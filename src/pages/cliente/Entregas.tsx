@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ClienteLayout } from "@/components/cliente/ClienteLayout";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ChevronRight, Package, Calendar } from "lucide-react";
 
@@ -33,25 +32,31 @@ export default function ClienteEntregas() {
         {/* Lista de Entregas */}
         <div className="space-y-3">
           {entregas.map((entrega, index) => (
-            <Card
+            <Link
               key={entrega.id}
-              className="group transition-all card-hover animate-slide-up"
-              style={{ animationDelay: `${index * 50}ms` }}
+              to={`/cliente/entrega-detalhe?id=${entrega.id}`}
+              className="block"
             >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+              <Card
+                className="group transition-all card-hover animate-slide-up"
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    {/* Ícone - hidden no mobile */}
+                    <div className="hidden h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10 sm:flex">
                       <Package className="h-6 w-6 text-primary" />
                     </div>
-                    <div>
+                    
+                    {/* Conteúdo */}
+                    <div className="flex-1">
                       <h3 className="font-semibold text-foreground">
                         {entrega.nome}
                       </h3>
-                      <div className="mt-1 flex items-center gap-3">
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Calendar className="h-3.5 w-3.5" />
-                          {entrega.data}
+                      <div className="mt-2 flex items-center justify-between gap-3 sm:justify-start">
+                        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                          <Calendar className="h-4 w-4" />
+                          <span>{entrega.data}</span>
                         </div>
                         <StatusBadge
                           variant={entrega.status === "aprovado" ? "success" : "warning"}
@@ -60,22 +65,13 @@ export default function ClienteEntregas() {
                         </StatusBadge>
                       </div>
                     </div>
-                  </div>
 
-                  <Button
-                    asChild
-                    variant="ghost"
-                    size="sm"
-                    className="gap-1 opacity-0 transition-opacity group-hover:opacity-100"
-                  >
-                    <Link to={`/cliente/entrega-detalhe?id=${entrega.id}`}>
-                      Visualizar
-                      <ChevronRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                    {/* Seta - visible no desktop */}
+                    <ChevronRight className="h-5 w-5 flex-shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
 
