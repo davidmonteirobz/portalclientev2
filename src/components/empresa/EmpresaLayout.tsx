@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Users, LayoutDashboard, ChevronLeft, ChevronRight } from "lucide-react";
+import { Users, LayoutDashboard, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface EmpresaLayoutProps {
   children: ReactNode;
@@ -15,36 +16,86 @@ const menuItems = [
 
 export function EmpresaLayout({ children }: EmpresaLayoutProps) {
   const location = useLocation();
+  const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  // Close mobile menu when switching to desktop
+  useEffect(() => {
+    if (!isMobile) {
+      setMobileMenuOpen(false);
+    }
+  }, [isMobile]);
 
   return (
     <div className="flex min-h-screen w-full bg-background">
+      {/* Mobile Header */}
+      {isMobile && (
+        <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b border-border bg-sidebar px-4">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
+              <LayoutDashboard className="h-4 w-4 text-sidebar-primary-foreground" />
+            </div>
+            <span className="font-semibold text-sidebar-foreground">Portal</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="h-8 w-8 text-sidebar-foreground hover:bg-sidebar-accent"
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+        </header>
+      )}
+
+      {/* Mobile Menu Overlay */}
+      {isMobile && mobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/50"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
         className={cn(
           "fixed left-0 top-0 z-40 flex h-screen flex-col bg-sidebar transition-all duration-300",
-          collapsed ? "w-16" : "w-64"
+          isMobile
+            ? cn(
+                "w-64 transform",
+                mobileMenuOpen ? "translate-x-0" : "-translate-x-full",
+                "top-14 h-[calc(100vh-3.5rem)]"
+              )
+            : cn(collapsed ? "w-16" : "w-64")
         )}
       >
-        {/* Logo */}
-        <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
-          {!collapsed && (
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
-                <LayoutDashboard className="h-4 w-4 text-sidebar-primary-foreground" />
+        {/* Logo - Desktop only */}
+        {!isMobile && (
+          <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
+            {!collapsed && (
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
+                  <LayoutDashboard className="h-4 w-4 text-sidebar-primary-foreground" />
+                </div>
+                <span className="font-semibold text-sidebar-foreground">Portal</span>
               </div>
-              <span className="font-semibold text-sidebar-foreground">Portal</span>
-            </div>
-          )}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCollapsed(!collapsed)}
-            className="h-8 w-8 text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-          >
-            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          </Button>
-        </div>
+            )}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setCollapsed(!collapsed)}
+              className="h-8 w-8 text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            >
+              {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+            </Button>
+          </div>
+        )}
 
         {/* Navigation */}
         <nav className="flex-1 space-y-1 p-3">
@@ -62,7 +113,7 @@ export function EmpresaLayout({ children }: EmpresaLayoutProps) {
                 )}
               >
                 <item.icon className="h-5 w-5 flex-shrink-0" />
-                {!collapsed && <span>{item.label}</span>}
+                {(isMobile || !collapsed) && <span>{item.label}</span>}
               </Link>
             );
           })}
@@ -70,7 +121,7 @@ export function EmpresaLayout({ children }: EmpresaLayoutProps) {
 
         {/* Footer */}
         <div className="border-t border-sidebar-border p-4">
-          {!collapsed && (
+          {(isMobile || !collapsed) && (
             <p className="text-xs text-sidebar-muted">Área da Empresa</p>
           )}
         </div>
@@ -80,7 +131,7 @@ export function EmpresaLayout({ children }: EmpresaLayoutProps) {
       <main
         className={cn(
           "flex-1 transition-all duration-300",
-          collapsed ? "ml-16" : "ml-64"
+          isMobile ? "ml-0 pt-14" : collapsed ? "ml-16" : "ml-64"
         )}
       >
         <div className="min-h-screen p-6 lg:p-8">{children}</div>
