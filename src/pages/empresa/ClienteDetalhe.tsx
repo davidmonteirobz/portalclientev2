@@ -96,7 +96,7 @@ export default function EmpresaClienteDetalhe() {
   const [reuniao, setReuniao] = useState({
     data: "2026-02-05",
     horario: "14:00",
-    tipo: "Revisão",
+    assunto: "Revisão do protótipo da home",
   });
   const [observacoesInternas, setObservacoesInternas] = useState(
     "Cliente prefere tons mais claros. Prazo flexível para esta entrega."
@@ -438,20 +438,13 @@ export default function EmpresaClienteDetalhe() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="tipo">Tipo</Label>
-                  <Select
-                    value={reuniao.tipo}
-                    onValueChange={(value) => setReuniao({ ...reuniao, tipo: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Alinhamento">Alinhamento</SelectItem>
-                      <SelectItem value="Revisão">Revisão</SelectItem>
-                      <SelectItem value="Kickoff">Kickoff</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="assunto">Assunto</Label>
+                  <Input
+                    id="assunto"
+                    value={reuniao.assunto}
+                    onChange={(e) => setReuniao({ ...reuniao, assunto: e.target.value })}
+                    placeholder="Ex: Revisão do protótipo, Alinhamento de briefing..."
+                  />
                 </div>
               </CardContent>
             </Card>
