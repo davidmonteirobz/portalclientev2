@@ -25,7 +25,6 @@ export default function ClienteDashboard() {
   // Dados mockados que viriam da empresa
   const clienteNome = "Maria";
   const servicoAtivo = "Design Mensal";
-  const faseAtual = "Design da Nova Home";
   
   // Onboarding
   const onboarding = {
@@ -43,6 +42,12 @@ export default function ClienteDashboard() {
   const etapasConcluidas = onboarding.etapas.filter(e => e.status === "concluido").length;
   const totalEtapas = onboarding.etapas.length;
   const progressoOnboarding = Math.round((etapasConcluidas / totalEtapas) * 100);
+
+  // Quando onboarding está ativo, sincroniza com a etapa atual
+  const etapaAtual = onboarding.etapas.find(e => e.status === "atual");
+  const faseAtual = onboarding.ativo && etapaAtual 
+    ? etapaAtual.nome 
+    : "Design da Nova Home"; // Fase fixa após onboarding
 
   const proximaAcao = {
     descricao: "Revisar protótipo da Home",
