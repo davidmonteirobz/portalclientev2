@@ -591,11 +591,11 @@ export default function EmpresaClienteDetalhe() {
                               Solicitado em {entrega.ajuste.dataHora}
                             </p>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex flex-col gap-2">
                             <Button
                               size="sm"
                               variant="outline"
-                              className="flex-1"
+                              className="w-full"
                               onClick={() => handleEntregaEmAndamento(entrega.id)}
                             >
                               <Clock className="mr-1.5 h-4 w-4" />
@@ -603,7 +603,7 @@ export default function EmpresaClienteDetalhe() {
                             </Button>
                             <Button
                               size="sm"
-                              className="flex-1"
+                              className="w-full"
                               onClick={() => handleEntregaResolvida(entrega.id)}
                             >
                               <CheckCircle className="mr-1.5 h-4 w-4" />
