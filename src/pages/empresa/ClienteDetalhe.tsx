@@ -70,12 +70,38 @@ export default function EmpresaClienteDetalhe() {
   const clienteId = searchParams.get("id") || "1";
 
   // Estados do cliente
-  const [cliente] = useState({
+  const [cliente, setCliente] = useState({
     id: clienteId,
     nome: "Maria Silva",
     negocio: "Studio Bella",
     servico: "Design Mensal",
   });
+
+  const [editarCadastroDialog, setEditarCadastroDialog] = useState(false);
+  const [clienteEditando, setClienteEditando] = useState({
+    nome: "",
+    negocio: "",
+    servico: "",
+  });
+
+  const handleAbrirEditarCadastro = () => {
+    setClienteEditando({
+      nome: cliente.nome,
+      negocio: cliente.negocio || "",
+      servico: cliente.servico,
+    });
+    setEditarCadastroDialog(true);
+  };
+
+  const handleSalvarCadastro = () => {
+    setCliente({
+      ...cliente,
+      nome: clienteEditando.nome,
+      negocio: clienteEditando.negocio,
+      servico: clienteEditando.servico,
+    });
+    setEditarCadastroDialog(false);
+  };
 
   // Estado do Onboarding
   const [onboarding, setOnboarding] = useState({
@@ -249,10 +275,54 @@ export default function EmpresaClienteDetalhe() {
               </StatusBadge>
             </div>
           </div>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Edit2 className="h-4 w-4" />
-            Editar cadastro
-          </Button>
+          <Dialog open={editarCadastroDialog} onOpenChange={setEditarCadastroDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2" onClick={handleAbrirEditarCadastro}>
+                <Edit2 className="h-4 w-4" />
+                Editar cadastro
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Editar cadastro</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-nome">Nome do cliente *</Label>
+                  <Input
+                    id="edit-nome"
+                    value={clienteEditando.nome}
+                    onChange={(e) => setClienteEditando({ ...clienteEditando, nome: e.target.value })}
+                    placeholder="Ex: Maria Silva"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-negocio">Nome do negócio (opcional)</Label>
+                  <Input
+                    id="edit-negocio"
+                    value={clienteEditando.negocio}
+                    onChange={(e) => setClienteEditando({ ...clienteEditando, negocio: e.target.value })}
+                    placeholder="Ex: Studio Bella"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-servico">Serviço ativo *</Label>
+                  <Input
+                    id="edit-servico"
+                    value={clienteEditando.servico}
+                    onChange={(e) => setClienteEditando({ ...clienteEditando, servico: e.target.value })}
+                    placeholder="Ex: Design Mensal"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setEditarCadastroDialog(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={handleSalvarCadastro}>Salvar</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
