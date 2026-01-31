@@ -52,7 +52,7 @@ export default function ClienteDashboard() {
   const proximaReuniao = {
     data: "05 de Fevereiro",
     horario: "14:00",
-    tipo: "Revisão",
+    assunto: "Revisão do protótipo da home",
   };
 
   return (
@@ -170,7 +170,7 @@ export default function ClienteDashboard() {
                     {proximaReuniao.data} às {proximaReuniao.horario}
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {proximaReuniao.tipo}
+                    {proximaReuniao.assunto}
                   </p>
                   <p className="mt-2 text-xs text-muted-foreground">
                     O link será enviado pelo WhatsApp.
