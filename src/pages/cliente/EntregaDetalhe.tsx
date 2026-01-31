@@ -142,7 +142,7 @@ export default function ClienteEntregaDetalhe() {
               <div className="flex flex-col gap-3">
                 <Button
                   size="lg"
-                  className="flex-1 gap-2"
+                  className="h-14 w-full gap-2"
                   onClick={handleAprovar}
                 >
                   <CheckCircle className="h-5 w-5" />
@@ -151,7 +151,7 @@ export default function ClienteEntregaDetalhe() {
 
                 <Dialog open={ajusteDialogOpen} onOpenChange={setAjusteDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="lg" className="flex-1 gap-2">
+                    <Button variant="outline" size="lg" className="h-14 w-full gap-2">
                       <MessageSquare className="h-5 w-5" />
                       Solicitar ajuste
                     </Button>
