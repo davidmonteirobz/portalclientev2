@@ -8,10 +8,8 @@ import {
   Target,
 } from "lucide-react";
 import { ClienteLayout } from "@/components/cliente/ClienteLayout";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ui/progress-bar";
-import { InfoCard } from "@/components/ui/info-card";
 
 export default function ClienteDashboard() {
   // Dados mockados que viriam da empresa
@@ -121,20 +119,28 @@ export default function ClienteDashboard() {
         </div>
 
         {/* CTAs */}
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Button asChild size="lg" className="flex-1 gap-2">
-            <Link to="/cliente/entregas">
-              <Package className="h-5 w-5" />
-              Ver entregas
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
-          <Button asChild variant="outline" size="lg" className="flex-1 gap-2">
-            <Link to="/cliente/materiais">
-              <FolderOpen className="h-5 w-5" />
-              Acessar materiais
-            </Link>
-          </Button>
+        <div className="flex flex-col gap-4">
+          <Link
+            to="/cliente/entregas"
+            className="flex items-center justify-between rounded-2xl bg-primary px-6 py-5 text-primary-foreground transition-all hover:opacity-90 active:scale-[0.98]"
+          >
+            <div className="flex items-center gap-4">
+              <Package className="h-6 w-6" />
+              <span className="text-lg font-medium">Ver entregas</span>
+            </div>
+            <ArrowRight className="h-5 w-5" />
+          </Link>
+          
+          <Link
+            to="/cliente/materiais"
+            className="flex items-center justify-between rounded-2xl border-2 border-primary bg-transparent px-6 py-5 text-primary transition-all hover:bg-primary/5 active:scale-[0.98]"
+          >
+            <div className="flex items-center gap-4">
+              <FolderOpen className="h-6 w-6" />
+              <span className="text-lg font-medium">Acessar materiais</span>
+            </div>
+            <ArrowRight className="h-5 w-5" />
+          </Link>
         </div>
       </div>
     </ClienteLayout>
