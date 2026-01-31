@@ -6,6 +6,17 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
+// Empresa
+import EmpresaClientes from "./pages/empresa/Clientes";
+import EmpresaClienteDetalhe from "./pages/empresa/ClienteDetalhe";
+
+// Cliente
+import ClienteDashboard from "./pages/cliente/Dashboard";
+import ClienteProgresso from "./pages/cliente/Progresso";
+import ClienteEntregas from "./pages/cliente/Entregas";
+import ClienteEntregaDetalhe from "./pages/cliente/EntregaDetalhe";
+import ClienteMateriais from "./pages/cliente/Materiais";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -16,6 +27,18 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          
+          {/* Área da Empresa */}
+          <Route path="/empresa/clientes" element={<EmpresaClientes />} />
+          <Route path="/empresa/cliente-detalhe" element={<EmpresaClienteDetalhe />} />
+          
+          {/* Portal do Cliente */}
+          <Route path="/cliente/dashboard" element={<ClienteDashboard />} />
+          <Route path="/cliente/progresso" element={<ClienteProgresso />} />
+          <Route path="/cliente/entregas" element={<ClienteEntregas />} />
+          <Route path="/cliente/entrega-detalhe" element={<ClienteEntregaDetalhe />} />
+          <Route path="/cliente/materiais" element={<ClienteMateriais />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
