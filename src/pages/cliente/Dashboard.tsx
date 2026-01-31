@@ -17,7 +17,11 @@ export default function ClienteDashboard() {
   const servicoAtivo = "Design Mensal";
   const faseAtual = "Design da Nova Home";
   const progressoEntrega = 65; // Calculado: inicio=25, andamento=65, finalizando=90
-  const proximaAcao = "Revisar protótipo da Home";
+  const proximaAcao = {
+    descricao: "Revisar protótipo da Home",
+    prazoData: "03 de Fevereiro",
+    prazoHorario: "18:00",
+  };
   const proximaReuniao = {
     data: "05 de Fevereiro",
     horario: "14:00",
@@ -85,7 +89,10 @@ export default function ClienteDashboard() {
                     Sua próxima ação
                   </p>
                   <p className="mt-1 text-lg font-semibold text-foreground">
-                    {proximaAcao}
+                    {proximaAcao.descricao}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Até dia {proximaAcao.prazoData} às {proximaAcao.prazoHorario}
                   </p>
                 </div>
               </div>
