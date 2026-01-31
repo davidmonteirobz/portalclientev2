@@ -18,8 +18,11 @@ const materiais: Material[] = [
 ];
 
 export default function ClienteMateriais() {
+  // Dados mockados - onboarding ativo viria da empresa
+  const onboardingAtivo = true;
+  
   return (
-    <ClienteLayout>
+    <ClienteLayout onboardingAtivo={onboardingAtivo}>
       <div className="animate-fade-in space-y-8">
         {/* Header */}
         <div>

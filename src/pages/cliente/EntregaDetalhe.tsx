@@ -22,6 +22,8 @@ import {
 
 export default function ClienteEntregaDetalhe() {
   const navigate = useNavigate();
+  // Dados mockados - onboarding ativo viria da empresa
+  const onboardingAtivo = true;
   const [searchParams] = useSearchParams();
   const entregaId = searchParams.get("id") || "2";
 
@@ -48,7 +50,7 @@ export default function ClienteEntregaDetalhe() {
   };
 
   return (
-    <ClienteLayout>
+    <ClienteLayout onboardingAtivo={onboardingAtivo}>
       <div className="animate-fade-in space-y-6">
         {/* Header */}
         <div className="flex items-center gap-4">

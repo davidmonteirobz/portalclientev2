@@ -8,24 +8,30 @@ interface Etapa {
   status: "concluido" | "atual" | "pendente";
 }
 
-const etapas: Etapa[] = [
-  { id: "1", nome: "Briefing", status: "concluido" },
-  { id: "2", nome: "Pesquisa e Referências", status: "concluido" },
-  { id: "3", nome: "Wireframes", status: "concluido" },
-  { id: "4", nome: "Design da Nova Home", status: "atual" },
-  { id: "5", nome: "Ajustes e Revisões", status: "pendente" },
-  { id: "6", nome: "Aprovação Final", status: "pendente" },
-];
+// Dados mockados - viriam da empresa
+const onboardingConfig = {
+  nome: "Onboarding do Serviço",
+  ativo: true,
+  etapas: [
+    { id: "1", nome: "Reunião inicial", status: "concluido" as const },
+    { id: "2", nome: "Briefing", status: "concluido" as const },
+    { id: "3", nome: "Envio de materiais", status: "concluido" as const },
+    { id: "4", nome: "Setup inicial", status: "atual" as const },
+    { id: "5", nome: "Aprovação final", status: "pendente" as const },
+  ],
+};
 
-export default function ClienteProgresso() {
+export default function ClienteOnboarding() {
+  const { nome, etapas } = onboardingConfig;
+
   return (
-    <ClienteLayout>
+    <ClienteLayout onboardingAtivo={true}>
       <div className="animate-fade-in space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Progresso</h1>
+          <h1 className="text-2xl font-bold text-foreground">{nome}</h1>
           <p className="text-muted-foreground">
-            Acompanhe as etapas do seu projeto
+            Acompanhe as etapas de início do seu serviço
           </p>
         </div>
 

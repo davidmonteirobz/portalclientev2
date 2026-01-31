@@ -12,7 +12,7 @@ import EmpresaClienteDetalhe from "./pages/empresa/ClienteDetalhe";
 
 // Cliente
 import ClienteDashboard from "./pages/cliente/Dashboard";
-import ClienteProgresso from "./pages/cliente/Progresso";
+import ClienteOnboarding from "./pages/cliente/Onboarding";
 import ClienteEntregas from "./pages/cliente/Entregas";
 import ClienteEntregaDetalhe from "./pages/cliente/EntregaDetalhe";
 import ClienteMateriais from "./pages/cliente/Materiais";
@@ -34,7 +34,7 @@ const App = () => (
           
           {/* Portal do Cliente */}
           <Route path="/cliente/dashboard" element={<ClienteDashboard />} />
-          <Route path="/cliente/progresso" element={<ClienteProgresso />} />
+          <Route path="/cliente/onboarding" element={<ClienteOnboarding />} />
           <Route path="/cliente/entregas" element={<ClienteEntregas />} />
           <Route path="/cliente/entrega-detalhe" element={<ClienteEntregaDetalhe />} />
           <Route path="/cliente/materiais" element={<ClienteMateriais />} />
