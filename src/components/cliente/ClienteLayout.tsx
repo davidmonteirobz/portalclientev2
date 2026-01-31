@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
-  TrendingUp, 
+  Rocket, 
   Package, 
   FolderOpen,
   Menu,
@@ -14,18 +14,30 @@ import { useState } from "react";
 
 interface ClienteLayoutProps {
   children: ReactNode;
+  onboardingAtivo?: boolean;
 }
 
-const menuItems = [
-  { label: "Início", icon: LayoutDashboard, path: "/cliente/dashboard" },
-  { label: "Progresso", icon: TrendingUp, path: "/cliente/progresso" },
-  { label: "Entregas", icon: Package, path: "/cliente/entregas" },
-  { label: "Materiais", icon: FolderOpen, path: "/cliente/materiais" },
-];
+const getMenuItems = (onboardingAtivo: boolean) => {
+  const items = [
+    { label: "Início", icon: LayoutDashboard, path: "/cliente/dashboard" },
+  ];
+  
+  if (onboardingAtivo) {
+    items.push({ label: "Onboarding", icon: Rocket, path: "/cliente/onboarding" });
+  }
+  
+  items.push(
+    { label: "Entregas", icon: Package, path: "/cliente/entregas" },
+    { label: "Materiais", icon: FolderOpen, path: "/cliente/materiais" }
+  );
+  
+  return items;
+};
 
-export function ClienteLayout({ children }: ClienteLayoutProps) {
+export function ClienteLayout({ children, onboardingAtivo = true }: ClienteLayoutProps) {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const menuItems = getMenuItems(onboardingAtivo);
 
   return (
     <div className="min-h-screen w-full bg-background">

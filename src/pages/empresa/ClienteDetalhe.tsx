@@ -9,6 +9,9 @@ import {
   CheckCircle,
   Clock,
   Trash2,
+  Circle,
+  Rocket,
+  GripVertical,
 } from "lucide-react";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { Button } from "@/components/ui/button";
@@ -17,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { SectionHeader } from "@/components/ui/section-header";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -33,6 +37,7 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 interface Entrega {
   id: string;
@@ -45,6 +50,12 @@ interface Material {
   id: string;
   nome: string;
   link: string;
+}
+
+interface EtapaOnboarding {
+  id: string;
+  nome: string;
+  status: "concluido" | "atual" | "pendente";
 }
 
 export default function EmpresaClienteDetalhe() {
@@ -60,8 +71,23 @@ export default function EmpresaClienteDetalhe() {
     servico: "Design Mensal",
   });
 
+  // Estado do Onboarding
+  const [onboarding, setOnboarding] = useState({
+    nome: "Onboarding do Serviço",
+    ativo: true,
+    etapas: [
+      { id: "1", nome: "Reunião inicial", status: "concluido" as const },
+      { id: "2", nome: "Briefing", status: "concluido" as const },
+      { id: "3", nome: "Envio de materiais", status: "concluido" as const },
+      { id: "4", nome: "Setup inicial", status: "atual" as const },
+      { id: "5", nome: "Aprovação final", status: "pendente" as const },
+    ] as EtapaOnboarding[],
+  });
+
+  const [novaEtapaDialog, setNovaEtapaDialog] = useState(false);
+  const [novaEtapa, setNovaEtapa] = useState("");
+
   const [faseAtual, setFaseAtual] = useState("Design da Nova Home");
-  const [progressoEntrega, setProgressoEntrega] = useState<"inicio" | "andamento" | "finalizando">("andamento");
   const [proximaAcao, setProximaAcao] = useState({
     descricao: "Revisar protótipo da Home",
     prazoData: "2026-02-03",
@@ -125,6 +151,41 @@ export default function EmpresaClienteDetalhe() {
     );
   };
 
+  // Funções do Onboarding
+  const handleAddEtapa = () => {
+    if (novaEtapa.trim()) {
+      const newEtapa: EtapaOnboarding = {
+        id: Date.now().toString(),
+        nome: novaEtapa.trim(),
+        status: "pendente",
+      };
+      setOnboarding({
+        ...onboarding,
+        etapas: [...onboarding.etapas, newEtapa],
+      });
+      setNovaEtapa("");
+      setNovaEtapaDialog(false);
+    }
+  };
+
+  const handleRemoveEtapa = (id: string) => {
+    setOnboarding({
+      ...onboarding,
+      etapas: onboarding.etapas.filter((e) => e.id !== id),
+    });
+  };
+
+  const cycleEtapaStatus = (id: string) => {
+    setOnboarding({
+      ...onboarding,
+      etapas: onboarding.etapas.map((e) => {
+        if (e.id !== id) return e;
+        const nextStatus = e.status === "pendente" ? "atual" : e.status === "atual" ? "concluido" : "pendente";
+        return { ...e, status: nextStatus };
+      }),
+    });
+  };
+
   return (
     <EmpresaLayout>
       <div className="animate-fade-in space-y-8">
@@ -182,24 +243,129 @@ export default function EmpresaClienteDetalhe() {
               </CardContent>
             </Card>
 
-            {/* Seção 2 - Progresso */}
-            <Card>
+            {/* Seção 2 - Onboarding */}
+            <Card className="border-primary/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base">Progresso da Entrega Atual</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Rocket className="h-4 w-4" />
+                    Onboarding
+                  </CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="onboarding-ativo" className="text-sm text-muted-foreground">
+                      {onboarding.ativo ? "Ativo" : "Concluído"}
+                    </Label>
+                    <Switch
+                      id="onboarding-ativo"
+                      checked={onboarding.ativo}
+                      onCheckedChange={(checked) =>
+                        setOnboarding({ ...onboarding, ativo: checked })
+                      }
+                    />
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="flex gap-2">
-                  {(["inicio", "andamento", "finalizando"] as const).map((estado) => (
-                    <Button
-                      key={estado}
-                      variant={progressoEntrega === estado ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setProgressoEntrega(estado)}
-                      className="flex-1 capitalize"
-                    >
-                      {estado === "inicio" ? "Início" : estado === "andamento" ? "Em andamento" : "Finalizando"}
-                    </Button>
-                  ))}
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="onboarding-nome">Nome do onboarding</Label>
+                  <Input
+                    id="onboarding-nome"
+                    value={onboarding.nome}
+                    onChange={(e) =>
+                      setOnboarding({ ...onboarding, nome: e.target.value })
+                    }
+                    placeholder="Ex: Onboarding do Serviço"
+                  />
+                </div>
+
+                {/* Lista de Etapas */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Etapas</Label>
+                    <Dialog open={novaEtapaDialog} onOpenChange={setNovaEtapaDialog}>
+                      <DialogTrigger asChild>
+                        <Button size="sm" variant="outline" className="gap-1 h-7 text-xs">
+                          <Plus className="h-3 w-3" />
+                          Adicionar
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Nova Etapa</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                          <div className="space-y-2">
+                            <Label>Nome da etapa</Label>
+                            <Input
+                              value={novaEtapa}
+                              onChange={(e) => setNovaEtapa(e.target.value)}
+                              placeholder="Ex: Reunião inicial"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-3">
+                          <Button variant="outline" onClick={() => setNovaEtapaDialog(false)}>
+                            Cancelar
+                          </Button>
+                          <Button onClick={handleAddEtapa}>Adicionar</Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    {onboarding.etapas.map((etapa) => (
+                      <div
+                        key={etapa.id}
+                        className={cn(
+                          "flex items-center justify-between rounded-lg border p-2.5",
+                          etapa.status === "concluido"
+                            ? "border-success/30 bg-success/5"
+                            : etapa.status === "atual"
+                            ? "border-primary/30 bg-primary/5"
+                            : "border-border bg-muted/30"
+                        )}
+                      >
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => cycleEtapaStatus(etapa.id)}
+                            className="flex-shrink-0"
+                          >
+                            {etapa.status === "concluido" ? (
+                              <CheckCircle className="h-4 w-4 text-success" />
+                            ) : etapa.status === "atual" ? (
+                              <Clock className="h-4 w-4 text-primary" />
+                            ) : (
+                              <Circle className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </button>
+                          <span
+                            className={cn(
+                              "text-sm font-medium",
+                              etapa.status === "pendente"
+                                ? "text-muted-foreground"
+                                : "text-foreground"
+                            )}
+                          >
+                            {etapa.nome}
+                          </span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                          onClick={() => handleRemoveEtapa(etapa.id)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    ))}
+                    {onboarding.etapas.length === 0 && (
+                      <p className="py-3 text-center text-sm text-muted-foreground">
+                        Nenhuma etapa cadastrada
+                      </p>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
