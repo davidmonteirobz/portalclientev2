@@ -62,7 +62,11 @@ export default function EmpresaClienteDetalhe() {
 
   const [faseAtual, setFaseAtual] = useState("Design da Nova Home");
   const [progressoEntrega, setProgressoEntrega] = useState<"inicio" | "andamento" | "finalizando">("andamento");
-  const [proximaAcao, setProximaAcao] = useState("Revisar protótipo da Home");
+  const [proximaAcao, setProximaAcao] = useState({
+    descricao: "Revisar protótipo da Home",
+    prazoData: "2026-02-03",
+    prazoHorario: "18:00",
+  });
   const [reuniao, setReuniao] = useState({
     data: "2026-02-05",
     horario: "14:00",
@@ -205,12 +209,36 @@ export default function EmpresaClienteDetalhe() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-base">Próxima Ação do Cliente</CardTitle>
               </CardHeader>
-              <CardContent>
-                <Input
-                  value={proximaAcao}
-                  onChange={(e) => setProximaAcao(e.target.value)}
-                  placeholder="Ex: Revisar protótipo da Home"
-                />
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="acao">Descrição da ação</Label>
+                  <Input
+                    id="acao"
+                    value={proximaAcao.descricao}
+                    onChange={(e) => setProximaAcao({ ...proximaAcao, descricao: e.target.value })}
+                    placeholder="Ex: Revisar protótipo da Home"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="prazoData">Prazo - Data</Label>
+                    <Input
+                      id="prazoData"
+                      type="date"
+                      value={proximaAcao.prazoData}
+                      onChange={(e) => setProximaAcao({ ...proximaAcao, prazoData: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="prazoHorario">Prazo - Horário</Label>
+                    <Input
+                      id="prazoHorario"
+                      type="time"
+                      value={proximaAcao.prazoHorario}
+                      onChange={(e) => setProximaAcao({ ...proximaAcao, prazoHorario: e.target.value })}
+                    />
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
