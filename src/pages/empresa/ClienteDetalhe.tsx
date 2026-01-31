@@ -335,7 +335,7 @@ export default function EmpresaClienteDetalhe() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  <Label htmlFor="fase">Fase ou entrega atual</Label>
+                  <Label htmlFor="fase">Tipo de contrato ou projeto</Label>
                   <Input
                     id="fase"
                     value={faseAtual}
