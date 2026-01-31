@@ -78,7 +78,7 @@ export default function ClienteProgresso() {
                       : "border-border bg-muted/30"
                   )}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <h3
                       className={cn(
                         "font-semibold",
@@ -91,7 +91,7 @@ export default function ClienteProgresso() {
                     </h3>
                     <span
                       className={cn(
-                        "rounded-full px-2.5 py-1 text-xs font-medium",
+                        "w-fit rounded-full px-2.5 py-1.5 text-xs font-medium",
                         etapa.status === "concluido"
                           ? "bg-success/10 text-success"
                           : etapa.status === "atual"
