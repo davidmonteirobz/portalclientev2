@@ -139,7 +139,7 @@ export default function ClienteEntregaDetalhe() {
           <Card>
             <CardContent className="p-6">
               <h2 className="mb-4 font-semibold text-foreground">O que você achou?</h2>
-              <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex flex-row gap-3">
                 <Button
                   size="lg"
                   className="flex-1 gap-2"
