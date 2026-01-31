@@ -4,6 +4,7 @@ import { ClienteLayout } from "@/components/cliente/ClienteLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   ArrowLeft,
@@ -11,6 +12,7 @@ import {
   CheckCircle,
   MessageSquare,
   AlertCircle,
+  Clock,
 } from "lucide-react";
 import {
   Dialog,
@@ -20,6 +22,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+type EntregaStatus = "em_revisao" | "aprovado" | "ajuste_solicitado";
+
 export default function ClienteEntregaDetalhe() {
   const navigate = useNavigate();
   // Dados mockados - onboarding ativo viria da empresa
@@ -28,25 +32,46 @@ export default function ClienteEntregaDetalhe() {
   const entregaId = searchParams.get("id") || "2";
 
   // Mock data
-  const entrega = {
+  const [entrega, setEntrega] = useState({
     id: entregaId,
     nome: "Design Home v1",
-    status: "em_revisao" as "em_revisao" | "aprovado",
+    status: "em_revisao" as EntregaStatus,
     link: "https://figma.com/...",
     previewImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=600&fit=crop",
-  };
+    ajuste: null as { texto: string; dataHora: string } | null,
+  });
 
   const [comentario, setComentario] = useState("");
   const [ajusteDialogOpen, setAjusteDialogOpen] = useState(false);
-  const [aprovado, setAprovado] = useState(false);
 
   const handleAprovar = () => {
-    setAprovado(true);
+    setEntrega({ ...entrega, status: "aprovado", ajuste: null });
   };
 
   const handleSolicitarAjuste = () => {
-    setAjusteDialogOpen(false);
-    setComentario("");
+    if (comentario.trim()) {
+      setEntrega({
+        ...entrega,
+        status: "ajuste_solicitado",
+        ajuste: {
+          texto: comentario,
+          dataHora: new Date().toLocaleString("pt-BR"),
+        },
+      });
+      setAjusteDialogOpen(false);
+      setComentario("");
+    }
+  };
+
+  const getStatusBadge = () => {
+    switch (entrega.status) {
+      case "aprovado":
+        return <StatusBadge variant="success">Aprovado</StatusBadge>;
+      case "ajuste_solicitado":
+        return <StatusBadge variant="warning">Ajuste solicitado</StatusBadge>;
+      default:
+        return <StatusBadge variant="warning">Em revisão</StatusBadge>;
+    }
   };
 
   return (
@@ -60,11 +85,7 @@ export default function ClienteEntregaDetalhe() {
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-foreground">{entrega.nome}</h1>
             <div className="mt-1 flex items-center gap-2">
-              <StatusBadge
-                variant={aprovado ? "success" : entrega.status === "aprovado" ? "success" : "warning"}
-              >
-                {aprovado ? "Aprovado" : entrega.status === "aprovado" ? "Aprovado" : "Em revisão"}
-              </StatusBadge>
+              {getStatusBadge()}
             </div>
           </div>
         </div>
@@ -90,8 +111,31 @@ export default function ClienteEntregaDetalhe() {
           </CardContent>
         </Card>
 
+        {/* Ajuste Solicitado - Feedback visual */}
+        {entrega.status === "ajuste_solicitado" && entrega.ajuste && (
+          <Card className="border-warning/20 bg-warning/5">
+            <CardContent className="flex items-start gap-4 p-6">
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-warning">
+                <Clock className="h-6 w-6 text-warning-foreground" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-foreground">Ajuste solicitado</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Seu pedido foi enviado. Aguarde o retorno da equipe.
+                </p>
+                <div className="mt-3 rounded-lg bg-background p-3">
+                  <p className="text-sm text-foreground">{entrega.ajuste.texto}</p>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    Enviado em {entrega.ajuste.dataHora}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Ações */}
-        {!aprovado && entrega.status !== "aprovado" && (
+        {entrega.status === "em_revisao" && (
           <Card>
             <CardContent className="p-6">
               <h2 className="mb-4 font-semibold text-foreground">O que você achou?</h2>
@@ -123,18 +167,24 @@ export default function ClienteEntregaDetalhe() {
                           Descreva o que precisa ser ajustado. Sua solicitação será enviada para a equipe.
                         </p>
                       </div>
-                      <Textarea
-                        value={comentario}
-                        onChange={(e) => setComentario(e.target.value)}
-                        placeholder="Descreva os ajustes necessários..."
-                        rows={4}
-                      />
+                      <div className="space-y-2">
+                        <Label htmlFor="ajuste-texto">Descreva o ajuste necessário</Label>
+                        <Textarea
+                          id="ajuste-texto"
+                          value={comentario}
+                          onChange={(e) => setComentario(e.target.value)}
+                          placeholder="Descreva os ajustes necessários..."
+                          rows={4}
+                        />
+                      </div>
                     </div>
                     <div className="flex justify-end gap-3">
                       <Button variant="outline" onClick={() => setAjusteDialogOpen(false)}>
                         Cancelar
                       </Button>
-                      <Button onClick={handleSolicitarAjuste}>Enviar solicitação</Button>
+                      <Button onClick={handleSolicitarAjuste} disabled={!comentario.trim()}>
+                        Enviar solicitação
+                      </Button>
                     </div>
                   </DialogContent>
                 </Dialog>
@@ -144,7 +194,7 @@ export default function ClienteEntregaDetalhe() {
         )}
 
         {/* Aprovado */}
-        {(aprovado || entrega.status === "aprovado") && (
+        {entrega.status === "aprovado" && (
           <Card className="border-success/20 bg-success/5">
             <CardContent className="flex items-center gap-4 p-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-success">

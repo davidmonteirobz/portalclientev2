@@ -11,7 +11,7 @@ import {
   Trash2,
   Circle,
   Rocket,
-  GripVertical,
+  AlertCircle,
 } from "lucide-react";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { Button } from "@/components/ui/button";
@@ -39,11 +39,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
+interface AjusteSolicitado {
+  texto: string;
+  dataHora: string;
+}
+
 interface Entrega {
   id: string;
   nome: string;
-  status: "em_revisao" | "aprovado";
+  status: "em_revisao" | "aprovado" | "ajuste_solicitado";
   link: string;
+  ajuste?: AjusteSolicitado;
 }
 
 interface Material {
@@ -105,6 +111,16 @@ export default function EmpresaClienteDetalhe() {
   const [entregas, setEntregas] = useState<Entrega[]>([
     { id: "1", nome: "Wireframe Home", status: "aprovado", link: "https://figma.com/..." },
     { id: "2", nome: "Design Home v1", status: "em_revisao", link: "https://figma.com/..." },
+    { 
+      id: "3", 
+      nome: "Design Home v2", 
+      status: "ajuste_solicitado", 
+      link: "https://figma.com/...",
+      ajuste: {
+        texto: "Gostaria que o banner principal fosse mais alto e com cores mais vibrantes. Também seria bom adicionar um botão de CTA mais visível.",
+        dataHora: "31/01/2026, 14:30",
+      }
+    },
   ]);
 
   const [materiais, setMateriais] = useState<Material[]>([
@@ -141,13 +157,33 @@ export default function EmpresaClienteDetalhe() {
     }
   };
 
-  const toggleEntregaStatus = (id: string) => {
+  const handleEntregaEmAndamento = (id: string) => {
     setEntregas(
       entregas.map((e) =>
         e.id === id
-          ? { ...e, status: e.status === "aprovado" ? "em_revisao" : "aprovado" }
+          ? { ...e, status: "em_revisao", ajuste: undefined }
           : e
       )
+    );
+  };
+
+  const handleEntregaResolvida = (id: string) => {
+    setEntregas(
+      entregas.map((e) =>
+        e.id === id
+          ? { ...e, status: "aprovado", ajuste: undefined }
+          : e
+      )
+    );
+  };
+
+  const toggleEntregaStatus = (id: string) => {
+    setEntregas(
+      entregas.map((e) => {
+        if (e.id !== id) return e;
+        if (e.status === "ajuste_solicitado") return e; // Não altera pelo toggle se tem ajuste
+        return { ...e, status: e.status === "aprovado" ? "em_revisao" : "aprovado" };
+      })
     );
   };
 
@@ -497,32 +533,85 @@ export default function EmpresaClienteDetalhe() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {entregas.map((entrega) => (
                     <div
                       key={entrega.id}
-                      className="flex items-center justify-between rounded-lg border border-border bg-background p-3"
+                      className={cn(
+                        "rounded-lg border bg-background p-3",
+                        entrega.status === "ajuste_solicitado"
+                          ? "border-warning/30"
+                          : "border-border"
+                      )}
                     >
-                      <div className="flex items-center gap-3">
-                        <button onClick={() => toggleEntregaStatus(entrega.id)}>
-                          {entrega.status === "aprovado" ? (
-                            <CheckCircle className="h-5 w-5 text-success" />
-                          ) : (
-                            <Clock className="h-5 w-5 text-warning" />
-                          )}
-                        </button>
-                        <span className="font-medium">{entrega.nome}</span>
-                        <StatusBadge
-                          variant={entrega.status === "aprovado" ? "success" : "warning"}
-                        >
-                          {entrega.status === "aprovado" ? "Aprovado" : "Em revisão"}
-                        </StatusBadge>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <button 
+                            onClick={() => toggleEntregaStatus(entrega.id)}
+                            disabled={entrega.status === "ajuste_solicitado"}
+                          >
+                            {entrega.status === "aprovado" ? (
+                              <CheckCircle className="h-5 w-5 text-success" />
+                            ) : entrega.status === "ajuste_solicitado" ? (
+                              <AlertCircle className="h-5 w-5 text-warning" />
+                            ) : (
+                              <Clock className="h-5 w-5 text-muted-foreground" />
+                            )}
+                          </button>
+                          <span className="font-medium">{entrega.nome}</span>
+                          <StatusBadge
+                            variant={
+                              entrega.status === "aprovado"
+                                ? "success"
+                                : entrega.status === "ajuste_solicitado"
+                                ? "warning"
+                                : "muted"
+                            }
+                          >
+                            {entrega.status === "aprovado"
+                              ? "Aprovado"
+                              : entrega.status === "ajuste_solicitado"
+                              ? "Ajuste solicitado"
+                              : "Em revisão"}
+                          </StatusBadge>
+                        </div>
+                        <Button variant="ghost" size="icon" asChild>
+                          <a href={entrega.link} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="h-4 w-4" />
+                          </a>
+                        </Button>
                       </div>
-                      <Button variant="ghost" size="icon" asChild>
-                        <a href={entrega.link} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-4 w-4" />
-                        </a>
-                      </Button>
+
+                      {/* Detalhes do Ajuste Solicitado */}
+                      {entrega.status === "ajuste_solicitado" && entrega.ajuste && (
+                        <div className="mt-3 space-y-3 border-t border-warning/20 pt-3">
+                          <div className="rounded-lg bg-warning/5 p-3">
+                            <p className="text-sm text-foreground">{entrega.ajuste.texto}</p>
+                            <p className="mt-2 text-xs text-muted-foreground">
+                              Solicitado em {entrega.ajuste.dataHora}
+                            </p>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="flex-1"
+                              onClick={() => handleEntregaEmAndamento(entrega.id)}
+                            >
+                              <Clock className="mr-1.5 h-4 w-4" />
+                              Marcar como em andamento
+                            </Button>
+                            <Button
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => handleEntregaResolvida(entrega.id)}
+                            >
+                              <CheckCircle className="mr-1.5 h-4 w-4" />
+                              Marcar como resolvido
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                   {entregas.length === 0 && (
