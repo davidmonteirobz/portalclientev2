@@ -63,7 +63,7 @@ export default function ClienteDashboard() {
         {/* Welcome Header */}
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-foreground">
-            Olá, {clienteNome}! 👋
+            Olá, {clienteNome}!
           </h1>
           <p className="text-lg text-muted-foreground">
             Bem-vindo(a) ao seu portal. Aqui você encontra tudo sobre o seu projeto em um só lugar.
