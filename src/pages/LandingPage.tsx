@@ -72,170 +72,188 @@ function HeroSection() {
   );
 }
 
-// Demo Section - Dual View Preview
+// Demo Section - Portal do Cliente Overview
 function DemoSection() {
   return (
     <section id="demo" className="bg-muted/30 py-20 md:py-28">
       <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold text-foreground md:text-4xl">
-            Veja por dentro da plataforma
+            Veja como seu cliente vai visualizar
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Clique para explorar as duas visões: Empresa e Cliente
+            Um portal completo com a identidade da sua agência
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-2">
-          {/* Área da Empresa */}
-          <Link to="/empresa/clientes" className="group block">
-            <Card className="overflow-hidden border-border/50 bg-card shadow-lg transition-all hover:shadow-xl hover:-translate-y-2 hover:border-primary/30">
-              <div className="bg-primary/5 px-4 py-3 border-b border-border/50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      <div className="h-3 w-3 rounded-full bg-destructive/60" />
-                      <div className="h-3 w-3 rounded-full bg-warning/60" />
-                      <div className="h-3 w-3 rounded-full bg-success/60" />
-                    </div>
-                    <span className="ml-2 text-sm font-medium text-foreground">Área da Empresa</span>
-                  </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+        {/* Portal do Cliente Preview - Clicável */}
+        <Link to="/cliente/dashboard" className="group block mx-auto max-w-4xl">
+          <Card className="overflow-hidden border-border/50 bg-card shadow-xl transition-all hover:shadow-2xl hover:-translate-y-2 hover:border-primary/30">
+            {/* Browser Frame */}
+            <div className="bg-muted/50 px-4 py-3 border-b border-border/50">
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1.5">
+                  <div className="h-3 w-3 rounded-full bg-destructive/60" />
+                  <div className="h-3 w-3 rounded-full bg-warning/60" />
+                  <div className="h-3 w-3 rounded-full bg-success/60" />
+                </div>
+                <div className="ml-4 flex-1 rounded-md bg-background px-3 py-1 text-xs text-muted-foreground">
+                  meuportal.agencia.com.br
                 </div>
               </div>
-              <CardContent className="p-5">
-                <div className="space-y-3">
-                  {/* Header da tela */}
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-lg font-bold text-foreground">Clientes</p>
-                      <p className="text-xs text-muted-foreground">Gerencie seus clientes e acesse seus portais</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="rounded-md bg-muted px-3 py-1.5 text-xs text-muted-foreground">Importar</div>
-                      <div className="rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground">+ Novo cliente</div>
+            </div>
+
+            <CardContent className="p-0">
+              {/* Header do Portal */}
+              <div className="flex items-center justify-between border-b border-border px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-foreground flex items-center justify-center">
+                    <div className="h-4 w-4 grid grid-cols-2 gap-0.5">
+                      <div className="bg-background rounded-sm" />
+                      <div className="bg-background rounded-sm" />
+                      <div className="bg-background rounded-sm" />
+                      <div className="bg-background rounded-sm" />
                     </div>
                   </div>
-                  
-                  {/* Lista de clientes */}
+                  <span className="font-semibold text-foreground">Meu Portal</span>
+                </div>
+                <div className="flex items-center gap-6 text-sm">
+                  <span className="flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-background text-xs font-medium">
+                    <div className="h-3 w-3 grid grid-cols-2 gap-0.5">
+                      <div className="bg-background rounded-[1px]" />
+                      <div className="bg-background rounded-[1px]" />
+                      <div className="bg-background rounded-[1px]" />
+                      <div className="bg-background rounded-[1px]" />
+                    </div>
+                    Início
+                  </span>
+                  <span className="text-muted-foreground flex items-center gap-1.5">
+                    <Rocket className="h-4 w-4" />
+                    Onboarding
+                  </span>
+                  <span className="text-muted-foreground flex items-center gap-1.5">
+                    <Send className="h-4 w-4" />
+                    Entregas
+                  </span>
+                  <span className="text-muted-foreground flex items-center gap-1.5">
+                    <FolderOpen className="h-4 w-4" />
+                    Arquivos
+                  </span>
+                </div>
+              </div>
+
+              {/* Conteúdo do Portal */}
+              <div className="p-6 space-y-5">
+                {/* Saudação */}
+                <div>
+                  <h3 className="text-2xl font-bold text-foreground">Olá, Maria!</h3>
+                  <p className="text-muted-foreground">Bem-vindo(a) ao seu portal. Aqui você encontra tudo sobre o seu projeto em um só lugar.</p>
+                </div>
+
+                {/* Contexto Atual */}
+                <div className="rounded-xl bg-muted/50 p-4 flex items-center gap-4 border border-border">
+                  <div className="h-12 w-12 rounded-xl bg-foreground flex items-center justify-center">
+                    <Settings className="h-6 w-6 text-background" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Agora estamos em</p>
+                    <p className="text-lg font-semibold text-foreground">Setup inicial</p>
+                  </div>
+                </div>
+
+                {/* Onboarding do Serviço */}
+                <div className="rounded-xl border border-border p-5 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="font-medium text-foreground flex items-center gap-2">
+                      <Rocket className="h-5 w-5" />
+                      Onboarding do Serviço
+                    </p>
+                    <span className="text-sm text-muted-foreground">60%</span>
+                  </div>
+                  <div className="h-2 w-full rounded-full bg-secondary overflow-hidden">
+                    <div className="h-2 w-3/5 rounded-full bg-foreground" />
+                  </div>
                   <div className="space-y-2">
                     {[
-                      { nome: "Maria Silva", negocio: "Studio Bella", servico: "Design Mensal" },
-                      { nome: "João Santos", negocio: "TechStart", servico: "Site Institucional" },
-                      { nome: "Ana Costa", negocio: "", servico: "Criativos para Redes" },
-                    ].map((cliente, i) => (
-                      <div key={i} className="flex items-center justify-between rounded-lg bg-background p-3 border border-border">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
-                            <span className="text-xs font-medium text-primary">{cliente.nome.charAt(0)}</span>
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-foreground">{cliente.nome}</p>
-                            {cliente.negocio && <p className="text-xs text-muted-foreground">{cliente.negocio}</p>}
-                            <span className="inline-block mt-0.5 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-                              {cliente.servico}
-                            </span>
-                          </div>
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      { nome: "Reunião inicial", done: true },
+                      { nome: "Briefing", done: true },
+                      { nome: "Envio de materiais", done: true },
+                      { nome: "Setup inicial", current: true },
+                      { nome: "Aprovação final", pending: true },
+                    ].map((etapa, i) => (
+                      <div key={i} className="flex items-center gap-2 text-sm">
+                        {etapa.done ? (
+                          <CheckCircle className="h-4 w-4 text-foreground" />
+                        ) : etapa.current ? (
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <div className="h-4 w-4 rounded-full border-2 border-muted-foreground/30" />
+                        )}
+                        <span className={etapa.pending ? "text-muted-foreground" : "text-foreground"}>
+                          {etapa.nome}
+                        </span>
                       </div>
                     ))}
                   </div>
-                </div>
-                <div className="mt-4 flex items-center justify-center gap-2 text-sm font-medium text-primary">
-                  <span>Explorar área da empresa</span>
-                  <ArrowRight className="h-4 w-4" />
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          {/* Portal do Cliente */}
-          <Link to="/cliente/dashboard" className="group block">
-            <Card className="overflow-hidden border-border/50 bg-card shadow-lg transition-all hover:shadow-xl hover:-translate-y-2 hover:border-primary/30">
-              <div className="bg-primary/5 px-4 py-3 border-b border-border/50">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1.5">
-                      <div className="h-3 w-3 rounded-full bg-destructive/60" />
-                      <div className="h-3 w-3 rounded-full bg-warning/60" />
-                      <div className="h-3 w-3 rounded-full bg-success/60" />
-                    </div>
-                    <span className="ml-2 text-sm font-medium text-foreground">Portal do Cliente</span>
+                  <div className="flex items-center gap-1 text-sm font-medium text-foreground pt-1">
+                    Ver detalhes
+                    <ArrowRight className="h-4 w-4" />
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+                </div>
+
+                {/* Cards de ação */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="rounded-xl bg-warning/10 p-4 flex items-start gap-3 border border-warning/20">
+                    <div className="h-10 w-10 rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0">
+                      <Clock className="h-5 w-5 text-warning" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Sua próxima ação</p>
+                      <p className="font-semibold text-foreground">Revisar protótipo da Home</p>
+                      <p className="text-sm text-muted-foreground">Até dia 03 de Fevereiro às 18:00</p>
+                    </div>
+                  </div>
+                  <div className="rounded-xl bg-muted/50 p-4 flex items-start gap-3 border border-border">
+                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                      <ListChecks className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Próxima reunião</p>
+                      <p className="font-semibold text-foreground">05 de Fevereiro às 14:00</p>
+                      <p className="text-sm text-muted-foreground">Revisão do protótipo da home</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botões de ação */}
+                <div className="space-y-3">
+                  <div className="rounded-xl bg-foreground p-4 flex items-center justify-between text-background">
+                    <div className="flex items-center gap-3">
+                      <Send className="h-5 w-5" />
+                      <span className="font-medium">Ver entregas</span>
+                    </div>
+                    <ArrowRight className="h-5 w-5" />
+                  </div>
+                  <div className="rounded-xl border-2 border-border p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <FolderOpen className="h-5 w-5 text-muted-foreground" />
+                      <span className="font-medium text-foreground">Acessar arquivos</span>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                  </div>
                 </div>
               </div>
-              <CardContent className="p-5">
-                <div className="space-y-3">
-                  {/* Welcome */}
-                  <div>
-                    <p className="text-lg font-bold text-foreground">Olá, Maria! 👋</p>
-                    <p className="text-xs text-muted-foreground">Bem-vindo(a) ao seu portal.</p>
-                  </div>
+            </CardContent>
 
-                  {/* Contexto atual */}
-                  <div className="rounded-lg bg-primary/5 p-3 border border-primary/20">
-                    <p className="text-xs text-muted-foreground">Agora estamos em</p>
-                    <p className="text-sm font-semibold text-foreground">Setup inicial</p>
-                  </div>
-                  
-                  {/* Onboarding progress */}
-                  <div className="rounded-lg bg-background p-3 border border-border">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-xs font-medium text-foreground flex items-center gap-1">
-                        <Rocket className="h-3 w-3 text-primary" />
-                        Onboarding do Serviço
-                      </p>
-                      <span className="text-xs text-muted-foreground">60%</span>
-                    </div>
-                    <div className="h-2 w-full rounded-full bg-secondary">
-                      <div className="h-2 w-3/5 rounded-full bg-primary" />
-                    </div>
-                    <div className="mt-2 space-y-1">
-                      {[
-                        { nome: "Reunião inicial", done: true },
-                        { nome: "Briefing", done: true },
-                        { nome: "Envio de materiais", done: true },
-                        { nome: "Setup inicial", current: true },
-                        { nome: "Aprovação final", pending: true },
-                      ].map((etapa, i) => (
-                        <div key={i} className="flex items-center gap-1.5 text-[10px]">
-                          {etapa.done ? (
-                            <CheckCircle className="h-3 w-3 text-success" />
-                          ) : etapa.current ? (
-                            <Clock className="h-3 w-3 text-primary" />
-                          ) : (
-                            <div className="h-3 w-3 rounded-full border border-muted-foreground" />
-                          )}
-                          <span className={etapa.pending ? "text-muted-foreground" : "text-foreground"}>
-                            {etapa.nome}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Cards de ação */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="rounded-lg bg-warning/10 p-2 border border-warning/20">
-                      <p className="text-[10px] text-muted-foreground">Sua próxima ação</p>
-                      <p className="text-xs font-medium text-foreground">Revisar protótipo</p>
-                    </div>
-                    <div className="rounded-lg bg-muted/50 p-2 border border-border">
-                      <p className="text-[10px] text-muted-foreground">Próxima reunião</p>
-                      <p className="text-xs font-medium text-foreground">05 de Fev, 14:00</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center justify-center gap-2 text-sm font-medium text-primary">
-                  <span>Explorar portal do cliente</span>
-                  <ArrowRight className="h-4 w-4" />
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
+            {/* Hover overlay */}
+            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <div className="bg-primary text-primary-foreground px-6 py-3 rounded-full font-medium shadow-lg flex items-center gap-2">
+                Explorar portal do cliente
+                <ArrowRight className="h-5 w-5" />
+              </div>
+            </div>
+          </Card>
+        </Link>
       </div>
     </section>
   );
