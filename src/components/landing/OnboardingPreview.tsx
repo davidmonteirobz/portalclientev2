@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, Rocket } from "lucide-react";
+import { CheckCircle, Clock, Rocket, Circle } from "lucide-react";
 
 const etapas = [
   { nome: "Reunião inicial", descricao: "Alinhamento de expectativas e escopo", status: "done" as const },
@@ -13,25 +13,27 @@ export function OnboardingPreview() {
   const progress = (completedCount / etapas.length) * 100;
 
   return (
-    <div className="p-6 space-y-6 animate-fade-in">
+    <div className="p-4 md:p-6 space-y-4 md:space-y-6 animate-fade-in">
       {/* Header */}
       <div>
-        <h3 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <Rocket className="h-6 w-6" />
+        <h3 className="text-xl md:text-2xl font-bold text-foreground flex items-center gap-2">
+          <Rocket className="h-5 w-5 md:h-6 md:w-6 text-primary" />
           Onboarding do Serviço
         </h3>
-        <p className="text-muted-foreground mt-1">Acompanhe o progresso do início do seu projeto</p>
+        <p className="text-sm md:text-base text-muted-foreground mt-1">
+          Acompanhe o progresso do início do seu projeto
+        </p>
       </div>
 
       {/* Barra de progresso */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex items-center justify-between text-xs md:text-sm">
           <span className="text-muted-foreground">Progresso geral</span>
           <span className="font-medium text-foreground">{Math.round(progress)}%</span>
         </div>
-        <div className="h-3 w-full rounded-full bg-secondary overflow-hidden">
+        <div className="h-2 md:h-3 w-full rounded-full bg-secondary overflow-hidden">
           <div 
-            className="h-3 rounded-full bg-foreground transition-all duration-1000" 
+            className="h-full rounded-full bg-primary transition-all duration-1000" 
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -40,42 +42,42 @@ export function OnboardingPreview() {
       {/* Timeline */}
       <div className="space-y-0">
         {etapas.map((etapa, index) => (
-          <div key={index} className="relative flex gap-4">
+          <div key={index} className="relative flex gap-3 md:gap-4">
             {/* Linha vertical */}
             {index < etapas.length - 1 && (
-              <div className="absolute left-[19px] top-10 bottom-0 w-0.5 bg-border" />
+              <div className="absolute left-[15px] md:left-[19px] top-8 md:top-10 bottom-0 w-0.5 bg-border" />
             )}
             
             {/* Ícone */}
             <div className="relative z-10 flex-shrink-0">
               {etapa.status === "done" ? (
-                <div className="h-10 w-10 rounded-full bg-foreground flex items-center justify-center">
-                  <CheckCircle className="h-5 w-5 text-background" />
+                <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-success flex items-center justify-center">
+                  <CheckCircle className="h-4 w-4 md:h-5 md:w-5 text-success-foreground" />
                 </div>
               ) : etapa.status === "current" ? (
-                <div className="h-10 w-10 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center">
-                  <Clock className="h-5 w-5 text-primary" />
+                <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center">
+                  <Clock className="h-4 w-4 md:h-5 md:w-5 text-primary" />
                 </div>
               ) : (
-                <div className="h-10 w-10 rounded-full bg-muted border-2 border-border flex items-center justify-center">
-                  <div className="h-3 w-3 rounded-full bg-muted-foreground/30" />
+                <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-muted border-2 border-border flex items-center justify-center">
+                  <Circle className="h-3 w-3 md:h-4 md:w-4 text-muted-foreground/50" />
                 </div>
               )}
             </div>
 
             {/* Conteúdo */}
-            <div className={`flex-1 pb-6 ${etapa.status === "pending" ? "opacity-50" : ""}`}>
-              <div className={`rounded-xl p-4 ${
+            <div className={`flex-1 pb-4 md:pb-6 ${etapa.status === "pending" ? "opacity-50" : ""}`}>
+              <div className={`rounded-xl p-3 md:p-4 ${
                 etapa.status === "current" 
                   ? "bg-primary/10 border border-primary/20" 
                   : etapa.status === "done"
                   ? "bg-muted/50 border border-border"
                   : "bg-muted/30 border border-border/50"
               }`}>
-                <div className="flex items-center justify-between">
-                  <p className="font-semibold text-foreground">{etapa.nome}</p>
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <p className="font-semibold text-sm md:text-base text-foreground">{etapa.nome}</p>
                   {etapa.status === "done" && (
-                    <span className="text-xs bg-foreground text-background px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-success text-success-foreground px-2 py-0.5 rounded-full">
                       Concluído
                     </span>
                   )}
@@ -85,7 +87,7 @@ export function OnboardingPreview() {
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">{etapa.descricao}</p>
+                <p className="text-xs md:text-sm text-muted-foreground mt-1">{etapa.descricao}</p>
               </div>
             </div>
           </div>
