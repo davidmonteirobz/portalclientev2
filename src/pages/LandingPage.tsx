@@ -90,15 +90,24 @@ function HeroSection() {
   };
 
   return (
-    <section className="relative overflow-hidden py-12 md:py-20 lg:py-32">
+    <section className="relative overflow-hidden py-16 md:py-24 lg:py-32 xl:py-40">
       <div className="container mx-auto px-4 text-center">
-        <h1 className="mx-auto max-w-4xl text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-white animate-fade-in">
-          Centralize a experiência do seu cliente em um único lugar.
+        {/* Título com destaque em partes */}
+        <h1 className="mx-auto max-w-5xl text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1] animate-fade-in">
+          <span className="text-white">Centralize a </span>
+          <span className="text-white/50">experiência do seu cliente em </span>
+          <span className="text-white">um único lugar.</span>
         </h1>
-        <p className="mx-auto mt-4 md:mt-6 max-w-2xl text-base md:text-lg lg:text-xl text-white/60 animate-fade-in">
-          Um portal com a identidade da sua agência para organizar materiais, aprovações e comunicação com clientes.
+        
+        {/* Subtítulo */}
+        <p className="mx-auto mt-6 md:mt-8 max-w-2xl text-base md:text-lg lg:text-xl text-white/40 animate-fade-in">
+          Um portal com a identidade da sua agência para organizar materiais,
+          <br className="hidden sm:block" />
+          aprovações e comunicação com clientes.
         </p>
-        <div className="mt-6 md:mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row animate-fade-in">
+
+        {/* Botões */}
+        <div className="mt-8 md:mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row animate-fade-in">
           <GlassLinkButton to="/empresa/clientes" variant="primary" className="w-full sm:w-auto h-11 md:h-12 px-6 md:px-8 text-sm md:text-base">
             Começar agora
             <ArrowRight className="h-4 w-4 md:h-5 md:w-5" />
@@ -108,9 +117,10 @@ function HeroSection() {
           </GlassButton>
         </div>
       </div>
-      {/* Background gradient */}
+
+      {/* Background gradient sutil */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-1/2 top-0 h-[400px] md:h-[600px] w-[400px] md:w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute left-1/2 top-1/2 h-[600px] md:h-[800px] w-[600px] md:w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-radial from-white/[0.03] to-transparent blur-3xl" />
       </div>
     </section>
   );
