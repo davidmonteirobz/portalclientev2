@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { InteractivePortalDemo } from "@/components/landing/InteractivePortalDemo";
 import { 
   Palette, 
   CheckCircle, 
@@ -10,10 +11,7 @@ import {
   Settings,
   UserPlus,
   Send,
-  LayoutDashboard,
-  ChevronRight,
-  Rocket,
-  Clock
+  LayoutDashboard
 } from "lucide-react";
 
 // Header
@@ -82,171 +80,12 @@ function DemoSection() {
             Veja como seu cliente vai visualizar
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Um portal completo com a identidade da sua agência
+            Um portal completo com a identidade da sua agência — clique nos menus para explorar
           </p>
         </div>
 
-        {/* Portal do Cliente Preview */}
-        <div className="mx-auto max-w-4xl">
-          <Card className="overflow-hidden border-border/50 bg-card shadow-xl">
-            {/* Browser Frame */}
-            <div className="bg-muted/50 px-4 py-3 border-b border-border/50">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1.5">
-                  <div className="h-3 w-3 rounded-full bg-destructive/60" />
-                  <div className="h-3 w-3 rounded-full bg-warning/60" />
-                  <div className="h-3 w-3 rounded-full bg-success/60" />
-                </div>
-                <div className="ml-4 flex-1 rounded-md bg-background px-3 py-1 text-xs text-muted-foreground">
-                  meuportal.agencia.com.br
-                </div>
-              </div>
-            </div>
-
-            <CardContent className="p-0">
-              {/* Header do Portal */}
-              <div className="flex items-center justify-between border-b border-border px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-foreground flex items-center justify-center">
-                    <div className="h-4 w-4 grid grid-cols-2 gap-0.5">
-                      <div className="bg-background rounded-sm" />
-                      <div className="bg-background rounded-sm" />
-                      <div className="bg-background rounded-sm" />
-                      <div className="bg-background rounded-sm" />
-                    </div>
-                  </div>
-                  <span className="font-semibold text-foreground">Meu Portal</span>
-                </div>
-                <div className="flex items-center gap-6 text-sm">
-                  <span className="flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-background text-xs font-medium">
-                    <div className="h-3 w-3 grid grid-cols-2 gap-0.5">
-                      <div className="bg-background rounded-[1px]" />
-                      <div className="bg-background rounded-[1px]" />
-                      <div className="bg-background rounded-[1px]" />
-                      <div className="bg-background rounded-[1px]" />
-                    </div>
-                    Início
-                  </span>
-                  <span className="text-muted-foreground flex items-center gap-1.5">
-                    <Rocket className="h-4 w-4" />
-                    Onboarding
-                  </span>
-                  <span className="text-muted-foreground flex items-center gap-1.5">
-                    <Send className="h-4 w-4" />
-                    Entregas
-                  </span>
-                  <span className="text-muted-foreground flex items-center gap-1.5">
-                    <FolderOpen className="h-4 w-4" />
-                    Arquivos
-                  </span>
-                </div>
-              </div>
-
-              {/* Conteúdo do Portal */}
-              <div className="p-6 space-y-5">
-                {/* Saudação */}
-                <div>
-                  <h3 className="text-2xl font-bold text-foreground">Olá, Maria!</h3>
-                  <p className="text-muted-foreground">Bem-vindo(a) ao seu portal. Aqui você encontra tudo sobre o seu projeto em um só lugar.</p>
-                </div>
-
-                {/* Contexto Atual */}
-                <div className="rounded-xl bg-muted/50 p-4 flex items-center gap-4 border border-border">
-                  <div className="h-12 w-12 rounded-xl bg-foreground flex items-center justify-center">
-                    <Settings className="h-6 w-6 text-background" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Agora estamos em</p>
-                    <p className="text-lg font-semibold text-foreground">Setup inicial</p>
-                  </div>
-                </div>
-
-                {/* Onboarding do Serviço */}
-                <div className="rounded-xl border border-border p-5 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <p className="font-medium text-foreground flex items-center gap-2">
-                      <Rocket className="h-5 w-5" />
-                      Onboarding do Serviço
-                    </p>
-                    <span className="text-sm text-muted-foreground">60%</span>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-secondary overflow-hidden">
-                    <div className="h-2 w-3/5 rounded-full bg-foreground" />
-                  </div>
-                  <div className="space-y-2">
-                    {[
-                      { nome: "Reunião inicial", done: true },
-                      { nome: "Briefing", done: true },
-                      { nome: "Envio de materiais", done: true },
-                      { nome: "Setup inicial", current: true },
-                      { nome: "Aprovação final", pending: true },
-                    ].map((etapa, i) => (
-                      <div key={i} className="flex items-center gap-2 text-sm">
-                        {etapa.done ? (
-                          <CheckCircle className="h-4 w-4 text-foreground" />
-                        ) : etapa.current ? (
-                          <Clock className="h-4 w-4 text-muted-foreground" />
-                        ) : (
-                          <div className="h-4 w-4 rounded-full border-2 border-muted-foreground/30" />
-                        )}
-                        <span className={etapa.pending ? "text-muted-foreground" : "text-foreground"}>
-                          {etapa.nome}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-1 text-sm font-medium text-foreground pt-1">
-                    Ver detalhes
-                    <ArrowRight className="h-4 w-4" />
-                  </div>
-                </div>
-
-                {/* Cards de ação */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded-xl bg-warning/10 p-4 flex items-start gap-3 border border-warning/20">
-                    <div className="h-10 w-10 rounded-full bg-warning/20 flex items-center justify-center flex-shrink-0">
-                      <Clock className="h-5 w-5 text-warning" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Sua próxima ação</p>
-                      <p className="font-semibold text-foreground">Revisar protótipo da Home</p>
-                      <p className="text-sm text-muted-foreground">Até dia 03 de Fevereiro às 18:00</p>
-                    </div>
-                  </div>
-                  <div className="rounded-xl bg-muted/50 p-4 flex items-start gap-3 border border-border">
-                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                      <ListChecks className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Próxima reunião</p>
-                      <p className="font-semibold text-foreground">05 de Fevereiro às 14:00</p>
-                      <p className="text-sm text-muted-foreground">Revisão do protótipo da home</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Botões de ação */}
-                <div className="space-y-3">
-                  <div className="rounded-xl bg-foreground p-4 flex items-center justify-between text-background">
-                    <div className="flex items-center gap-3">
-                      <Send className="h-5 w-5" />
-                      <span className="font-medium">Ver entregas</span>
-                    </div>
-                    <ArrowRight className="h-5 w-5" />
-                  </div>
-                  <div className="rounded-xl border-2 border-border p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <FolderOpen className="h-5 w-5 text-muted-foreground" />
-                      <span className="font-medium text-foreground">Acessar arquivos</span>
-                    </div>
-                    <ArrowRight className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-
-          </Card>
-        </div>
+        {/* Interactive Portal Demo */}
+        <InteractivePortalDemo />
       </div>
     </section>
   );
