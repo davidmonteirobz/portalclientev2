@@ -1,10 +1,11 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Users, LayoutDashboard, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
+import { Users, LayoutDashboard, ChevronLeft, ChevronRight, Menu, X, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useEmpresaTheme } from "@/contexts/EmpresaThemeContext";
 
 interface EmpresaLayoutProps {
   children: ReactNode;
@@ -12,11 +13,13 @@ interface EmpresaLayoutProps {
 
 const menuItems = [
   { label: "Clientes", icon: Users, path: "/empresa/clientes" },
+  { label: "Configurações", icon: Settings, path: "/empresa/configuracoes" },
 ];
 
 export function EmpresaLayout({ children }: EmpresaLayoutProps) {
   const location = useLocation();
   const isMobile = useIsMobile();
+  const { theme } = useEmpresaTheme();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -32,15 +35,23 @@ export function EmpresaLayout({ children }: EmpresaLayoutProps) {
     }
   }, [isMobile]);
 
+  const LogoComponent = () => (
+    theme.logoUrl ? (
+      <img src={theme.logoUrl} alt="Logo" className="h-8 w-8 rounded-lg object-contain" />
+    ) : (
+      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
+        <LayoutDashboard className="h-4 w-4 text-sidebar-primary-foreground" />
+      </div>
+    )
+  );
+
   return (
     <div className="flex min-h-screen w-full bg-background">
       {/* Mobile Header */}
       {isMobile && (
-        <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b border-border bg-sidebar px-4">
+        <div className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b border-border bg-sidebar px-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
-              <LayoutDashboard className="h-4 w-4 text-sidebar-primary-foreground" />
-            </div>
+            <LogoComponent />
             <span className="font-semibold text-sidebar-foreground">Portal</span>
           </div>
           <Button
@@ -51,7 +62,7 @@ export function EmpresaLayout({ children }: EmpresaLayoutProps) {
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
-        </header>
+        </div>
       )}
 
       {/* Mobile Menu Overlay */}
@@ -80,9 +91,7 @@ export function EmpresaLayout({ children }: EmpresaLayoutProps) {
           <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
             {!collapsed && (
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
-                  <LayoutDashboard className="h-4 w-4 text-sidebar-primary-foreground" />
-                </div>
+                <LogoComponent />
                 <span className="font-semibold text-sidebar-foreground">Portal</span>
               </div>
             )}

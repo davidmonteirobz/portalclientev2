@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEmpresaTheme } from "@/contexts/EmpresaThemeContext";
 
 interface ClienteLayoutProps {
   children: ReactNode;
@@ -36,8 +36,19 @@ const getMenuItems = (onboardingAtivo: boolean) => {
 
 export function ClienteLayout({ children, onboardingAtivo = true }: ClienteLayoutProps) {
   const location = useLocation();
+  const { theme } = useEmpresaTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuItems = getMenuItems(onboardingAtivo);
+
+  const LogoComponent = () => (
+    theme.logoUrl ? (
+      <img src={theme.logoUrl} alt="Logo" className="h-9 w-9 rounded-lg object-contain" />
+    ) : (
+      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
+        <LayoutDashboard className="h-5 w-5 text-primary-foreground" />
+      </div>
+    )
+  );
 
   return (
     <div className="min-h-screen w-full bg-background">
@@ -46,9 +57,7 @@ export function ClienteLayout({ children, onboardingAtivo = true }: ClienteLayou
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 lg:px-8">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <LayoutDashboard className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <LogoComponent />
             <span className="text-lg font-semibold text-foreground">Meu Portal</span>
           </div>
 
