@@ -92,11 +92,11 @@ function HeroSection() {
   return (
     <section className="relative overflow-hidden py-16 md:py-24 lg:py-32 xl:py-40">
       <div className="container mx-auto px-4 text-center">
-        {/* Título com destaque em partes */}
-        <h1 className="mx-auto max-w-5xl text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1] animate-fade-in">
-          <span className="text-white">Centralize a </span>
-          <span className="text-white/50">experiência do seu cliente em </span>
-          <span className="text-white">um único lugar.</span>
+        {/* Título em duas linhas */}
+        <h1 className="mx-auto max-w-5xl text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight leading-[1.1] text-white animate-fade-in">
+          Centralize a experiência do seu
+          <br />
+          cliente em um único lugar.
         </h1>
         
         {/* Subtítulo */}
