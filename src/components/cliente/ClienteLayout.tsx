@@ -28,7 +28,7 @@ const getMenuItems = (onboardingAtivo: boolean) => {
   
   items.push(
     { label: "Entregas", icon: Package, path: "/cliente/entregas" },
-    { label: "Materiais", icon: FolderOpen, path: "/cliente/materiais" }
+    { label: "Arquivos", icon: FolderOpen, path: "/cliente/materiais" }
   );
   
   return items;
