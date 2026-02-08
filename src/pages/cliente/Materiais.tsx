@@ -26,9 +26,9 @@ export default function ClienteMateriais() {
       <div className="animate-fade-in space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Materiais</h1>
+          <h1 className="text-2xl font-bold text-foreground">Arquivos</h1>
           <p className="text-muted-foreground">
-            Acesse os materiais do seu projeto
+            Acesse os arquivos do seu projeto
           </p>
         </div>
 

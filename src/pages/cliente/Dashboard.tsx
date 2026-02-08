@@ -205,7 +205,7 @@ export default function ClienteDashboard() {
           >
             <div className="flex items-center gap-4">
               <FolderOpen className="h-6 w-6" />
-              <span className="text-lg font-medium">Acessar materiais</span>
+              <span className="text-lg font-medium">Acessar arquivos</span>
             </div>
             <ArrowRight className="h-5 w-5" />
           </Link>
