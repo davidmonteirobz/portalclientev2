@@ -193,16 +193,12 @@ export default function EmpresaClientes() {
                     <User className="h-5 w-5 text-primary" />
                   )}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-foreground">{cliente.nome}</h3>
-                    {cliente.negocio && (
-                      <span className="text-sm text-muted-foreground">
-                        • {cliente.negocio}
-                      </span>
-                    )}
-                  </div>
-                  <div className="mt-1 flex items-center gap-2">
+                <div className="space-y-1">
+                  <h3 className="font-semibold text-foreground">{cliente.nome}</h3>
+                  {cliente.negocio && (
+                    <p className="text-sm text-muted-foreground">{cliente.negocio}</p>
+                  )}
+                  <div className="pt-1">
                     <StatusBadge variant="primary">{cliente.servico}</StatusBadge>
                   </div>
                 </div>
