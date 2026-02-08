@@ -261,18 +261,16 @@ export default function EmpresaClienteDetalhe() {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold text-foreground">{cliente.nome}</h1>
-                {cliente.negocio && (
-                  <span className="text-lg text-muted-foreground">
-                    • {cliente.negocio}
-                  </span>
-                )}
+            <div className="space-y-1">
+              <h1 className="text-2xl font-bold text-foreground">{cliente.nome}</h1>
+              {cliente.negocio && (
+                <p className="text-base text-muted-foreground">{cliente.negocio}</p>
+              )}
+              <div className="pt-1">
+                <StatusBadge variant="primary" className="whitespace-nowrap">
+                  {cliente.servico}
+                </StatusBadge>
               </div>
-              <StatusBadge variant="primary" className="mt-1">
-                {cliente.servico}
-              </StatusBadge>
             </div>
           </div>
           <Dialog open={editarCadastroDialog} onOpenChange={setEditarCadastroDialog}>
