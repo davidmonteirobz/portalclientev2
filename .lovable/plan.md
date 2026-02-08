@@ -1,81 +1,184 @@
 
-# Plano: Adicionar Seção de Acesso ao Portal (Usuários do Cliente)
+# Plano: Tema Black & White + Personalização da Empresa
 
 ## Resumo
-Adicionar uma nova seção na página de detalhes do cliente (Área da Empresa) para gerenciar os usuários que terão acesso ao Portal do Cliente. Esta seção permitirá cadastrar, visualizar e remover usuários de login para cada cliente.
 
-## O que será criado
-
-### Nova Seção "Acesso ao Portal"
-Uma nova seção (card) na página de detalhes do cliente com:
-- Lista de usuários cadastrados mostrando nome e e-mail
-- Badge indicando status do convite (pendente, ativo)
-- Botão para adicionar novo usuário
-- Botão para remover usuário existente
-
-### Modal de Cadastro de Usuário
-Um dialog para criar novo acesso contendo:
-- Campo para nome do usuário
-- Campo para e-mail (será usado como login)
-- Botão de confirmar cadastro
-
-## Estrutura Visual
-
-```text
-+-------------------------------------------+
-|  Acesso ao Portal              [+ Adicionar]|
-+-------------------------------------------+
-|  +---------------------------------------+ |
-|  | Maria Silva                           | |
-|  | maria@studiobella.com     [Ativo]  [X]| |
-|  +---------------------------------------+ |
-|  +---------------------------------------+ |
-|  | João Assistente                       | |
-|  | joao@studiobella.com   [Pendente]  [X]| |
-|  +---------------------------------------+ |
-+-------------------------------------------+
-```
-
-## Localização
-A nova seção será posicionada na **coluna direita**, logo após a seção "Observações Internas", pois se trata de uma configuração administrativa do cliente.
+Este plano implementa duas mudanças principais:
+1. **Nova paleta padrão preto e branco** para toda a plataforma
+2. **Sistema de personalização** onde cada empresa pode definir sua cor primária e logo, que será aplicado automaticamente ao portal do seu cliente
 
 ---
 
-## Detalhes Tecnico
+## O que será modificado
 
-### Arquivo a ser modificado
-- `src/pages/empresa/ClienteDetalhe.tsx`
+### 1. Nova Paleta de Cores (Black & White)
 
-### Novos elementos
-1. **Interface `UsuarioCliente`**: Define a estrutura de dados do usuario
-   - `id`: string
-   - `nome`: string
-   - `email`: string
-   - `status`: "pendente" | "ativo"
+Atualização do arquivo `src/index.css` para usar uma paleta monocromática:
+- Fundo: branco puro
+- Textos: preto/cinza escuro
+- Sidebar: preto
+- Cor primária padrão: preto
+- Accent: cinza escuro
 
-2. **Estados novos**:
-   - `usuarios`: lista de usuarios mockados
-   - `novoUsuarioDialog`: controle do modal
-   - `novoUsuario`: dados do formulario (nome, email)
+### 2. Sistema de Personalização da Empresa
 
-3. **Funcoes novas**:
-   - `handleAddUsuario`: adiciona usuario a lista
-   - `handleRemoveUsuario`: remove usuario da lista
+#### Nova Página de Configurações
+Criar `src/pages/empresa/Configuracoes.tsx` com:
+- Seletor de cor primária (color picker)
+- Upload de logo personalizado
+- Preview em tempo real das mudanças
 
-4. **Novos imports**:
-   - Icone `UserPlus` do lucide-react
-   - Icone `Mail` do lucide-react
+#### Contexto de Tema da Empresa
+Criar `src/contexts/EmpresaThemeContext.tsx`:
+- Armazena cor primária e URL do logo
+- Aplica variáveis CSS dinamicamente via style tag
+- Propaga para portal do cliente
 
-### Dados mockados iniciais
-```typescript
-const usuariosMock = [
-  { id: "1", nome: "Maria Silva", email: "maria@studiobella.com", status: "ativo" },
-  { id: "2", nome: "João Assistente", email: "joao@studiobella.com", status: "pendente" },
-];
+#### Atualizações nos Layouts
+- `EmpresaLayout.tsx`: Usar logo da empresa em vez do ícone padrão
+- `ClienteLayout.tsx`: Herdar cor e logo da empresa
+
+---
+
+## Estrutura Visual
+
+### Área da Empresa - Nova Seção de Configurações
+
+```text
++-------------------------------------------+
+|  Configurações da Empresa                 |
++-------------------------------------------+
+|                                           |
+|  Logo da Empresa                          |
+|  +-------+                                |
+|  |       |  [Alterar Logo]                |
+|  | LOGO  |                                |
+|  |       |                                |
+|  +-------+                                |
+|                                           |
+|  Cor Primária                             |
+|  [■ #000000] ____________________         |
+|                                           |
+|  Preview:                                 |
+|  +------------------------------------+   |
+|  | [LOGO] Menu ativo | Menu inativo  |   |
+|  +------------------------------------+   |
+|                                           |
+|                         [Salvar]          |
++-------------------------------------------+
 ```
 
-### Componente visual
-Um novo Card seguindo o padrao existente na pagina, com:
-- Header com titulo "Acesso ao Portal" e botao "Adicionar"
-- Lista de usuarios com avatar, nome, email, badge de status e botao de remover
-- Dialog para cadastro de novo usuario
+---
+
+## Detalhes Tecnicos
+
+### Arquivo: `src/index.css` (modificar)
+
+Nova paleta padrão monocromatica:
+
+```css
+:root {
+  --background: 0 0% 100%;        /* branco */
+  --foreground: 0 0% 9%;          /* preto */
+  --primary: 0 0% 9%;             /* preto */
+  --primary-foreground: 0 0% 100%; /* branco */
+  --secondary: 0 0% 96%;          /* cinza claro */
+  --muted: 0 0% 96%;
+  --accent: 0 0% 15%;             /* cinza escuro */
+  --sidebar-background: 0 0% 4%; /* preto */
+  /* ... demais ajustes */
+}
+```
+
+### Arquivo: `src/contexts/EmpresaThemeContext.tsx` (novo)
+
+```typescript
+interface EmpresaTheme {
+  corPrimaria: string;        // hex color
+  logoUrl: string | null;     // URL ou null para icone padrao
+}
+
+const EmpresaThemeContext = createContext<...>();
+
+function EmpresaThemeProvider({ children }) {
+  const [theme, setTheme] = useState<EmpresaTheme>({
+    corPrimaria: "#000000",
+    logoUrl: null,
+  });
+
+  // Aplica cor dinamicamente via CSS variables
+  useEffect(() => {
+    const hsl = hexToHsl(theme.corPrimaria);
+    document.documentElement.style.setProperty("--primary", hsl);
+  }, [theme.corPrimaria]);
+
+  return <EmpresaThemeContext.Provider value={{ theme, setTheme }}>
+    {children}
+  </EmpresaThemeContext.Provider>;
+}
+```
+
+### Arquivo: `src/pages/empresa/Configuracoes.tsx` (novo)
+
+Pagina com:
+- Input type="color" para selecionar cor primaria
+- Input type="file" para upload de logo
+- Preview visual do tema
+- Botao para salvar configuracoes
+
+### Arquivo: `src/components/empresa/EmpresaLayout.tsx` (modificar)
+
+- Importar hook `useEmpresaTheme`
+- Substituir icone `LayoutDashboard` por `<img>` quando houver logo
+- Manter icone padrao quando nao houver logo personalizado
+
+### Arquivo: `src/components/cliente/ClienteLayout.tsx` (modificar)
+
+- Mesmo comportamento: usar logo da empresa quando disponivel
+- Herdar cor primaria do contexto
+
+### Arquivo: `src/App.tsx` (modificar)
+
+- Envolver rotas com `<EmpresaThemeProvider>`
+
+### Novo Item no Menu da Empresa
+
+Adicionar em `EmpresaLayout.tsx`:
+```typescript
+{ label: "Configurações", icon: Settings, path: "/empresa/configuracoes" }
+```
+
+### Funcao Helper: `hexToHsl`
+
+Criar em `src/lib/utils.ts`:
+```typescript
+export function hexToHsl(hex: string): string {
+  // Converte #000000 para "0 0% 0%"
+}
+```
+
+---
+
+## Arquivos a Criar
+
+1. `src/contexts/EmpresaThemeContext.tsx`
+2. `src/pages/empresa/Configuracoes.tsx`
+
+## Arquivos a Modificar
+
+1. `src/index.css` - nova paleta black & white
+2. `src/App.tsx` - adicionar provider e rota
+3. `src/components/empresa/EmpresaLayout.tsx` - menu + logo dinamico
+4. `src/components/cliente/ClienteLayout.tsx` - logo dinamico
+5. `src/lib/utils.ts` - funcao hexToHsl
+
+---
+
+## Fluxo de Uso
+
+1. Empresa acessa "Configuracoes" no menu lateral
+2. Escolhe cor primaria via color picker
+3. Faz upload do logo (opcional)
+4. Clica em "Salvar"
+5. Toda a area da empresa assume a nova cor
+6. O portal do cliente tambem herda a cor e logo automaticamente
