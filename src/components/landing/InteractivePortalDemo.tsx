@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Rocket, Send, FolderOpen, Menu, X, LayoutDashboard } from "lucide-react";
 import { DashboardPreview } from "./DashboardPreview";
 import { OnboardingPreview } from "./OnboardingPreview";
@@ -30,29 +29,31 @@ export function InteractivePortalDemo() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Card className="overflow-hidden border-border/50 bg-card shadow-xl">
-        {/* Browser Frame */}
-        <div className="bg-muted/50 px-4 py-3 border-b border-border/50">
+      {/* Wrapper com tema claro forçado */}
+      <div className="rounded-2xl overflow-hidden shadow-2xl shadow-white/5 border border-white/10">
+        {/* Browser Frame - escuro para combinar com landing */}
+        <div className="bg-neutral-800 px-4 py-3 border-b border-neutral-700">
           <div className="flex items-center gap-2">
             <div className="flex gap-1.5">
-              <div className="h-3 w-3 rounded-full bg-destructive/60" />
-              <div className="h-3 w-3 rounded-full bg-warning/60" />
-              <div className="h-3 w-3 rounded-full bg-success/60" />
+              <div className="h-3 w-3 rounded-full bg-red-500/80" />
+              <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
+              <div className="h-3 w-3 rounded-full bg-green-500/80" />
             </div>
-            <div className="ml-4 flex-1 rounded-md bg-background px-3 py-1 text-xs text-muted-foreground">
+            <div className="ml-4 flex-1 rounded-md bg-neutral-700 px-3 py-1 text-xs text-neutral-400">
               meuportal.agencia.com.br
             </div>
           </div>
         </div>
 
-        <CardContent className="p-0">
+        {/* Portal Preview com fundo branco */}
+        <div className="bg-white text-neutral-900">
           {/* Header do Portal com Menu Navegável */}
-          <div className="flex items-center justify-between border-b border-border px-4 py-3 md:px-6 md:py-4">
+          <div className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 md:px-6 md:py-4 bg-white">
             <div className="flex items-center gap-2 md:gap-3">
-              <div className="h-8 w-8 md:h-9 md:w-9 rounded-lg bg-primary flex items-center justify-center">
-                <LayoutDashboard className="h-4 w-4 md:h-5 md:w-5 text-primary-foreground" />
+              <div className="h-8 w-8 md:h-9 md:w-9 rounded-lg bg-neutral-900 flex items-center justify-center">
+                <LayoutDashboard className="h-4 w-4 md:h-5 md:w-5 text-white" />
               </div>
-              <span className="font-semibold text-foreground text-sm md:text-base">Meu Portal</span>
+              <span className="font-semibold text-neutral-900 text-sm md:text-base">Meu Portal</span>
             </div>
             
             {/* Desktop Menu */}
@@ -63,8 +64,8 @@ export function InteractivePortalDemo() {
                   onClick={() => handleTabChange(item.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
                     activeTab === item.id
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      ? "bg-neutral-900 text-white"
+                      : "text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100"
                   }`}
                 >
                   {item.icon}
@@ -76,7 +77,7 @@ export function InteractivePortalDemo() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+              className="md:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-900"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -84,7 +85,7 @@ export function InteractivePortalDemo() {
 
           {/* Mobile Navigation Dropdown */}
           {mobileMenuOpen && (
-            <div className="md:hidden border-b border-border bg-card p-3 animate-fade-in">
+            <div className="md:hidden border-b border-neutral-200 bg-white p-3 animate-fade-in">
               <div className="flex flex-col gap-1">
                 {menuItems.map((item) => (
                   <button
@@ -92,8 +93,8 @@ export function InteractivePortalDemo() {
                     onClick={() => handleTabChange(item.id)}
                     className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all w-full text-left ${
                       activeTab === item.id
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                        ? "bg-neutral-900 text-white"
+                        : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
                     }`}
                   >
                     {item.icon}
@@ -105,14 +106,14 @@ export function InteractivePortalDemo() {
           )}
 
           {/* Conteúdo Dinâmico */}
-          <div className="min-h-[400px] md:min-h-[500px]">
+          <div className="min-h-[400px] md:min-h-[500px] bg-white">
             {activeTab === "inicio" && <DashboardPreview onNavigate={handleTabChange} />}
             {activeTab === "onboarding" && <OnboardingPreview />}
             {activeTab === "entregas" && <EntregasPreview />}
             {activeTab === "arquivos" && <ArquivosPreview />}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
