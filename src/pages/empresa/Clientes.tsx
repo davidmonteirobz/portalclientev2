@@ -199,7 +199,7 @@ export default function EmpresaClientes() {
                     <p className="text-sm text-muted-foreground">{cliente.negocio}</p>
                   )}
                   <div className="pt-1">
-                    <StatusBadge variant="primary">{cliente.servico}</StatusBadge>
+                    <StatusBadge variant="primary" className="whitespace-nowrap">{cliente.servico}</StatusBadge>
                   </div>
                 </div>
               </div>
