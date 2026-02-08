@@ -38,6 +38,7 @@ export default function ClienteEntregaDetalhe() {
     status: "em_revisao" as EntregaStatus,
     link: "https://figma.com/...",
     previewImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=600&fit=crop",
+    legenda: "Primeira versão do design da home page. Apresentamos o layout principal com hero section, seção de serviços e depoimentos de clientes.",
     ajuste: null as { texto: string; dataHora: string } | null,
   });
 
@@ -108,6 +109,12 @@ export default function ClienteEntregaDetalhe() {
                 </Button>
               </div>
             </div>
+            {/* Legenda */}
+            {entrega.legenda && (
+              <div className="border-t border-border bg-muted/30 p-4">
+                <p className="text-sm text-muted-foreground">{entrega.legenda}</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
