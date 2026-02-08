@@ -86,9 +86,9 @@ function DemoSection() {
           </p>
         </div>
 
-        {/* Portal do Cliente Preview - Clicável */}
-        <Link to="/cliente/dashboard" className="group block mx-auto max-w-4xl">
-          <Card className="overflow-hidden border-border/50 bg-card shadow-xl transition-all hover:shadow-2xl hover:-translate-y-2 hover:border-primary/30">
+        {/* Portal do Cliente Preview */}
+        <div className="mx-auto max-w-4xl">
+          <Card className="overflow-hidden border-border/50 bg-card shadow-xl">
             {/* Browser Frame */}
             <div className="bg-muted/50 px-4 py-3 border-b border-border/50">
               <div className="flex items-center gap-2">
@@ -245,15 +245,8 @@ function DemoSection() {
               </div>
             </CardContent>
 
-            {/* Hover overlay */}
-            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <div className="bg-primary text-primary-foreground px-6 py-3 rounded-full font-medium shadow-lg flex items-center gap-2">
-                Explorar portal do cliente
-                <ArrowRight className="h-5 w-5" />
-              </div>
-            </div>
           </Card>
-        </Link>
+        </div>
       </div>
     </section>
   );
