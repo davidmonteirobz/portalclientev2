@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { ClienteLayout } from "@/components/cliente/ClienteLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { ChevronRight, Package, Calendar } from "lucide-react";
+import { ChevronRight, Package, Calendar, FolderOpen, LayoutDashboard, ArrowRight } from "lucide-react";
 
 interface Entrega {
   id: string;
@@ -91,6 +91,31 @@ export default function ClienteEntregas() {
             </p>
           </div>
         )}
+
+        {/* CTAs - Mobile */}
+        <div className="flex flex-col gap-4 md:hidden">
+          <Link
+            to="/cliente/materiais"
+            className="flex items-center justify-between rounded-2xl bg-primary px-6 py-5 text-primary-foreground transition-all hover:opacity-90 active:scale-[0.98]"
+          >
+            <div className="flex items-center gap-4">
+              <FolderOpen className="h-6 w-6" />
+              <span className="text-lg font-medium">Arquivos</span>
+            </div>
+            <ArrowRight className="h-5 w-5" />
+          </Link>
+          
+          <Link
+            to="/cliente/dashboard"
+            className="flex items-center justify-between rounded-2xl border-2 border-primary bg-transparent px-6 py-5 text-primary transition-all hover:bg-primary/5 active:scale-[0.98]"
+          >
+            <div className="flex items-center gap-4">
+              <LayoutDashboard className="h-6 w-6" />
+              <span className="text-lg font-medium">Início</span>
+            </div>
+            <ArrowRight className="h-5 w-5" />
+          </Link>
+        </div>
       </div>
     </ClienteLayout>
   );
