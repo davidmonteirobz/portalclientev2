@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, ChevronRight, Building2, User, Download } from "lucide-react";
+import { Plus, Search, ChevronRight, Building2, User, Upload, FileSpreadsheet } from "lucide-react";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,6 +54,7 @@ export default function EmpresaClientes() {
   const [clientes] = useState<Cliente[]>(clientesMock);
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [novoCliente, setNovoCliente] = useState({
     nome: "",
     negocio: "",
@@ -75,29 +76,31 @@ export default function EmpresaClientes() {
     setNovoCliente({ nome: "", negocio: "", servico: "", whatsapp: "", email: "" });
   };
 
-  const handleExportar = () => {
-    // Simulação de exportação para CSV
+  const handleDownloadModelo = () => {
     const headers = ["Nome", "Negócio", "Serviço", "WhatsApp", "E-mail"];
-    const rows = clientes.map((c) => [
-      c.nome,
-      c.negocio || "",
-      c.servico,
-      c.whatsapp,
-      c.email,
-    ]);
+    const exemploRow = ["Maria Silva", "Studio Bella", "Design Mensal", "(11) 99999-9999", "maria@email.com"];
     
     const csvContent = [
       headers.join(","),
-      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+      exemploRow.map((cell) => `"${cell}"`).join(","),
     ].join("\n");
     
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
-    link.setAttribute("download", "clientes.csv");
+    link.setAttribute("download", "modelo_clientes.csv");
     link.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Simulação de importação
+      console.log("Arquivo selecionado:", file.name);
+      setImportDialogOpen(false);
+    }
   };
 
   return (
@@ -113,10 +116,53 @@ export default function EmpresaClientes() {
           </div>
 
           <div className="flex gap-2">
-            <Button variant="outline" className="gap-2" onClick={handleExportar}>
-              <Download className="h-4 w-4" />
-              <span className="hidden sm:inline">Exportar</span>
-            </Button>
+            <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Upload className="h-4 w-4" />
+                  <span className="hidden sm:inline">Importar</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Importar clientes</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label>Arquivo da planilha</Label>
+                    <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30 p-8 transition-colors hover:border-primary/50">
+                      <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Arraste o arquivo ou clique para selecionar
+                      </p>
+                      <Input
+                        type="file"
+                        accept=".csv,.xlsx,.xls"
+                        className="max-w-[200px]"
+                        onChange={handleFileUpload}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-3">
+                    <FileSpreadsheet className="h-5 w-5 text-primary" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Modelo de planilha</p>
+                      <p className="text-xs text-muted-foreground">
+                        Baixe o modelo para preencher corretamente
+                      </p>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={handleDownloadModelo}>
+                      Baixar
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button variant="outline" onClick={() => setImportDialogOpen(false)}>
+                    Cancelar
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
 
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
