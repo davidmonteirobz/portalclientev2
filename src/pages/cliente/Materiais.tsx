@@ -1,7 +1,8 @@
+import { Link } from "react-router-dom";
 import { ClienteLayout } from "@/components/cliente/ClienteLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, FileText, Image, Palette, FileEdit } from "lucide-react";
+import { ExternalLink, FileText, Image, Palette, FileEdit, LayoutDashboard, Package, ArrowRight } from "lucide-react";
 
 interface Material {
   id: string;
@@ -72,8 +73,33 @@ export default function ClienteMateriais() {
         {/* Nota */}
         <div className="rounded-lg bg-muted/50 p-4">
           <p className="text-sm text-muted-foreground">
-            💡 Os materiais são hospedados externamente. Se tiver problemas de acesso, entre em contato pelo WhatsApp.
+            💡 Os arquivos são hospedados externamente. Se tiver problemas de acesso, entre em contato pelo WhatsApp.
           </p>
+        </div>
+
+        {/* CTAs - Mobile */}
+        <div className="flex flex-col gap-4 md:hidden">
+          <Link
+            to="/cliente/dashboard"
+            className="flex items-center justify-between rounded-2xl bg-primary px-6 py-5 text-primary-foreground transition-all hover:opacity-90 active:scale-[0.98]"
+          >
+            <div className="flex items-center gap-4">
+              <LayoutDashboard className="h-6 w-6" />
+              <span className="text-lg font-medium">Início</span>
+            </div>
+            <ArrowRight className="h-5 w-5" />
+          </Link>
+          
+          <Link
+            to="/cliente/entregas"
+            className="flex items-center justify-between rounded-2xl border-2 border-primary bg-transparent px-6 py-5 text-primary transition-all hover:bg-primary/5 active:scale-[0.98]"
+          >
+            <div className="flex items-center gap-4">
+              <Package className="h-6 w-6" />
+              <span className="text-lg font-medium">Entregas</span>
+            </div>
+            <ArrowRight className="h-5 w-5" />
+          </Link>
         </div>
       </div>
     </ClienteLayout>
