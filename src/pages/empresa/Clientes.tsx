@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, ChevronRight, Building2, User } from "lucide-react";
+import { Plus, Search, ChevronRight, Building2, User, Download } from "lucide-react";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,6 +75,31 @@ export default function EmpresaClientes() {
     setNovoCliente({ nome: "", negocio: "", servico: "", whatsapp: "", email: "" });
   };
 
+  const handleExportar = () => {
+    // Simulação de exportação para CSV
+    const headers = ["Nome", "Negócio", "Serviço", "WhatsApp", "E-mail"];
+    const rows = clientes.map((c) => [
+      c.nome,
+      c.negocio || "",
+      c.servico,
+      c.whatsapp,
+      c.email,
+    ]);
+    
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
+    
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "clientes.csv");
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <EmpresaLayout>
       <div className="animate-fade-in space-y-6">
@@ -87,13 +112,19 @@ export default function EmpresaClientes() {
             </p>
           </div>
 
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Novo cliente
-              </Button>
-            </DialogTrigger>
+          <div className="flex gap-2">
+            <Button variant="outline" className="gap-2" onClick={handleExportar}>
+              <Download className="h-4 w-4" />
+              <span className="hidden sm:inline">Exportar</span>
+            </Button>
+
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  <span className="hidden sm:inline">Novo cliente</span>
+                </Button>
+              </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>Cadastrar novo cliente</DialogTitle>
@@ -164,6 +195,7 @@ export default function EmpresaClientes() {
               </div>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {/* Search */}
