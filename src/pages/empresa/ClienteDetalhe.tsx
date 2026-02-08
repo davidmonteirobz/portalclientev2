@@ -52,6 +52,7 @@ interface Entrega {
   nome: string;
   status: "em_revisao" | "aprovado" | "ajuste_solicitado";
   link: string;
+  legenda?: string;
   ajuste?: AjusteSolicitado;
 }
 
@@ -166,7 +167,7 @@ export default function EmpresaClienteDetalhe() {
   ]);
 
   const [novaEntregaDialog, setNovaEntregaDialog] = useState(false);
-  const [novaEntrega, setNovaEntrega] = useState({ nome: "", link: "" });
+  const [novaEntrega, setNovaEntrega] = useState({ nome: "", link: "", legenda: "" });
 
   const [novoMaterialDialog, setNovoMaterialDialog] = useState(false);
   const [novoMaterial, setNovoMaterial] = useState({ nome: "", link: "" });
@@ -183,9 +184,15 @@ export default function EmpresaClienteDetalhe() {
     if (novaEntrega.nome && novaEntrega.link) {
       setEntregas([
         ...entregas,
-        { id: Date.now().toString(), nome: novaEntrega.nome, status: "em_revisao", link: novaEntrega.link },
+        { 
+          id: Date.now().toString(), 
+          nome: novaEntrega.nome, 
+          status: "em_revisao", 
+          link: novaEntrega.link,
+          legenda: novaEntrega.legenda || undefined,
+        },
       ]);
-      setNovaEntrega({ nome: "", link: "" });
+      setNovaEntrega({ nome: "", link: "", legenda: "" });
       setNovaEntregaDialog(false);
     }
   };
@@ -614,7 +621,7 @@ export default function EmpresaClienteDetalhe() {
                       </DialogHeader>
                       <div className="space-y-4 py-4">
                         <div className="space-y-2">
-                          <Label>Nome da entrega</Label>
+                          <Label>Nome da entrega *</Label>
                           <Input
                             value={novaEntrega.nome}
                             onChange={(e) => setNovaEntrega({ ...novaEntrega, nome: e.target.value })}
@@ -622,11 +629,20 @@ export default function EmpresaClienteDetalhe() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Link</Label>
+                          <Label>Link *</Label>
                           <Input
                             value={novaEntrega.link}
                             onChange={(e) => setNovaEntrega({ ...novaEntrega, link: e.target.value })}
                             placeholder="https://..."
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Legenda (opcional)</Label>
+                          <Textarea
+                            value={novaEntrega.legenda}
+                            onChange={(e) => setNovaEntrega({ ...novaEntrega, legenda: e.target.value })}
+                            placeholder="Descreva o que está sendo entregue..."
+                            rows={3}
                           />
                         </div>
                       </div>
