@@ -1,184 +1,194 @@
 
-# Plano: Tema Black & White + Personalização da Empresa
+# Plano: Landing Page da Plataforma
 
 ## Resumo
 
-Este plano implementa duas mudanças principais:
-1. **Nova paleta padrão preto e branco** para toda a plataforma
-2. **Sistema de personalização** onde cada empresa pode definir sua cor primária e logo, que será aplicado automaticamente ao portal do seu cliente
+Criar uma landing page profissional que apresenta a plataforma para agencias, com demonstracao visual de como funciona o Portal do Cliente e call-to-actions para conversao.
 
 ---
 
-## O que será modificado
+## Estrutura da Landing Page
 
-### 1. Nova Paleta de Cores (Black & White)
+### 1. Hero Section
+- Titulo principal: "Centralize a experiencia do seu cliente em um unico lugar."
+- Subtitulo: "Um portal com a identidade da sua agencia para organizar materiais, aprovacoes e comunicacao com clientes."
+- Botao CTA: "Comecar agora" (direciona para /empresa/clientes)
+- Botao secundario: "Ver demonstracao" (scroll para secao de demo)
 
-Atualização do arquivo `src/index.css` para usar uma paleta monocromática:
-- Fundo: branco puro
-- Textos: preto/cinza escuro
-- Sidebar: preto
-- Cor primária padrão: preto
-- Accent: cinza escuro
+### 2. Secao de Demonstracao do Portal
+- Mockup interativo mostrando o Portal do Cliente
+- Screenshots/cards mostrando as principais telas:
+  - Dashboard com progresso do onboarding
+  - Lista de entregas
+  - Tela de aprovacao
+  - Arquivos organizados
+- Animacoes suaves de entrada
 
-### 2. Sistema de Personalização da Empresa
+### 3. Secao de Beneficios
+Cards com os principais beneficios:
+- **Sua marca, seu portal** - Personalize cores e logo
+- **Entregas organizadas** - Aprovacoes e feedback em um so lugar
+- **Onboarding guiado** - Seus clientes sempre sabem a proxima etapa
+- **Arquivos centralizados** - Materiais acessiveis a qualquer momento
 
-#### Nova Página de Configurações
-Criar `src/pages/empresa/Configuracoes.tsx` com:
-- Seletor de cor primária (color picker)
-- Upload de logo personalizado
-- Preview em tempo real das mudanças
+### 4. Secao de Como Funciona
+Steps visuais:
+1. Configure seu portal com sua identidade
+2. Cadastre seus clientes
+3. Envie entregas e receba aprovacoes
+4. Tudo organizado em um so lugar
 
-#### Contexto de Tema da Empresa
-Criar `src/contexts/EmpresaThemeContext.tsx`:
-- Armazena cor primária e URL do logo
-- Aplica variáveis CSS dinamicamente via style tag
-- Propaga para portal do cliente
+### 5. CTA Final
+- Chamada para acao com botao grande
+- Texto de reforco da proposta de valor
 
-#### Atualizações nos Layouts
-- `EmpresaLayout.tsx`: Usar logo da empresa em vez do ícone padrão
-- `ClienteLayout.tsx`: Herdar cor e logo da empresa
+### 6. Footer
+- Links basicos
+- Copyright
 
 ---
 
-## Estrutura Visual
-
-### Área da Empresa - Nova Seção de Configurações
+## Layout Visual
 
 ```text
-+-------------------------------------------+
-|  Configurações da Empresa                 |
-+-------------------------------------------+
-|                                           |
-|  Logo da Empresa                          |
-|  +-------+                                |
-|  |       |  [Alterar Logo]                |
-|  | LOGO  |                                |
-|  |       |                                |
-|  +-------+                                |
-|                                           |
-|  Cor Primária                             |
-|  [■ #000000] ____________________         |
-|                                           |
-|  Preview:                                 |
-|  +------------------------------------+   |
-|  | [LOGO] Menu ativo | Menu inativo  |   |
-|  +------------------------------------+   |
-|                                           |
-|                         [Salvar]          |
-+-------------------------------------------+
++--------------------------------------------------+
+|                     HEADER                        |
+|  [Logo]                    [Entrar] [Comecar]    |
++--------------------------------------------------+
+|                                                   |
+|                   HERO SECTION                    |
+|                                                   |
+|    Centralize a experiencia do seu cliente        |
+|           em um unico lugar.                      |
+|                                                   |
+|    Um portal com a identidade da sua agencia...   |
+|                                                   |
+|    [Comecar agora]    [Ver demonstracao]         |
+|                                                   |
++--------------------------------------------------+
+|                                                   |
+|              DEMONSTRACAO DO PORTAL               |
+|                                                   |
+|  +----------+  +----------+  +----------+        |
+|  |Dashboard |  | Entregas |  |Aprovacao |        |
+|  |   [img]  |  |   [img]  |  |   [img]  |        |
+|  +----------+  +----------+  +----------+        |
+|                                                   |
++--------------------------------------------------+
+|                                                   |
+|                  BENEFICIOS                       |
+|                                                   |
+|  [icon] Sua marca    [icon] Entregas             |
+|  [icon] Onboarding   [icon] Arquivos             |
+|                                                   |
++--------------------------------------------------+
+|                                                   |
+|               COMO FUNCIONA                       |
+|                                                   |
+|    1 -----> 2 -----> 3 -----> 4                  |
+|                                                   |
++--------------------------------------------------+
+|                                                   |
+|                  CTA FINAL                        |
+|                                                   |
+|      Pronto para centralizar seus clientes?       |
+|            [Comecar agora - Gratis]               |
+|                                                   |
++--------------------------------------------------+
+|                    FOOTER                         |
++--------------------------------------------------+
 ```
 
 ---
 
 ## Detalhes Tecnicos
 
-### Arquivo: `src/index.css` (modificar)
+### Novo Arquivo: `src/pages/LandingPage.tsx`
 
-Nova paleta padrão monocromatica:
-
-```css
-:root {
-  --background: 0 0% 100%;        /* branco */
-  --foreground: 0 0% 9%;          /* preto */
-  --primary: 0 0% 9%;             /* preto */
-  --primary-foreground: 0 0% 100%; /* branco */
-  --secondary: 0 0% 96%;          /* cinza claro */
-  --muted: 0 0% 96%;
-  --accent: 0 0% 15%;             /* cinza escuro */
-  --sidebar-background: 0 0% 4%; /* preto */
-  /* ... demais ajustes */
-}
-```
-
-### Arquivo: `src/contexts/EmpresaThemeContext.tsx` (novo)
+Pagina completa com todas as secoes:
+- Uso de componentes existentes (Card, Button)
+- Animacoes com classes Tailwind existentes (animate-fade-in, animate-slide-up)
+- Responsivo (mobile-first)
+- Scroll suave para secao de demo
 
 ```typescript
-interface EmpresaTheme {
-  corPrimaria: string;        // hex color
-  logoUrl: string | null;     // URL ou null para icone padrao
-}
-
-const EmpresaThemeContext = createContext<...>();
-
-function EmpresaThemeProvider({ children }) {
-  const [theme, setTheme] = useState<EmpresaTheme>({
-    corPrimaria: "#000000",
-    logoUrl: null,
-  });
-
-  // Aplica cor dinamicamente via CSS variables
-  useEffect(() => {
-    const hsl = hexToHsl(theme.corPrimaria);
-    document.documentElement.style.setProperty("--primary", hsl);
-  }, [theme.corPrimaria]);
-
-  return <EmpresaThemeContext.Provider value={{ theme, setTheme }}>
-    {children}
-  </EmpresaThemeContext.Provider>;
+// Estrutura do componente
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen bg-background">
+      <Header />
+      <HeroSection />
+      <DemoSection />
+      <BenefitsSection />
+      <HowItWorksSection />
+      <CTASection />
+      <Footer />
+    </div>
+  );
 }
 ```
 
-### Arquivo: `src/pages/empresa/Configuracoes.tsx` (novo)
+### Secao de Demo - Screenshots do Portal
 
-Pagina com:
-- Input type="color" para selecionar cor primaria
-- Input type="file" para upload de logo
-- Preview visual do tema
-- Botao para salvar configuracoes
+Usar as proprias telas do sistema como preview:
+- Capturas mockadas do Dashboard
+- Preview da tela de entregas
+- Preview da tela de aprovacao
 
-### Arquivo: `src/components/empresa/EmpresaLayout.tsx` (modificar)
+Alternativa: criar componentes visuais simplificados que representam as telas.
 
-- Importar hook `useEmpresaTheme`
-- Substituir icone `LayoutDashboard` por `<img>` quando houver logo
-- Manter icone padrao quando nao houver logo personalizado
+### Modificar: `src/App.tsx`
 
-### Arquivo: `src/components/cliente/ClienteLayout.tsx` (modificar)
+- Trocar a rota "/" para a nova LandingPage
+- Mover o conteudo atual de Index para uma nova rota "/acesso" ou remover
 
-- Mesmo comportamento: usar logo da empresa quando disponivel
-- Herdar cor primaria do contexto
-
-### Arquivo: `src/App.tsx` (modificar)
-
-- Envolver rotas com `<EmpresaThemeProvider>`
-
-### Novo Item no Menu da Empresa
-
-Adicionar em `EmpresaLayout.tsx`:
 ```typescript
-{ label: "Configurações", icon: Settings, path: "/empresa/configuracoes" }
+<Route path="/" element={<LandingPage />} />
+<Route path="/acesso" element={<Index />} /> // opcional
 ```
 
-### Funcao Helper: `hexToHsl`
+### Novo Componente: `src/components/landing/PortalPreview.tsx`
 
-Criar em `src/lib/utils.ts`:
-```typescript
-export function hexToHsl(hex: string): string {
-  // Converte #000000 para "0 0% 0%"
-}
-```
+Componente que exibe mockups do portal com:
+- Frame de navegador estilizado
+- Screenshot ou representacao visual das telas
+- Hover effects para destacar funcionalidades
 
 ---
 
 ## Arquivos a Criar
 
-1. `src/contexts/EmpresaThemeContext.tsx`
-2. `src/pages/empresa/Configuracoes.tsx`
+1. `src/pages/LandingPage.tsx` - Pagina principal da landing
 
 ## Arquivos a Modificar
 
-1. `src/index.css` - nova paleta black & white
-2. `src/App.tsx` - adicionar provider e rota
-3. `src/components/empresa/EmpresaLayout.tsx` - menu + logo dinamico
-4. `src/components/cliente/ClienteLayout.tsx` - logo dinamico
-5. `src/lib/utils.ts` - funcao hexToHsl
+1. `src/App.tsx` - Atualizar rota "/" para LandingPage
 
 ---
 
-## Fluxo de Uso
+## Elementos Visuais da Demo
 
-1. Empresa acessa "Configuracoes" no menu lateral
-2. Escolhe cor primaria via color picker
-3. Faz upload do logo (opcional)
-4. Clica em "Salvar"
-5. Toda a area da empresa assume a nova cor
-6. O portal do cliente tambem herda a cor e logo automaticamente
+Para a demonstracao do portal, vou criar representacoes visuais das telas:
+
+### Preview do Dashboard
+- Card com saudacao "Ola, Maria!"
+- Barra de progresso do onboarding
+- Cards de proxima acao e reuniao
+
+### Preview das Entregas
+- Lista de cards de entregas
+- Status badges (Aprovado, Em revisao)
+
+### Preview de Aprovacao
+- Imagem de preview
+- Botoes de aprovar/solicitar ajuste
+
+Esses previews serao componentes estilizados que imitam as telas reais, dando uma ideia clara de como o portal funciona.
+
+---
+
+## Responsividade
+
+- Mobile: secoes empilhadas verticalmente
+- Tablet: grid 2 colunas para beneficios
+- Desktop: layout completo com espacamento generoso
