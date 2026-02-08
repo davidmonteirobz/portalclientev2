@@ -252,8 +252,9 @@ export default function EmpresaClienteDetalhe() {
     <EmpresaLayout>
       <div className="animate-fade-in space-y-8">
         {/* Header */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-4">
+        <div className="space-y-4">
+          {/* Top row: back button + edit button */}
+          <div className="flex items-center justify-between">
             <Button
               variant="ghost"
               size="icon"
@@ -261,66 +262,68 @@ export default function EmpresaClienteDetalhe() {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div className="space-y-1">
-              <h1 className="text-2xl font-bold text-foreground">{cliente.nome}</h1>
-              {cliente.negocio && (
-                <p className="text-base text-muted-foreground">{cliente.negocio}</p>
-              )}
-              <div className="pt-1">
-                <StatusBadge variant="primary" className="whitespace-nowrap">
-                  {cliente.servico}
-                </StatusBadge>
-              </div>
+            <Dialog open={editarCadastroDialog} onOpenChange={setEditarCadastroDialog}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="gap-2" onClick={handleAbrirEditarCadastro}>
+                  <Edit2 className="h-4 w-4" />
+                  Editar cadastro
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Editar cadastro</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-nome">Nome do cliente *</Label>
+                    <Input
+                      id="edit-nome"
+                      value={clienteEditando.nome}
+                      onChange={(e) => setClienteEditando({ ...clienteEditando, nome: e.target.value })}
+                      placeholder="Ex: Maria Silva"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-negocio">Nome do negócio (opcional)</Label>
+                    <Input
+                      id="edit-negocio"
+                      value={clienteEditando.negocio}
+                      onChange={(e) => setClienteEditando({ ...clienteEditando, negocio: e.target.value })}
+                      placeholder="Ex: Studio Bella"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-servico">Serviço ativo *</Label>
+                    <Input
+                      id="edit-servico"
+                      value={clienteEditando.servico}
+                      onChange={(e) => setClienteEditando({ ...clienteEditando, servico: e.target.value })}
+                      placeholder="Ex: Design Mensal"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3">
+                  <Button variant="outline" onClick={() => setEditarCadastroDialog(false)}>
+                    Cancelar
+                  </Button>
+                  <Button onClick={handleSalvarCadastro}>Salvar</Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          {/* Client info */}
+          <div className="space-y-1">
+            <h1 className="text-2xl font-bold text-foreground whitespace-nowrap">{cliente.nome}</h1>
+            {cliente.negocio && (
+              <p className="text-base text-muted-foreground">{cliente.negocio}</p>
+            )}
+            <div className="pt-1">
+              <StatusBadge variant="primary" className="whitespace-nowrap">
+                {cliente.servico}
+              </StatusBadge>
             </div>
           </div>
-          <Dialog open={editarCadastroDialog} onOpenChange={setEditarCadastroDialog}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2" onClick={handleAbrirEditarCadastro}>
-                <Edit2 className="h-4 w-4" />
-                Editar cadastro
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Editar cadastro</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="edit-nome">Nome do cliente *</Label>
-                  <Input
-                    id="edit-nome"
-                    value={clienteEditando.nome}
-                    onChange={(e) => setClienteEditando({ ...clienteEditando, nome: e.target.value })}
-                    placeholder="Ex: Maria Silva"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-negocio">Nome do negócio (opcional)</Label>
-                  <Input
-                    id="edit-negocio"
-                    value={clienteEditando.negocio}
-                    onChange={(e) => setClienteEditando({ ...clienteEditando, negocio: e.target.value })}
-                    placeholder="Ex: Studio Bella"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-servico">Serviço ativo *</Label>
-                  <Input
-                    id="edit-servico"
-                    value={clienteEditando.servico}
-                    onChange={(e) => setClienteEditando({ ...clienteEditando, servico: e.target.value })}
-                    placeholder="Ex: Design Mensal"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={() => setEditarCadastroDialog(false)}>
-                  Cancelar
-                </Button>
-                <Button onClick={handleSalvarCadastro}>Salvar</Button>
-              </div>
-            </DialogContent>
-          </Dialog>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
