@@ -12,6 +12,9 @@ import {
   Circle,
   Rocket,
   AlertCircle,
+  UserPlus,
+  Mail,
+  X,
 } from "lucide-react";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { Button } from "@/components/ui/button";
@@ -62,6 +65,13 @@ interface EtapaOnboarding {
   id: string;
   nome: string;
   status: "concluido" | "atual" | "pendente";
+}
+
+interface UsuarioCliente {
+  id: string;
+  nome: string;
+  email: string;
+  status: "pendente" | "ativo";
 }
 
 export default function EmpresaClienteDetalhe() {
@@ -161,6 +171,14 @@ export default function EmpresaClienteDetalhe() {
   const [novoMaterialDialog, setNovoMaterialDialog] = useState(false);
   const [novoMaterial, setNovoMaterial] = useState({ nome: "", link: "" });
 
+  // Estado dos usuários de acesso ao portal
+  const [usuarios, setUsuarios] = useState<UsuarioCliente[]>([
+    { id: "1", nome: "Maria Silva", email: "maria@studiobella.com", status: "ativo" },
+    { id: "2", nome: "João Assistente", email: "joao@studiobella.com", status: "pendente" },
+  ]);
+  const [novoUsuarioDialog, setNovoUsuarioDialog] = useState(false);
+  const [novoUsuario, setNovoUsuario] = useState({ nome: "", email: "" });
+
   const handleAddEntrega = () => {
     if (novaEntrega.nome && novaEntrega.link) {
       setEntregas([
@@ -246,6 +264,25 @@ export default function EmpresaClienteDetalhe() {
         return { ...e, status: nextStatus };
       }),
     });
+  };
+
+  // Funções de usuários do portal
+  const handleAddUsuario = () => {
+    if (novoUsuario.nome.trim() && novoUsuario.email.trim()) {
+      const newUsuario: UsuarioCliente = {
+        id: Date.now().toString(),
+        nome: novoUsuario.nome.trim(),
+        email: novoUsuario.email.trim(),
+        status: "pendente",
+      };
+      setUsuarios([...usuarios, newUsuario]);
+      setNovoUsuario({ nome: "", email: "" });
+      setNovoUsuarioDialog(false);
+    }
+  };
+
+  const handleRemoveUsuario = (id: string) => {
+    setUsuarios(usuarios.filter((u) => u.id !== id));
   };
 
   return (
@@ -784,6 +821,104 @@ export default function EmpresaClienteDetalhe() {
                   placeholder="Anotações internas sobre este cliente..."
                   rows={4}
                 />
+              </CardContent>
+            </Card>
+
+            {/* Seção 8 - Acesso ao Portal */}
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <UserPlus className="h-4 w-4" />
+                    Acesso ao Portal
+                  </CardTitle>
+                  <Dialog open={novoUsuarioDialog} onOpenChange={setNovoUsuarioDialog}>
+                    <DialogTrigger asChild>
+                      <Button size="sm" variant="outline" className="gap-1">
+                        <Plus className="h-3.5 w-3.5" />
+                        Adicionar
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Novo Acesso</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label>Nome do usuário</Label>
+                          <Input
+                            value={novoUsuario.nome}
+                            onChange={(e) => setNovoUsuario({ ...novoUsuario, nome: e.target.value })}
+                            placeholder="Ex: Maria Silva"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>E-mail (será o login)</Label>
+                          <Input
+                            type="email"
+                            value={novoUsuario.email}
+                            onChange={(e) => setNovoUsuario({ ...novoUsuario, email: e.target.value })}
+                            placeholder="maria@email.com"
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end gap-3">
+                        <Button variant="outline" onClick={() => setNovoUsuarioDialog(false)}>
+                          Cancelar
+                        </Button>
+                        <Button onClick={handleAddUsuario}>Adicionar</Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Usuários com acesso ao portal do cliente
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {usuarios.map((usuario) => (
+                    <div
+                      key={usuario.id}
+                      className="flex items-center justify-between rounded-lg border border-border bg-background p-3"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                          <span className="text-sm font-medium">
+                            {usuario.nome.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-medium text-sm">{usuario.nome}</p>
+                          <p className="flex items-center gap-1 truncate text-xs text-muted-foreground">
+                            <Mail className="h-3 w-3 flex-shrink-0" />
+                            {usuario.email}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <StatusBadge
+                          variant={usuario.status === "ativo" ? "success" : "warning"}
+                        >
+                          {usuario.status === "ativo" ? "Ativo" : "Pendente"}
+                        </StatusBadge>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                          onClick={() => handleRemoveUsuario(usuario.id)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  {usuarios.length === 0 && (
+                    <p className="py-4 text-center text-sm text-muted-foreground">
+                      Nenhum usuário cadastrado
+                    </p>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>
