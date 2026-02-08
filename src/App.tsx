@@ -21,6 +21,7 @@ import ClienteMateriais from "./pages/cliente/Materiais";
 
 const queryClient = new QueryClient();
 
+// Main App component
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <EmpresaThemeProvider>
