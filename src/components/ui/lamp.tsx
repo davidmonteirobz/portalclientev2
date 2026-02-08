@@ -13,7 +13,7 @@ export const LampContainer = ({
   return (
     <div
       className={cn(
-        "relative flex min-h-[600px] md:min-h-[700px] lg:min-h-[800px] flex-col items-center justify-center overflow-hidden bg-black w-full z-0",
+        "relative flex min-h-[500px] md:min-h-[550px] lg:min-h-[600px] flex-col items-center justify-center overflow-hidden bg-black w-full z-0",
         className
       )}
     >
@@ -77,7 +77,7 @@ export const LampContainer = ({
         <div className="absolute inset-auto z-40 h-44 w-full -translate-y-[12.5rem] bg-black"></div>
       </div>
 
-      <div className="relative z-50 flex -translate-y-60 md:-translate-y-72 lg:-translate-y-80 flex-col items-center px-5">
+      <div className="relative z-50 flex -translate-y-40 md:-translate-y-48 lg:-translate-y-56 flex-col items-center px-5">
         {children}
       </div>
     </div>
