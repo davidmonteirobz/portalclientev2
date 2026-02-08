@@ -69,8 +69,7 @@ export default function ClienteDashboard() {
             Olá, {clienteNome}! 👋
           </h1>
           <p className="text-lg text-muted-foreground">
-            Acompanhe o andamento do seu{" "}
-            <span className="font-medium text-primary">{servicoAtivo}</span>
+            Tudo sobre o seu projeto, em um só lugar
           </p>
         </div>
 
