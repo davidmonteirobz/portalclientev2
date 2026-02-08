@@ -35,10 +35,14 @@ export function EmpresaThemeProvider({ children }: EmpresaThemeProviderProps) {
   // Aplica cor dinamicamente via CSS variables
   useEffect(() => {
     const hsl = hexToHsl(theme.corPrimaria);
+    
+    // Atualiza a cor primária global
     document.documentElement.style.setProperty("--primary", hsl);
     
-    // Também atualiza sidebar-primary para manter consistência
+    // Atualiza cores da sidebar para manter consistência
     document.documentElement.style.setProperty("--sidebar-primary", hsl);
+    document.documentElement.style.setProperty("--sidebar-background", hsl);
+    document.documentElement.style.setProperty("--ring", hsl);
     
     // Salva no localStorage
     localStorage.setItem("empresa-theme", JSON.stringify(theme));
