@@ -18,15 +18,15 @@ import {
 function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link to="/" className="text-xl font-bold gradient-text">
+      <div className="container mx-auto flex h-14 md:h-16 items-center justify-between px-4">
+        <Link to="/" className="text-lg md:text-xl font-bold gradient-text">
           Portal
         </Link>
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" asChild>
+        <div className="flex items-center gap-2 md:gap-3">
+          <Button variant="ghost" size="sm" className="hidden sm:flex" asChild>
             <Link to="/empresa/clientes">Entrar</Link>
           </Button>
-          <Button asChild>
+          <Button size="sm" className="text-xs md:text-sm" asChild>
             <Link to="/empresa/clientes">Começar agora</Link>
           </Button>
         </div>
@@ -42,29 +42,29 @@ function HeroSection() {
   };
 
   return (
-    <section className="relative overflow-hidden py-20 md:py-32">
+    <section className="relative overflow-hidden py-12 md:py-20 lg:py-32">
       <div className="container mx-auto px-4 text-center">
-        <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl animate-fade-in">
+        <h1 className="mx-auto max-w-4xl text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-foreground animate-fade-in">
           Centralize a experiência do seu cliente em um único lugar.
         </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl animate-fade-in">
+        <p className="mx-auto mt-4 md:mt-6 max-w-2xl text-base md:text-lg lg:text-xl text-muted-foreground animate-fade-in">
           Um portal com a identidade da sua agência para organizar materiais, aprovações e comunicação com clientes.
         </p>
-        <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row animate-fade-in">
-          <Button size="lg" className="h-12 px-8 text-base" asChild>
+        <div className="mt-6 md:mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row animate-fade-in">
+          <Button size="lg" className="w-full sm:w-auto h-11 md:h-12 px-6 md:px-8 text-sm md:text-base" asChild>
             <Link to="/empresa/clientes">
               Começar agora
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
             </Link>
           </Button>
-          <Button size="lg" variant="outline" className="h-12 px-8 text-base" onClick={scrollToDemo}>
+          <Button size="lg" variant="outline" className="w-full sm:w-auto h-11 md:h-12 px-6 md:px-8 text-sm md:text-base" onClick={scrollToDemo}>
             Ver demonstração
           </Button>
         </div>
       </div>
       {/* Background gradient */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl" />
+        <div className="absolute left-1/2 top-0 h-[400px] md:h-[600px] w-[400px] md:w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl" />
       </div>
     </section>
   );
@@ -73,13 +73,13 @@ function HeroSection() {
 // Demo Section - Portal do Cliente Overview
 function DemoSection() {
   return (
-    <section id="demo" className="bg-muted/30 py-20 md:py-28">
+    <section id="demo" className="bg-muted/30 py-12 md:py-20 lg:py-28">
       <div className="container mx-auto px-4">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold text-foreground md:text-4xl">
+        <div className="mb-8 md:mb-12 text-center">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
             Veja como seu cliente vai visualizar
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-3 md:mt-4 text-sm md:text-base lg:text-lg text-muted-foreground">
             Um portal completo com a identidade da sua agência — clique nos menus para explorar
           </p>
         </div>
@@ -117,29 +117,29 @@ function BenefitsSection() {
   ];
 
   return (
-    <section className="py-20 md:py-28">
+    <section className="py-12 md:py-20 lg:py-28">
       <div className="container mx-auto px-4">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold text-foreground md:text-4xl">
+        <div className="mb-8 md:mb-12 text-center">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
             Tudo que você precisa para gerenciar clientes
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-3 md:mt-4 text-sm md:text-base lg:text-lg text-muted-foreground">
             Funcionalidades pensadas para agências que querem profissionalizar seu atendimento
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {benefits.map((benefit, index) => (
             <Card 
               key={index} 
               className="border-border/50 bg-card transition-all hover:border-primary/30 hover:shadow-md"
             >
-              <CardContent className="p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                  <benefit.icon className="h-6 w-6 text-primary" />
+              <CardContent className="p-4 md:p-6">
+                <div className="mb-3 md:mb-4 flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl bg-primary/10">
+                  <benefit.icon className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-foreground">{benefit.title}</h3>
-                <p className="text-sm text-muted-foreground">{benefit.description}</p>
+                <h3 className="mb-1 md:mb-2 text-base md:text-lg font-semibold text-foreground">{benefit.title}</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">{benefit.description}</p>
               </CardContent>
             </Card>
           ))}
@@ -179,30 +179,30 @@ function HowItWorksSection() {
   ];
 
   return (
-    <section className="bg-muted/30 py-20 md:py-28">
+    <section className="bg-muted/30 py-12 md:py-20 lg:py-28">
       <div className="container mx-auto px-4">
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold text-foreground md:text-4xl">
+        <div className="mb-8 md:mb-12 text-center">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
             Simples de começar
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-3 md:mt-4 text-sm md:text-base lg:text-lg text-muted-foreground">
             Em poucos minutos seu portal está pronto para receber clientes
           </p>
         </div>
 
         <div className="relative mx-auto max-w-4xl">
-          {/* Connection line - desktop */}
+          {/* Connection line - desktop only */}
           <div className="absolute left-0 right-0 top-[60px] hidden h-0.5 bg-border lg:block" />
           
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 md:gap-8 grid-cols-2 lg:grid-cols-4">
             {steps.map((item, index) => (
               <div key={index} className="relative flex flex-col items-center text-center">
-                <div className="relative z-10 mb-4 flex h-[120px] w-[120px] flex-col items-center justify-center rounded-2xl border border-border bg-card shadow-sm">
-                  <span className="mb-1 text-2xl font-bold text-primary">{item.step}</span>
-                  <item.icon className="h-8 w-8 text-muted-foreground" />
+                <div className="relative z-10 mb-3 md:mb-4 flex h-20 w-20 md:h-[100px] md:w-[100px] lg:h-[120px] lg:w-[120px] flex-col items-center justify-center rounded-xl md:rounded-2xl border border-border bg-card shadow-sm">
+                  <span className="mb-0.5 md:mb-1 text-lg md:text-xl lg:text-2xl font-bold text-primary">{item.step}</span>
+                  <item.icon className="h-5 w-5 md:h-6 md:w-6 lg:h-8 lg:w-8 text-muted-foreground" />
                 </div>
-                <h3 className="mb-1 font-semibold text-foreground">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.description}</p>
+                <h3 className="mb-0.5 md:mb-1 text-sm md:text-base font-semibold text-foreground">{item.title}</h3>
+                <p className="text-xs md:text-sm text-muted-foreground">{item.description}</p>
               </div>
             ))}
           </div>
@@ -215,19 +215,19 @@ function HowItWorksSection() {
 // CTA Section
 function CTASection() {
   return (
-    <section className="py-20 md:py-28">
+    <section className="py-12 md:py-20 lg:py-28">
       <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-3xl rounded-3xl bg-primary/5 p-8 text-center md:p-12">
-          <h2 className="text-3xl font-bold text-foreground md:text-4xl">
+        <div className="mx-auto max-w-3xl rounded-2xl md:rounded-3xl bg-primary/5 p-6 md:p-8 lg:p-12 text-center">
+          <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
             Pronto para centralizar seus clientes?
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-3 md:mt-4 text-sm md:text-base lg:text-lg text-muted-foreground">
             Crie seu portal personalizado e transforme a experiência dos seus clientes.
           </p>
-          <Button size="lg" className="mt-8 h-14 px-10 text-lg" asChild>
+          <Button size="lg" className="mt-6 md:mt-8 w-full sm:w-auto h-12 md:h-14 px-6 md:px-10 text-sm md:text-base lg:text-lg" asChild>
             <Link to="/empresa/clientes">
               Começar agora — Grátis
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
             </Link>
           </Button>
         </div>
@@ -239,18 +239,18 @@ function CTASection() {
 // Footer
 function Footer() {
   return (
-    <footer className="border-t border-border bg-muted/30 py-8">
+    <footer className="border-t border-border bg-muted/30 py-6 md:py-8">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <div className="text-xl font-bold gradient-text">Portal</div>
-          <p className="text-sm text-muted-foreground">
+        <div className="flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
+          <div className="text-lg md:text-xl font-bold gradient-text">Portal</div>
+          <p className="text-xs md:text-sm text-muted-foreground order-3 md:order-2">
             © {new Date().getFullYear()} Portal. Todos os direitos reservados.
           </p>
-          <div className="flex gap-6">
-            <Link to="/empresa/clientes" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <div className="flex gap-4 md:gap-6 order-2 md:order-3">
+            <Link to="/empresa/clientes" className="text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors">
               Área da Empresa
             </Link>
-            <Link to="/cliente/dashboard" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/cliente/dashboard" className="text-xs md:text-sm text-muted-foreground hover:text-foreground transition-colors">
               Portal do Cliente
             </Link>
           </div>
