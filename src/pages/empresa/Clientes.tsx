@@ -182,37 +182,32 @@ export default function EmpresaClientes() {
           {clientesFiltrados.map((cliente, index) => (
             <div
               key={cliente.id}
-              className="group flex items-center justify-between rounded-xl border border-border bg-card p-4 transition-all card-hover animate-slide-up"
+              className="group cursor-pointer rounded-xl border border-border bg-card p-4 transition-all card-hover animate-slide-up"
               style={{ animationDelay: `${index * 50}ms` }}
+              onClick={() => navigate(`/empresa/cliente-detalhe?id=${cliente.id}`)}
             >
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  {cliente.negocio ? (
-                    <Building2 className="h-5 w-5 text-primary" />
-                  ) : (
-                    <User className="h-5 w-5 text-primary" />
-                  )}
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-foreground">{cliente.nome}</h3>
-                  {cliente.negocio && (
-                    <p className="text-sm text-muted-foreground">{cliente.negocio}</p>
-                  )}
-                  <div className="pt-1">
-                    <StatusBadge variant="primary" className="whitespace-nowrap">{cliente.servico}</StatusBadge>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary/10">
+                    {cliente.negocio ? (
+                      <Building2 className="h-5 w-5 text-primary" />
+                    ) : (
+                      <User className="h-5 w-5 text-primary" />
+                    )}
+                  </div>
+                  <div className="space-y-1 min-w-0">
+                    <h3 className="font-semibold text-foreground truncate">{cliente.nome}</h3>
+                    {cliente.negocio && (
+                      <p className="text-sm text-muted-foreground truncate">{cliente.negocio}</p>
+                    )}
+                    <div className="pt-1">
+                      <StatusBadge variant="primary" className="whitespace-nowrap">{cliente.servico}</StatusBadge>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 opacity-0 transition-opacity group-hover:opacity-100"
-                onClick={() => navigate(`/empresa/cliente-detalhe?id=${cliente.id}`)}
-              >
-                Gerenciar
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+                <ChevronRight className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
+              </div>
             </div>
           ))}
 
