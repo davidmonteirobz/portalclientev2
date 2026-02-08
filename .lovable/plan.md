@@ -1,50 +1,62 @@
 
-# Plano: Landing Page da Plataforma
+# Plano: Demo Interativa do Portal do Cliente
 
 ## Resumo
 
-Criar uma landing page profissional que apresenta a plataforma para agencias, com demonstracao visual de como funciona o Portal do Cliente e call-to-actions para conversao.
+Transformar a segunda secao da landing page em uma demonstracao interativa e navegavel do Portal do Cliente. O visitante pode clicar nos itens do menu e ver diferentes "telas" do portal, tudo sem sair da landing page.
 
 ---
 
-## Estrutura da Landing Page
+## Como Vai Funcionar
 
-### 1. Hero Section
-- Titulo principal: "Centralize a experiencia do seu cliente em um unico lugar."
-- Subtitulo: "Um portal com a identidade da sua agencia para organizar materiais, aprovacoes e comunicacao com clientes."
-- Botao CTA: "Comecar agora" (direciona para /empresa/clientes)
-- Botao secundario: "Ver demonstracao" (scroll para secao de demo)
+O preview do portal tera uma navegacao funcional:
 
-### 2. Secao de Demonstracao do Portal
-- Mockup interativo mostrando o Portal do Cliente
-- Screenshots/cards mostrando as principais telas:
-  - Dashboard com progresso do onboarding
-  - Lista de entregas
-  - Tela de aprovacao
-  - Arquivos organizados
-- Animacoes suaves de entrada
+1. **Menu clicavel** - Os itens de navegacao (Inicio, Onboarding, Entregas, Arquivos) serao botoes que mudam a "tela" exibida
+2. **Estado React** - Um state controlara qual tela esta ativa
+3. **Transicoes suaves** - Animacoes ao trocar entre telas
+4. **Tudo dentro do mockup** - Mantem o frame de navegador, criando a sensacao de estar usando o portal real
 
-### 3. Secao de Beneficios
-Cards com os principais beneficios:
-- **Sua marca, seu portal** - Personalize cores e logo
-- **Entregas organizadas** - Aprovacoes e feedback em um so lugar
-- **Onboarding guiado** - Seus clientes sempre sabem a proxima etapa
-- **Arquivos centralizados** - Materiais acessiveis a qualquer momento
+---
 
-### 4. Secao de Como Funciona
-Steps visuais:
-1. Configure seu portal com sua identidade
-2. Cadastre seus clientes
-3. Envie entregas e receba aprovacoes
-4. Tudo organizado em um so lugar
+## Telas Incluidas na Demo
 
-### 5. CTA Final
-- Chamada para acao com botao grande
-- Texto de reforco da proposta de valor
+### 1. Inicio (Dashboard)
+- Saudacao "Ola, Maria!"
+- Card de contexto atual
+- Bloco de onboarding com progresso
+- Cards de proxima acao e reuniao
+- Botoes de acao (entregas e arquivos)
 
-### 6. Footer
-- Links basicos
-- Copyright
+### 2. Onboarding
+- Timeline visual das etapas
+- Status de cada etapa (concluido, atual, pendente)
+- Barra de progresso
+
+### 3. Entregas
+- Lista de entregas com status badges
+- Cards clicaveis que podem abrir a tela de detalhe
+
+### 4. Arquivos
+- Grid de materiais com icones
+- Links externos simulados
+
+---
+
+## Estrutura do Componente
+
+```text
+DemoSection
+├── Titulo e subtitulo
+└── Card (Frame do navegador)
+    ├── Browser Frame (bolinhas + URL)
+    ├── Header do Portal
+    │   └── Menu Navegavel ← CLICAVEIS
+    └── Conteudo Dinamico
+        ├── [activeTab === "inicio"] → DashboardView
+        ├── [activeTab === "onboarding"] → OnboardingView
+        ├── [activeTab === "entregas"] → EntregasView
+        └── [activeTab === "arquivos"] → ArquivosView
+```
 
 ---
 
@@ -52,50 +64,20 @@ Steps visuais:
 
 ```text
 +--------------------------------------------------+
-|                     HEADER                        |
-|  [Logo]                    [Entrar] [Comecar]    |
+|  [●] [●] [●]     meuportal.agencia.com.br        |  ← Browser Frame
++--------------------------------------------------+
+|  [Logo]   [Inicio] [Onboarding] [Entregas] [Arq] |  ← Menu Clicavel
 +--------------------------------------------------+
 |                                                   |
-|                   HERO SECTION                    |
+|               CONTEUDO DINAMICO                   |  ← Muda conforme
+|                                                   |     o item clicado
+|   ┌─────────────────────────────────────────┐    |
+|   │                                         │    |
+|   │     (Dashboard / Onboarding /           │    |
+|   │      Entregas / Arquivos)               │    |
+|   │                                         │    |
+|   └─────────────────────────────────────────┘    |
 |                                                   |
-|    Centralize a experiencia do seu cliente        |
-|           em um unico lugar.                      |
-|                                                   |
-|    Um portal com a identidade da sua agencia...   |
-|                                                   |
-|    [Comecar agora]    [Ver demonstracao]         |
-|                                                   |
-+--------------------------------------------------+
-|                                                   |
-|              DEMONSTRACAO DO PORTAL               |
-|                                                   |
-|  +----------+  +----------+  +----------+        |
-|  |Dashboard |  | Entregas |  |Aprovacao |        |
-|  |   [img]  |  |   [img]  |  |   [img]  |        |
-|  +----------+  +----------+  +----------+        |
-|                                                   |
-+--------------------------------------------------+
-|                                                   |
-|                  BENEFICIOS                       |
-|                                                   |
-|  [icon] Sua marca    [icon] Entregas             |
-|  [icon] Onboarding   [icon] Arquivos             |
-|                                                   |
-+--------------------------------------------------+
-|                                                   |
-|               COMO FUNCIONA                       |
-|                                                   |
-|    1 -----> 2 -----> 3 -----> 4                  |
-|                                                   |
-+--------------------------------------------------+
-|                                                   |
-|                  CTA FINAL                        |
-|                                                   |
-|      Pronto para centralizar seus clientes?       |
-|            [Comecar agora - Gratis]               |
-|                                                   |
-+--------------------------------------------------+
-|                    FOOTER                         |
 +--------------------------------------------------+
 ```
 
@@ -103,92 +85,101 @@ Steps visuais:
 
 ## Detalhes Tecnicos
 
-### Novo Arquivo: `src/pages/LandingPage.tsx`
+### Arquivo a Modificar
 
-Pagina completa com todas as secoes:
-- Uso de componentes existentes (Card, Button)
-- Animacoes com classes Tailwind existentes (animate-fade-in, animate-slide-up)
-- Responsivo (mobile-first)
-- Scroll suave para secao de demo
+**`src/pages/LandingPage.tsx`**
 
+Reestruturar a `DemoSection` para:
+
+1. Adicionar estado para controlar a aba ativa:
 ```typescript
-// Estrutura do componente
-export default function LandingPage() {
-  return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <HeroSection />
-      <DemoSection />
-      <BenefitsSection />
-      <HowItWorksSection />
-      <CTASection />
-      <Footer />
-    </div>
-  );
-}
+const [activeTab, setActiveTab] = useState<"inicio" | "onboarding" | "entregas" | "arquivos">("inicio");
 ```
 
-### Secao de Demo - Screenshots do Portal
-
-Usar as proprias telas do sistema como preview:
-- Capturas mockadas do Dashboard
-- Preview da tela de entregas
-- Preview da tela de aprovacao
-
-Alternativa: criar componentes visuais simplificados que representam as telas.
-
-### Modificar: `src/App.tsx`
-
-- Trocar a rota "/" para a nova LandingPage
-- Mover o conteudo atual de Index para uma nova rota "/acesso" ou remover
-
+2. Tornar os itens do menu clicaveis:
 ```typescript
-<Route path="/" element={<LandingPage />} />
-<Route path="/acesso" element={<Index />} /> // opcional
+<button 
+  onClick={() => setActiveTab("inicio")}
+  className={activeTab === "inicio" ? "bg-foreground text-background" : "text-muted-foreground"}
+>
+  Inicio
+</button>
 ```
 
-### Novo Componente: `src/components/landing/PortalPreview.tsx`
-
-Componente que exibe mockups do portal com:
-- Frame de navegador estilizado
-- Screenshot ou representacao visual das telas
-- Hover effects para destacar funcionalidades
+3. Renderizar conteudo dinamico baseado na aba:
+```typescript
+{activeTab === "inicio" && <DashboardPreview />}
+{activeTab === "onboarding" && <OnboardingPreview />}
+{activeTab === "entregas" && <EntregasPreview />}
+{activeTab === "arquivos" && <ArquivosPreview />}
+```
 
 ---
 
-## Arquivos a Criar
+## Componentes de Preview (Inline)
 
-1. `src/pages/LandingPage.tsx` - Pagina principal da landing
+Cada "tela" sera um componente inline dentro da DemoSection:
 
-## Arquivos a Modificar
-
-1. `src/App.tsx` - Atualizar rota "/" para LandingPage
-
----
-
-## Elementos Visuais da Demo
-
-Para a demonstracao do portal, vou criar representacoes visuais das telas:
-
-### Preview do Dashboard
-- Card com saudacao "Ola, Maria!"
-- Barra de progresso do onboarding
+### DashboardPreview
+- Saudacao
+- Card de contexto atual
+- Bloco de onboarding com progresso (60%)
 - Cards de proxima acao e reuniao
+- Botoes de acao
 
-### Preview das Entregas
-- Lista de cards de entregas
+### OnboardingPreview
+- Timeline vertical das etapas
+- Icones de status (check, relogio, circulo vazio)
+- Cards coloridos por status
+
+### EntregasPreview
+- Lista de 3 entregas mockadas
 - Status badges (Aprovado, Em revisao)
+- Hover effects nos cards
 
-### Preview de Aprovacao
-- Imagem de preview
-- Botoes de aprovar/solicitar ajuste
-
-Esses previews serao componentes estilizados que imitam as telas reais, dando uma ideia clara de como o portal funciona.
+### ArquivosPreview
+- Grid 2x2 de materiais
+- Icones representativos
+- Botoes de acesso externo
 
 ---
 
-## Responsividade
+## Interatividade Adicional
 
-- Mobile: secoes empilhadas verticalmente
-- Tablet: grid 2 colunas para beneficios
-- Desktop: layout completo com espacamento generoso
+### Cliques Internos
+Alguns elementos dentro das telas podem ser clicaveis para navegar entre telas:
+
+- **"Ver detalhes" no onboarding** → Muda para aba Onboarding
+- **"Ver entregas" botao** → Muda para aba Entregas
+- **"Acessar arquivos" botao** → Muda para aba Arquivos
+- **Cards de entrega** → Poderia mostrar preview de detalhe (opcional)
+
+### Animacoes
+- Fade in/out ao trocar de aba
+- Slide suave entre conteudos
+
+---
+
+## Beneficios
+
+1. **Experiencia imersiva** - Visitante "usa" o portal antes de criar conta
+2. **Demonstracao clara** - Mostra todas as funcionalidades principais
+3. **Sem redirecionamento** - Tudo acontece na landing page
+4. **Engajamento** - Interatividade aumenta tempo na pagina
+
+---
+
+## Resumo das Mudancas
+
+| Arquivo | Acao |
+|---------|------|
+| `src/pages/LandingPage.tsx` | Reescrever `DemoSection` com estado e navegacao interativa |
+
+---
+
+## Complexidade
+
+- **Estimativa**: Modificacao unica em um arquivo
+- **Componentes**: 4 sub-componentes de preview (inline)
+- **Estado**: useState simples para controlar aba ativa
+- **Animacoes**: Classes Tailwind existentes
