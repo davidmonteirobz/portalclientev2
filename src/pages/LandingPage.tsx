@@ -10,7 +10,10 @@ import {
   Settings,
   UserPlus,
   Send,
-  LayoutDashboard
+  LayoutDashboard,
+  ChevronRight,
+  Rocket,
+  Clock
 } from "lucide-react";
 
 // Header
@@ -69,133 +72,169 @@ function HeroSection() {
   );
 }
 
-// Demo Section - Portal Preview
+// Demo Section - Dual View Preview
 function DemoSection() {
   return (
     <section id="demo" className="bg-muted/30 py-20 md:py-28">
       <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
           <h2 className="text-3xl font-bold text-foreground md:text-4xl">
-            Veja como funciona o Portal do Cliente
+            Veja por dentro da plataforma
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Uma experiência completa para seus clientes acompanharem tudo
+            Clique para explorar as duas visões: Empresa e Cliente
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {/* Dashboard Preview */}
-          <Card className="overflow-hidden border-border/50 bg-card shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
-            <div className="bg-primary/5 px-4 py-2 border-b border-border/50">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1.5">
-                  <div className="h-3 w-3 rounded-full bg-destructive/60" />
-                  <div className="h-3 w-3 rounded-full bg-warning/60" />
-                  <div className="h-3 w-3 rounded-full bg-success/60" />
-                </div>
-                <span className="ml-2 text-xs text-muted-foreground">Dashboard</span>
-              </div>
-            </div>
-            <CardContent className="p-4">
-              <div className="space-y-3">
-                <div className="rounded-lg bg-background p-3 border border-border">
-                  <p className="text-sm font-medium text-foreground">Olá, Maria! 👋</p>
-                  <p className="text-xs text-muted-foreground">Bem-vinda ao seu portal</p>
-                </div>
-                <div className="rounded-lg bg-background p-3 border border-border">
-                  <p className="text-xs text-muted-foreground mb-2">Progresso do onboarding</p>
-                  <div className="h-2 w-full rounded-full bg-secondary">
-                    <div className="h-2 w-3/4 rounded-full bg-primary" />
+        <div className="grid gap-8 lg:grid-cols-2">
+          {/* Área da Empresa */}
+          <Link to="/empresa/clientes" className="group block">
+            <Card className="overflow-hidden border-border/50 bg-card shadow-lg transition-all hover:shadow-xl hover:-translate-y-2 hover:border-primary/30">
+              <div className="bg-primary/5 px-4 py-3 border-b border-border/50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <div className="h-3 w-3 rounded-full bg-destructive/60" />
+                      <div className="h-3 w-3 rounded-full bg-warning/60" />
+                      <div className="h-3 w-3 rounded-full bg-success/60" />
+                    </div>
+                    <span className="ml-2 text-sm font-medium text-foreground">Área da Empresa</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">75% completo</p>
-                </div>
-                <div className="rounded-lg bg-primary/5 p-3 border border-primary/20">
-                  <p className="text-xs font-medium text-primary">Próxima etapa</p>
-                  <p className="text-sm text-foreground">Enviar materiais da marca</p>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+              <CardContent className="p-5">
+                <div className="space-y-3">
+                  {/* Header da tela */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-lg font-bold text-foreground">Clientes</p>
+                      <p className="text-xs text-muted-foreground">Gerencie seus clientes e acesse seus portais</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="rounded-md bg-muted px-3 py-1.5 text-xs text-muted-foreground">Importar</div>
+                      <div className="rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground">+ Novo cliente</div>
+                    </div>
+                  </div>
+                  
+                  {/* Lista de clientes */}
+                  <div className="space-y-2">
+                    {[
+                      { nome: "Maria Silva", negocio: "Studio Bella", servico: "Design Mensal" },
+                      { nome: "João Santos", negocio: "TechStart", servico: "Site Institucional" },
+                      { nome: "Ana Costa", negocio: "", servico: "Criativos para Redes" },
+                    ].map((cliente, i) => (
+                      <div key={i} className="flex items-center justify-between rounded-lg bg-background p-3 border border-border">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
+                            <span className="text-xs font-medium text-primary">{cliente.nome.charAt(0)}</span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{cliente.nome}</p>
+                            {cliente.negocio && <p className="text-xs text-muted-foreground">{cliente.negocio}</p>}
+                            <span className="inline-block mt-0.5 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                              {cliente.servico}
+                            </span>
+                          </div>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center justify-center gap-2 text-sm font-medium text-primary">
+                  <span>Explorar área da empresa</span>
+                  <ArrowRight className="h-4 w-4" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
-          {/* Entregas Preview */}
-          <Card className="overflow-hidden border-border/50 bg-card shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
-            <div className="bg-primary/5 px-4 py-2 border-b border-border/50">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1.5">
-                  <div className="h-3 w-3 rounded-full bg-destructive/60" />
-                  <div className="h-3 w-3 rounded-full bg-warning/60" />
-                  <div className="h-3 w-3 rounded-full bg-success/60" />
-                </div>
-                <span className="ml-2 text-xs text-muted-foreground">Entregas</span>
-              </div>
-            </div>
-            <CardContent className="p-4">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-lg bg-background p-3 border border-border">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Logo Final</p>
-                    <p className="text-xs text-muted-foreground">Identidade Visual</p>
+          {/* Portal do Cliente */}
+          <Link to="/cliente/dashboard" className="group block">
+            <Card className="overflow-hidden border-border/50 bg-card shadow-lg transition-all hover:shadow-xl hover:-translate-y-2 hover:border-primary/30">
+              <div className="bg-primary/5 px-4 py-3 border-b border-border/50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <div className="h-3 w-3 rounded-full bg-destructive/60" />
+                      <div className="h-3 w-3 rounded-full bg-warning/60" />
+                      <div className="h-3 w-3 rounded-full bg-success/60" />
+                    </div>
+                    <span className="ml-2 text-sm font-medium text-foreground">Portal do Cliente</span>
                   </div>
-                  <span className="rounded-full bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
-                    Aprovado
-                  </span>
-                </div>
-                <div className="flex items-center justify-between rounded-lg bg-background p-3 border border-border">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Posts Instagram</p>
-                    <p className="text-xs text-muted-foreground">Redes Sociais</p>
-                  </div>
-                  <span className="rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning">
-                    Em revisão
-                  </span>
-                </div>
-                <div className="flex items-center justify-between rounded-lg bg-background p-3 border border-border">
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Banner Site</p>
-                    <p className="text-xs text-muted-foreground">Web Design</p>
-                  </div>
-                  <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                    Aguardando
-                  </span>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+              <CardContent className="p-5">
+                <div className="space-y-3">
+                  {/* Welcome */}
+                  <div>
+                    <p className="text-lg font-bold text-foreground">Olá, Maria! 👋</p>
+                    <p className="text-xs text-muted-foreground">Bem-vindo(a) ao seu portal.</p>
+                  </div>
 
-          {/* Aprovação Preview */}
-          <Card className="overflow-hidden border-border/50 bg-card shadow-lg transition-all hover:shadow-xl hover:-translate-y-1">
-            <div className="bg-primary/5 px-4 py-2 border-b border-border/50">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1.5">
-                  <div className="h-3 w-3 rounded-full bg-destructive/60" />
-                  <div className="h-3 w-3 rounded-full bg-warning/60" />
-                  <div className="h-3 w-3 rounded-full bg-success/60" />
+                  {/* Contexto atual */}
+                  <div className="rounded-lg bg-primary/5 p-3 border border-primary/20">
+                    <p className="text-xs text-muted-foreground">Agora estamos em</p>
+                    <p className="text-sm font-semibold text-foreground">Setup inicial</p>
+                  </div>
+                  
+                  {/* Onboarding progress */}
+                  <div className="rounded-lg bg-background p-3 border border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-xs font-medium text-foreground flex items-center gap-1">
+                        <Rocket className="h-3 w-3 text-primary" />
+                        Onboarding do Serviço
+                      </p>
+                      <span className="text-xs text-muted-foreground">60%</span>
+                    </div>
+                    <div className="h-2 w-full rounded-full bg-secondary">
+                      <div className="h-2 w-3/5 rounded-full bg-primary" />
+                    </div>
+                    <div className="mt-2 space-y-1">
+                      {[
+                        { nome: "Reunião inicial", done: true },
+                        { nome: "Briefing", done: true },
+                        { nome: "Envio de materiais", done: true },
+                        { nome: "Setup inicial", current: true },
+                        { nome: "Aprovação final", pending: true },
+                      ].map((etapa, i) => (
+                        <div key={i} className="flex items-center gap-1.5 text-[10px]">
+                          {etapa.done ? (
+                            <CheckCircle className="h-3 w-3 text-success" />
+                          ) : etapa.current ? (
+                            <Clock className="h-3 w-3 text-primary" />
+                          ) : (
+                            <div className="h-3 w-3 rounded-full border border-muted-foreground" />
+                          )}
+                          <span className={etapa.pending ? "text-muted-foreground" : "text-foreground"}>
+                            {etapa.nome}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Cards de ação */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="rounded-lg bg-warning/10 p-2 border border-warning/20">
+                      <p className="text-[10px] text-muted-foreground">Sua próxima ação</p>
+                      <p className="text-xs font-medium text-foreground">Revisar protótipo</p>
+                    </div>
+                    <div className="rounded-lg bg-muted/50 p-2 border border-border">
+                      <p className="text-[10px] text-muted-foreground">Próxima reunião</p>
+                      <p className="text-xs font-medium text-foreground">05 de Fev, 14:00</p>
+                    </div>
+                  </div>
                 </div>
-                <span className="ml-2 text-xs text-muted-foreground">Aprovação</span>
-              </div>
-            </div>
-            <CardContent className="p-4">
-              <div className="space-y-3">
-                <div className="aspect-video rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center border border-border">
-                  <span className="text-3xl">🎨</span>
+                <div className="mt-4 flex items-center justify-center gap-2 text-sm font-medium text-primary">
+                  <span>Explorar portal do cliente</span>
+                  <ArrowRight className="h-4 w-4" />
                 </div>
-                <div className="flex gap-2">
-                  <Button size="sm" className="flex-1 h-9">
-                    <CheckCircle className="mr-1.5 h-4 w-4" />
-                    Aprovar
-                  </Button>
-                  <Button size="sm" variant="outline" className="flex-1 h-9">
-                    Solicitar ajuste
-                  </Button>
-                </div>
-                <div className="rounded-lg bg-muted/50 p-3">
-                  <p className="text-xs text-muted-foreground">
-                    "Ficou incrível! Só ajustar a tonalidade do azul..."
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </div>
     </section>
