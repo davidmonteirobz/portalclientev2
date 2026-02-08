@@ -1,67 +1,64 @@
 import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  Calendar,
-  Clock,
-  Package,
-  FolderOpen,
-  Target,
-  Rocket,
-  CheckCircle,
-  Circle,
-} from "lucide-react";
+import { ArrowRight, Calendar, Clock, Package, FolderOpen, Target, Rocket, CheckCircle, Circle } from "lucide-react";
 import { ClienteLayout } from "@/components/cliente/ClienteLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { cn } from "@/lib/utils";
-
 interface EtapaOnboarding {
   id: string;
   nome: string;
   status: "concluido" | "atual" | "pendente";
 }
-
 export default function ClienteDashboard() {
   // Dados mockados que viriam da empresa
   const clienteNome = "Maria";
   const servicoAtivo = "Design Mensal";
-  
+
   // Onboarding
   const onboarding = {
     nome: "Onboarding do Serviço",
     ativo: true,
-    etapas: [
-      { id: "1", nome: "Reunião inicial", status: "concluido" as const },
-      { id: "2", nome: "Briefing", status: "concluido" as const },
-      { id: "3", nome: "Envio de materiais", status: "concluido" as const },
-      { id: "4", nome: "Setup inicial", status: "atual" as const },
-      { id: "5", nome: "Aprovação final", status: "pendente" as const },
-    ] as EtapaOnboarding[],
+    etapas: [{
+      id: "1",
+      nome: "Reunião inicial",
+      status: "concluido" as const
+    }, {
+      id: "2",
+      nome: "Briefing",
+      status: "concluido" as const
+    }, {
+      id: "3",
+      nome: "Envio de materiais",
+      status: "concluido" as const
+    }, {
+      id: "4",
+      nome: "Setup inicial",
+      status: "atual" as const
+    }, {
+      id: "5",
+      nome: "Aprovação final",
+      status: "pendente" as const
+    }] as EtapaOnboarding[]
   };
-  
   const etapasConcluidas = onboarding.etapas.filter(e => e.status === "concluido").length;
   const totalEtapas = onboarding.etapas.length;
-  const progressoOnboarding = Math.round((etapasConcluidas / totalEtapas) * 100);
+  const progressoOnboarding = Math.round(etapasConcluidas / totalEtapas * 100);
 
   // Quando onboarding está ativo, sincroniza com a etapa atual
   const etapaAtual = onboarding.etapas.find(e => e.status === "atual");
-  const faseAtual = onboarding.ativo && etapaAtual 
-    ? etapaAtual.nome 
-    : "Design da Nova Home"; // Fase fixa após onboarding
+  const faseAtual = onboarding.ativo && etapaAtual ? etapaAtual.nome : "Design da Nova Home"; // Fase fixa após onboarding
 
   const proximaAcao = {
     descricao: "Revisar protótipo da Home",
     prazoData: "03 de Fevereiro",
-    prazoHorario: "18:00",
+    prazoHorario: "18:00"
   };
   const proximaReuniao = {
     data: "05 de Fevereiro",
     horario: "14:00",
-    assunto: "Revisão do protótipo da home",
+    assunto: "Revisão do protótipo da home"
   };
-
-  return (
-    <ClienteLayout onboardingAtivo={onboarding.ativo}>
+  return <ClienteLayout onboardingAtivo={onboarding.ativo}>
       <div className="animate-fade-in space-y-8">
         {/* Welcome Header */}
         <div className="space-y-2">
@@ -69,7 +66,7 @@ export default function ClienteDashboard() {
             Olá, {clienteNome}! 👋
           </h1>
           <p className="text-lg text-muted-foreground">
-            Tudo sobre o seu projeto, em um só lugar
+            Bem-vindo(a) ao seu portal. Aqui você encontra tudo sobre o seu projeto em um só lugar.
           </p>
         </div>
 
@@ -91,8 +88,7 @@ export default function ClienteDashboard() {
         </Card>
 
         {/* Bloco de Onboarding - só aparece quando ativo */}
-        {onboarding.ativo && (
-          <Card className="border-primary/20">
+        {onboarding.ativo && <Card className="border-primary/20">
             <CardContent className="p-6">
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -103,37 +99,19 @@ export default function ClienteDashboard() {
               </div>
               <ProgressBar value={progressoOnboarding} size="lg" animated />
               <div className="mt-4 space-y-2">
-                {onboarding.etapas.map((etapa) => (
-                  <div
-                    key={etapa.id}
-                    className={cn(
-                      "flex items-center gap-2 text-sm",
-                      etapa.status === "pendente" ? "text-muted-foreground" : "text-foreground"
-                    )}
-                  >
-                    {etapa.status === "concluido" ? (
-                      <CheckCircle className="h-4 w-4 text-success" />
-                    ) : etapa.status === "atual" ? (
-                      <Clock className="h-4 w-4 text-primary" />
-                    ) : (
-                      <Circle className="h-4 w-4 text-muted-foreground" />
-                    )}
+                {onboarding.etapas.map(etapa => <div key={etapa.id} className={cn("flex items-center gap-2 text-sm", etapa.status === "pendente" ? "text-muted-foreground" : "text-foreground")}>
+                    {etapa.status === "concluido" ? <CheckCircle className="h-4 w-4 text-success" /> : etapa.status === "atual" ? <Clock className="h-4 w-4 text-primary" /> : <Circle className="h-4 w-4 text-muted-foreground" />}
                     <span className={cn(etapa.status === "atual" && "font-medium")}>
                       {etapa.nome}
                     </span>
-                  </div>
-                ))}
+                  </div>)}
               </div>
-              <Link
-                to="/cliente/onboarding"
-                className="mt-4 flex items-center gap-1 text-sm font-medium text-primary hover:underline"
-              >
+              <Link to="/cliente/onboarding" className="mt-4 flex items-center gap-1 text-sm font-medium text-primary hover:underline">
                 Ver detalhes
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </CardContent>
-          </Card>
-        )}
+          </Card>}
 
         {/* Grid de Cards */}
         <div className="grid gap-4 sm:grid-cols-2">
@@ -187,10 +165,7 @@ export default function ClienteDashboard() {
 
         {/* CTAs */}
         <div className="flex flex-col gap-4">
-          <Link
-            to="/cliente/entregas"
-            className="flex items-center justify-between rounded-2xl bg-primary px-6 py-5 text-primary-foreground transition-all hover:opacity-90 active:scale-[0.98]"
-          >
+          <Link to="/cliente/entregas" className="flex items-center justify-between rounded-2xl bg-primary px-6 py-5 text-primary-foreground transition-all hover:opacity-90 active:scale-[0.98]">
             <div className="flex items-center gap-4">
               <Package className="h-6 w-6" />
               <span className="text-lg font-medium">Ver entregas</span>
@@ -198,10 +173,7 @@ export default function ClienteDashboard() {
             <ArrowRight className="h-5 w-5" />
           </Link>
           
-          <Link
-            to="/cliente/materiais"
-            className="flex items-center justify-between rounded-2xl border-2 border-primary bg-transparent px-6 py-5 text-primary transition-all hover:bg-primary/5 active:scale-[0.98]"
-          >
+          <Link to="/cliente/materiais" className="flex items-center justify-between rounded-2xl border-2 border-primary bg-transparent px-6 py-5 text-primary transition-all hover:bg-primary/5 active:scale-[0.98]">
             <div className="flex items-center gap-4">
               <FolderOpen className="h-6 w-6" />
               <span className="text-lg font-medium">Acessar arquivos</span>
@@ -210,6 +182,5 @@ export default function ClienteDashboard() {
           </Link>
         </div>
       </div>
-    </ClienteLayout>
-  );
+    </ClienteLayout>;
 }
