@@ -42,6 +42,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
+type StatusContrato = "ativo" | "pausado" | "rescindido";
+
+const statusContratoConfig: Record<StatusContrato, { label: string; variant: "success" | "warning" | "destructive" }> = {
+  ativo: { label: "Contrato ativo", variant: "success" },
+  pausado: { label: "Contrato pausado", variant: "warning" },
+  rescindido: { label: "Contrato rescindido", variant: "destructive" },
+};
+
 interface AjusteSolicitado {
   texto: string;
   dataHora: string;
@@ -87,6 +95,8 @@ export default function EmpresaClienteDetalhe() {
     negocio: "Studio Bella",
     servico: "Design Mensal",
   });
+
+  const [statusContrato, setStatusContrato] = useState<StatusContrato>("ativo");
 
   const [editarCadastroDialog, setEditarCadastroDialog] = useState(false);
   const [clienteEditando, setClienteEditando] = useState({
@@ -379,17 +389,39 @@ export default function EmpresaClienteDetalhe() {
                 <CardTitle className="text-base">Contexto Atual</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <Label htmlFor="fase">Tipo de contrato ou projeto</Label>
-                  <Input
-                    id="fase"
-                    value={faseAtual}
-                    onChange={(e) => setFaseAtual(e.target.value)}
-                    placeholder="Ex: Design da Nova Home"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Aparece no portal como: "Agora estamos em: {faseAtual}"
-                  </p>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="fase">Tipo de contrato ou projeto</Label>
+                    <Input
+                      id="fase"
+                      value={faseAtual}
+                      onChange={(e) => setFaseAtual(e.target.value)}
+                      placeholder="Ex: Design da Nova Home"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Aparece no portal como: "Agora estamos em: {faseAtual}"
+                    </p>
+                  </div>
+                  <Separator />
+                  <div className="space-y-2">
+                    <Label>Status do contrato</Label>
+                    <Select
+                      value={statusContrato}
+                      onValueChange={(value) => setStatusContrato(value as StatusContrato)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ativo">Contrato ativo</SelectItem>
+                        <SelectItem value="pausado">Contrato pausado</SelectItem>
+                        <SelectItem value="rescindido">Contrato rescindido</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <StatusBadge variant={statusContratoConfig[statusContrato].variant}>
+                      {statusContratoConfig[statusContrato].label}
+                    </StatusBadge>
+                  </div>
                 </div>
               </CardContent>
             </Card>
