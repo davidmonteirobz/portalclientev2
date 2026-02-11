@@ -143,7 +143,7 @@ export function EmpresaLayout({ children }: EmpresaLayoutProps) {
           isMobile ? "ml-0 pt-14" : collapsed ? "ml-16" : "ml-64"
         )}
       >
-        <div className="min-h-screen p-6 lg:p-8">{children}</div>
+        <div className="min-h-screen p-4 sm:p-6 lg:p-8 overflow-x-hidden">{children}</div>
       </main>
     </div>
   );

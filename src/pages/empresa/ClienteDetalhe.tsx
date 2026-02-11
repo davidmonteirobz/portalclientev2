@@ -304,7 +304,7 @@ export default function EmpresaClienteDetalhe() {
 
   return (
     <EmpresaLayout>
-      <div className="animate-fade-in space-y-8">
+      <div className="animate-fade-in space-y-8 overflow-hidden">
         {/* Header */}
         <div className="space-y-4">
           {/* Top row: back button + edit button */}
@@ -701,11 +701,12 @@ export default function EmpresaClienteDetalhe() {
                           : "border-border"
                       )}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-3 min-w-0">
                           <button 
                             onClick={() => toggleEntregaStatus(entrega.id)}
                             disabled={entrega.status === "ajuste_solicitado"}
+                            className="flex-shrink-0"
                           >
                             {entrega.status === "aprovado" ? (
                               <CheckCircle className="h-5 w-5 text-success" />
@@ -715,7 +716,9 @@ export default function EmpresaClienteDetalhe() {
                               <Clock className="h-5 w-5 text-muted-foreground" />
                             )}
                           </button>
-                          <span className="font-medium">{entrega.nome}</span>
+                          <span className="font-medium truncate">{entrega.nome}</span>
+                        </div>
+                        <div className="flex items-center gap-2 pl-8 sm:pl-0">
                           <StatusBadge
                             variant={
                               entrega.status === "aprovado"
@@ -731,12 +734,12 @@ export default function EmpresaClienteDetalhe() {
                               ? "Ajuste solicitado"
                               : "Em revisão"}
                           </StatusBadge>
+                          <Button variant="ghost" size="icon" className="flex-shrink-0" asChild>
+                            <a href={entrega.link} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-4 w-4" />
+                            </a>
+                          </Button>
                         </div>
-                        <Button variant="ghost" size="icon" asChild>
-                          <a href={entrega.link} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
-                        </Button>
                       </div>
 
                       {/* Detalhes do Ajuste Solicitado */}
@@ -932,7 +935,7 @@ export default function EmpresaClienteDetalhe() {
                       className="flex items-center justify-between rounded-lg border border-border bg-background p-3"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary hidden sm:flex">
                           <span className="text-sm font-medium">
                             {usuario.nome.charAt(0).toUpperCase()}
                           </span>
