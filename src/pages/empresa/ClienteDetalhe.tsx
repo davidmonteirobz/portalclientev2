@@ -96,7 +96,7 @@ export default function EmpresaClienteDetalhe() {
     servico: "Design Mensal",
   });
 
-  const [statusContrato, setStatusContrato] = useState<StatusContrato>("ativo");
+  const [statusContrato, setStatusContrato] = useState<StatusContrato>("ativo"); // contract status
 
   const [editarCadastroDialog, setEditarCadastroDialog] = useState(false);
   const [clienteEditando, setClienteEditando] = useState({
