@@ -1,185 +1,37 @@
 
-# Plano: Demo Interativa do Portal do Cliente
+
+# Adicionar Status do Contrato nos Cards de Clientes
 
 ## Resumo
 
-Transformar a segunda secao da landing page em uma demonstracao interativa e navegavel do Portal do Cliente. O visitante pode clicar nos itens do menu e ver diferentes "telas" do portal, tudo sem sair da landing page.
+Adicionar um campo de status do contrato em cada card de cliente na listagem, com tres opcoes possiveis: **Contrato ativo**, **Contrato pausado** e **Contrato rescindido**, cada um com uma cor diferente.
 
----
+## Mudancas
 
-## Como Vai Funcionar
+### 1. `src/pages/empresa/Clientes.tsx`
 
-O preview do portal tera uma navegacao funcional:
+- Adicionar campo `status` na interface `Cliente` com tipo `"ativo" | "pausado" | "rescindido"`
+- Adicionar status nos dados mock (Maria e Joao com "ativo", Ana com "pausado")
+- Exibir um `StatusBadge` ao lado do badge de servico em cada card, usando as variantes:
+  - **Contrato ativo** → variante `success` (verde)
+  - **Contrato pausado** → variante `warning` (amarelo)
+  - **Contrato rescindido** → variante `destructive` (nova variante vermelha, ou usar estilo inline)
+- Adicionar campo de status no formulario de cadastro de novo cliente (select/radio)
+- Adicionar coluna de status no modelo CSV de importacao
 
-1. **Menu clicavel** - Os itens de navegacao (Inicio, Onboarding, Entregas, Arquivos) serao botoes que mudam a "tela" exibida
-2. **Estado React** - Um state controlara qual tela esta ativa
-3. **Transicoes suaves** - Animacoes ao trocar entre telas
-4. **Tudo dentro do mockup** - Mantem o frame de navegador, criando a sensacao de estar usando o portal real
+### 2. `src/components/ui/status-badge.tsx`
 
----
+- Adicionar variante `destructive` (vermelho) para representar "Contrato rescindido"
 
-## Telas Incluidas na Demo
-
-### 1. Inicio (Dashboard)
-- Saudacao "Ola, Maria!"
-- Card de contexto atual
-- Bloco de onboarding com progresso
-- Cards de proxima acao e reuniao
-- Botoes de acao (entregas e arquivos)
-
-### 2. Onboarding
-- Timeline visual das etapas
-- Status de cada etapa (concluido, atual, pendente)
-- Barra de progresso
-
-### 3. Entregas
-- Lista de entregas com status badges
-- Cards clicaveis que podem abrir a tela de detalhe
-
-### 4. Arquivos
-- Grid de materiais com icones
-- Links externos simulados
-
----
-
-## Estrutura do Componente
+### Layout do Card (atualizado)
 
 ```text
-DemoSection
-├── Titulo e subtitulo
-└── Card (Frame do navegador)
-    ├── Browser Frame (bolinhas + URL)
-    ├── Header do Portal
-    │   └── Menu Navegavel ← CLICAVEIS
-    └── Conteudo Dinamico
-        ├── [activeTab === "inicio"] → DashboardView
-        ├── [activeTab === "onboarding"] → OnboardingView
-        ├── [activeTab === "entregas"] → EntregasView
-        └── [activeTab === "arquivos"] → ArquivosView
+┌──────────────────────────────────────────────┐
+│  [Icon]  Maria Silva                     [>] │
+│          Studio Bella                        │
+│          [Design Mensal] [Contrato ativo]    │
+└──────────────────────────────────────────────┘
 ```
 
----
+Os dois badges ficam lado a lado na terceira linha: servico + status do contrato.
 
-## Layout Visual
-
-```text
-+--------------------------------------------------+
-|  [●] [●] [●]     meuportal.agencia.com.br        |  ← Browser Frame
-+--------------------------------------------------+
-|  [Logo]   [Inicio] [Onboarding] [Entregas] [Arq] |  ← Menu Clicavel
-+--------------------------------------------------+
-|                                                   |
-|               CONTEUDO DINAMICO                   |  ← Muda conforme
-|                                                   |     o item clicado
-|   ┌─────────────────────────────────────────┐    |
-|   │                                         │    |
-|   │     (Dashboard / Onboarding /           │    |
-|   │      Entregas / Arquivos)               │    |
-|   │                                         │    |
-|   └─────────────────────────────────────────┘    |
-|                                                   |
-+--------------------------------------------------+
-```
-
----
-
-## Detalhes Tecnicos
-
-### Arquivo a Modificar
-
-**`src/pages/LandingPage.tsx`**
-
-Reestruturar a `DemoSection` para:
-
-1. Adicionar estado para controlar a aba ativa:
-```typescript
-const [activeTab, setActiveTab] = useState<"inicio" | "onboarding" | "entregas" | "arquivos">("inicio");
-```
-
-2. Tornar os itens do menu clicaveis:
-```typescript
-<button 
-  onClick={() => setActiveTab("inicio")}
-  className={activeTab === "inicio" ? "bg-foreground text-background" : "text-muted-foreground"}
->
-  Inicio
-</button>
-```
-
-3. Renderizar conteudo dinamico baseado na aba:
-```typescript
-{activeTab === "inicio" && <DashboardPreview />}
-{activeTab === "onboarding" && <OnboardingPreview />}
-{activeTab === "entregas" && <EntregasPreview />}
-{activeTab === "arquivos" && <ArquivosPreview />}
-```
-
----
-
-## Componentes de Preview (Inline)
-
-Cada "tela" sera um componente inline dentro da DemoSection:
-
-### DashboardPreview
-- Saudacao
-- Card de contexto atual
-- Bloco de onboarding com progresso (60%)
-- Cards de proxima acao e reuniao
-- Botoes de acao
-
-### OnboardingPreview
-- Timeline vertical das etapas
-- Icones de status (check, relogio, circulo vazio)
-- Cards coloridos por status
-
-### EntregasPreview
-- Lista de 3 entregas mockadas
-- Status badges (Aprovado, Em revisao)
-- Hover effects nos cards
-
-### ArquivosPreview
-- Grid 2x2 de materiais
-- Icones representativos
-- Botoes de acesso externo
-
----
-
-## Interatividade Adicional
-
-### Cliques Internos
-Alguns elementos dentro das telas podem ser clicaveis para navegar entre telas:
-
-- **"Ver detalhes" no onboarding** → Muda para aba Onboarding
-- **"Ver entregas" botao** → Muda para aba Entregas
-- **"Acessar arquivos" botao** → Muda para aba Arquivos
-- **Cards de entrega** → Poderia mostrar preview de detalhe (opcional)
-
-### Animacoes
-- Fade in/out ao trocar de aba
-- Slide suave entre conteudos
-
----
-
-## Beneficios
-
-1. **Experiencia imersiva** - Visitante "usa" o portal antes de criar conta
-2. **Demonstracao clara** - Mostra todas as funcionalidades principais
-3. **Sem redirecionamento** - Tudo acontece na landing page
-4. **Engajamento** - Interatividade aumenta tempo na pagina
-
----
-
-## Resumo das Mudancas
-
-| Arquivo | Acao |
-|---------|------|
-| `src/pages/LandingPage.tsx` | Reescrever `DemoSection` com estado e navegacao interativa |
-
----
-
-## Complexidade
-
-- **Estimativa**: Modificacao unica em um arquivo
-- **Componentes**: 4 sub-componentes de preview (inline)
-- **Estado**: useState simples para controlar aba ativa
-- **Animacoes**: Classes Tailwind existentes
