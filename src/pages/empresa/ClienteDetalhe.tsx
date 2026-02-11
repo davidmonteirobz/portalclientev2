@@ -318,9 +318,10 @@ export default function EmpresaClienteDetalhe() {
             </Button>
             <Dialog open={editarCadastroDialog} onOpenChange={setEditarCadastroDialog}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="gap-2" onClick={handleAbrirEditarCadastro}>
+                <Button variant="outline" size="sm" className="gap-2 flex-shrink-0" onClick={handleAbrirEditarCadastro}>
                   <Edit2 className="h-4 w-4" />
-                  Editar cadastro
+                  <span className="hidden sm:inline">Editar cadastro</span>
+                  <span className="sm:hidden">Editar</span>
                 </Button>
               </DialogTrigger>
               <DialogContent>
