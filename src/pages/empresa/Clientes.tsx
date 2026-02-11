@@ -235,29 +235,6 @@ export default function EmpresaClientes() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Status do contrato *</Label>
-                  <RadioGroup
-                    value={novoCliente.status}
-                    onValueChange={(value) =>
-                      setNovoCliente({ ...novoCliente, status: value as StatusContrato })
-                    }
-                    className="flex gap-4"
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <RadioGroupItem value="ativo" id="status-ativo" />
-                      <Label htmlFor="status-ativo" className="text-sm font-normal cursor-pointer">Ativo</Label>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <RadioGroupItem value="pausado" id="status-pausado" />
-                      <Label htmlFor="status-pausado" className="text-sm font-normal cursor-pointer">Pausado</Label>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <RadioGroupItem value="rescindido" id="status-rescindido" />
-                      <Label htmlFor="status-rescindido" className="text-sm font-normal cursor-pointer">Rescindido</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-                <div className="space-y-2">
                   <Label htmlFor="email">E-mail</Label>
                   <Input
                     id="email"
