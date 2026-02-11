@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Search, ChevronRight, Building2, User, Upload, FileSpreadsheet } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,14 +15,23 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 
+type StatusContrato = "ativo" | "pausado" | "rescindido";
+
 interface Cliente {
   id: string;
   nome: string;
   negocio?: string;
   servico: string;
+  status: StatusContrato;
   whatsapp: string;
   email: string;
 }
+
+const statusConfig: Record<StatusContrato, { label: string; variant: "success" | "warning" | "destructive" }> = {
+  ativo: { label: "Contrato ativo", variant: "success" },
+  pausado: { label: "Contrato pausado", variant: "warning" },
+  rescindido: { label: "Contrato rescindido", variant: "destructive" },
+};
 
 const clientesMock: Cliente[] = [
   {
@@ -29,6 +39,7 @@ const clientesMock: Cliente[] = [
     nome: "Maria Silva",
     negocio: "Studio Bella",
     servico: "Design Mensal",
+    status: "ativo",
     whatsapp: "(11) 99999-9999",
     email: "maria@studiobella.com",
   },
@@ -37,6 +48,7 @@ const clientesMock: Cliente[] = [
     nome: "João Santos",
     negocio: "TechStart",
     servico: "Site Institucional",
+    status: "ativo",
     whatsapp: "(21) 98888-8888",
     email: "joao@techstart.io",
   },
@@ -44,6 +56,7 @@ const clientesMock: Cliente[] = [
     id: "3",
     nome: "Ana Costa",
     servico: "Criativos para Redes",
+    status: "pausado",
     whatsapp: "(31) 97777-7777",
     email: "ana.costa@email.com",
   },
@@ -59,6 +72,7 @@ export default function EmpresaClientes() {
     nome: "",
     negocio: "",
     servico: "",
+    status: "ativo" as StatusContrato,
     whatsapp: "",
     email: "",
   });
@@ -73,12 +87,12 @@ export default function EmpresaClientes() {
   const handleCadastrar = () => {
     // Simulação de cadastro
     setDialogOpen(false);
-    setNovoCliente({ nome: "", negocio: "", servico: "", whatsapp: "", email: "" });
+    setNovoCliente({ nome: "", negocio: "", servico: "", status: "ativo", whatsapp: "", email: "" });
   };
 
   const handleDownloadModelo = () => {
-    const headers = ["Nome", "Negócio", "Serviço", "WhatsApp", "E-mail"];
-    const exemploRow = ["Maria Silva", "Studio Bella", "Design Mensal", "(11) 99999-9999", "maria@email.com"];
+    const headers = ["Nome", "Negócio", "Serviço", "Status", "WhatsApp", "E-mail"];
+    const exemploRow = ["Maria Silva", "Studio Bella", "Design Mensal", "ativo", "(11) 99999-9999", "maria@email.com"];
     
     const csvContent = [
       headers.join(","),
@@ -221,6 +235,29 @@ export default function EmpresaClientes() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label>Status do contrato *</Label>
+                  <RadioGroup
+                    value={novoCliente.status}
+                    onValueChange={(value) =>
+                      setNovoCliente({ ...novoCliente, status: value as StatusContrato })
+                    }
+                    className="flex gap-4"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <RadioGroupItem value="ativo" id="status-ativo" />
+                      <Label htmlFor="status-ativo" className="text-sm font-normal cursor-pointer">Ativo</Label>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <RadioGroupItem value="pausado" id="status-pausado" />
+                      <Label htmlFor="status-pausado" className="text-sm font-normal cursor-pointer">Pausado</Label>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <RadioGroupItem value="rescindido" id="status-rescindido" />
+                      <Label htmlFor="status-rescindido" className="text-sm font-normal cursor-pointer">Rescindido</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+                <div className="space-y-2">
                   <Label htmlFor="email">E-mail</Label>
                   <Input
                     id="email"
@@ -278,8 +315,11 @@ export default function EmpresaClientes() {
                     {cliente.negocio && (
                       <p className="text-sm text-muted-foreground truncate">{cliente.negocio}</p>
                     )}
-                    <div className="pt-1">
+                    <div className="flex flex-wrap gap-1.5 pt-1">
                       <StatusBadge variant="primary" className="whitespace-nowrap">{cliente.servico}</StatusBadge>
+                      <StatusBadge variant={statusConfig[cliente.status].variant} className="whitespace-nowrap">
+                        {statusConfig[cliente.status].label}
+                      </StatusBadge>
                     </div>
                   </div>
                 </div>
