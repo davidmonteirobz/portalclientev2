@@ -179,8 +179,14 @@ export default function EmpresaClienteDetalhe() {
   const [novaEntregaDialog, setNovaEntregaDialog] = useState(false);
   const [novaEntrega, setNovaEntrega] = useState({ nome: "", link: "", legenda: "" });
 
+  const [editarEntregaDialog, setEditarEntregaDialog] = useState(false);
+  const [entregaEditando, setEntregaEditando] = useState<{ id: string; nome: string; link: string; legenda: string }>({ id: "", nome: "", link: "", legenda: "" });
+
   const [novoMaterialDialog, setNovoMaterialDialog] = useState(false);
   const [novoMaterial, setNovoMaterial] = useState({ nome: "", link: "" });
+
+  const [editarMaterialDialog, setEditarMaterialDialog] = useState(false);
+  const [materialEditando, setMaterialEditando] = useState<{ id: string; nome: string; link: string }>({ id: "", nome: "", link: "" });
 
   // Estado dos usuários de acesso ao portal
   const [usuarios, setUsuarios] = useState<UsuarioCliente[]>([
@@ -216,6 +222,26 @@ export default function EmpresaClienteDetalhe() {
       setNovoMaterial({ nome: "", link: "" });
       setNovoMaterialDialog(false);
     }
+  };
+
+  const handleEditarEntrega = (entrega: Entrega) => {
+    setEntregaEditando({ id: entrega.id, nome: entrega.nome, link: entrega.link, legenda: entrega.legenda || "" });
+    setEditarEntregaDialog(true);
+  };
+
+  const handleSalvarEntrega = () => {
+    setEntregas(entregas.map((e) => e.id === entregaEditando.id ? { ...e, nome: entregaEditando.nome, link: entregaEditando.link, legenda: entregaEditando.legenda || undefined } : e));
+    setEditarEntregaDialog(false);
+  };
+
+  const handleEditarMaterial = (material: Material) => {
+    setMaterialEditando({ id: material.id, nome: material.nome, link: material.link });
+    setEditarMaterialDialog(true);
+  };
+
+  const handleSalvarMaterial = () => {
+    setMateriais(materiais.map((m) => m.id === materialEditando.id ? { ...m, nome: materialEditando.nome, link: materialEditando.link } : m));
+    setEditarMaterialDialog(false);
   };
 
   const handleEntregaEmAndamento = (id: string) => {
@@ -734,6 +760,9 @@ export default function EmpresaClienteDetalhe() {
                               ? "Ajuste solicitado"
                               : "Em revisão"}
                           </StatusBadge>
+                          <Button variant="ghost" size="icon" className="flex-shrink-0" onClick={() => handleEditarEntrega(entrega)}>
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
                           <Button variant="ghost" size="icon" className="flex-shrink-0" asChild>
                             <a href={entrega.link} target="_blank" rel="noopener noreferrer">
                               <ExternalLink className="h-4 w-4" />
@@ -836,6 +865,9 @@ export default function EmpresaClienteDetalhe() {
                     >
                       <span className="font-medium">{material.nome}</span>
                       <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" onClick={() => handleEditarMaterial(material)}>
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
                         <Button variant="ghost" size="icon" asChild>
                           <a href={material.link} target="_blank" rel="noopener noreferrer">
                             <ExternalLink className="h-4 w-4" />
@@ -976,6 +1008,71 @@ export default function EmpresaClienteDetalhe() {
           </div>
         </div>
       </div>
+
+      {/* Dialog Editar Entrega */}
+      <Dialog open={editarEntregaDialog} onOpenChange={setEditarEntregaDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar Entrega</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Nome da entrega</Label>
+              <Input
+                value={entregaEditando.nome}
+                onChange={(e) => setEntregaEditando({ ...entregaEditando, nome: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Link</Label>
+              <Input
+                value={entregaEditando.link}
+                onChange={(e) => setEntregaEditando({ ...entregaEditando, link: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Legenda (opcional)</Label>
+              <Input
+                value={entregaEditando.legenda}
+                onChange={(e) => setEntregaEditando({ ...entregaEditando, legenda: e.target.value })}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setEditarEntregaDialog(false)}>Cancelar</Button>
+            <Button onClick={handleSalvarEntrega}>Salvar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Editar Material */}
+      <Dialog open={editarMaterialDialog} onOpenChange={setEditarMaterialDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar Material</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Nome do material</Label>
+              <Input
+                value={materialEditando.nome}
+                onChange={(e) => setMaterialEditando({ ...materialEditando, nome: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Link</Label>
+              <Input
+                value={materialEditando.link}
+                onChange={(e) => setMaterialEditando({ ...materialEditando, link: e.target.value })}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setEditarMaterialDialog(false)}>Cancelar</Button>
+            <Button onClick={handleSalvarMaterial}>Salvar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </EmpresaLayout>
   );
 }
