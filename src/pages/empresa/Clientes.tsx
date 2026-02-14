@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, ChevronRight, User, Upload, FileSpreadsheet } from "lucide-react";
+import { Plus, Search, ChevronRight, Building2, User, Upload, FileSpreadsheet } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,87 +14,80 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+
+type StatusContrato = "ativo" | "pausado" | "rescindido";
 
 interface Cliente {
   id: string;
   nome: string;
+  negocio?: string;
+  servico: string;
+  status: StatusContrato;
+  whatsapp: string;
   email: string;
-  status: string;
 }
 
-const statusConfig: Record<string, { label: string; variant: "success" | "warning" | "destructive" }> = {
-  ativo: { label: "Ativo", variant: "success" },
-  pendente: { label: "Pendente", variant: "warning" },
-  inativo: { label: "Inativo", variant: "destructive" },
+const statusConfig: Record<StatusContrato, { label: string; variant: "success" | "warning" | "destructive" }> = {
+  ativo: { label: "Contrato ativo", variant: "success" },
+  pausado: { label: "Contrato pausado", variant: "warning" },
+  rescindido: { label: "Contrato rescindido", variant: "destructive" },
 };
+
+const clientesMock: Cliente[] = [
+  {
+    id: "1",
+    nome: "Maria Silva",
+    negocio: "Studio Bella",
+    servico: "Design Mensal",
+    status: "ativo",
+    whatsapp: "(11) 99999-9999",
+    email: "maria@studiobella.com",
+  },
+  {
+    id: "2",
+    nome: "João Santos",
+    negocio: "TechStart",
+    servico: "Site Institucional",
+    status: "ativo",
+    whatsapp: "(21) 98888-8888",
+    email: "joao@techstart.io",
+  },
+  {
+    id: "3",
+    nome: "Ana Costa",
+    servico: "Criativos para Redes",
+    status: "pausado",
+    whatsapp: "(31) 97777-7777",
+    email: "ana.costa@email.com",
+  },
+];
 
 export default function EmpresaClientes() {
   const navigate = useNavigate();
-  const { empresaId } = useAuth();
-  const { toast } = useToast();
-  const [clientes, setClientes] = useState<Cliente[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [clientes] = useState<Cliente[]>(clientesMock);
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [novoCliente, setNovoCliente] = useState({
     nome: "",
+    negocio: "",
+    servico: "",
+    status: "ativo" as StatusContrato,
+    whatsapp: "",
     email: "",
   });
-
-  // Fetch clients from Supabase
-  useEffect(() => {
-    if (!empresaId) return;
-    const fetchClientes = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("portal_clients")
-        .select("id, nome, email, status")
-        .eq("empresa_id", empresaId)
-        .neq("status", "inativo");
-      if (data && !error) {
-        setClientes(data);
-      }
-      setLoading(false);
-    };
-    fetchClientes();
-  }, [empresaId]);
 
   const clientesFiltrados = clientes.filter(
     (cliente) =>
       cliente.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cliente.email.toLowerCase().includes(searchQuery.toLowerCase())
+      cliente.negocio?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      cliente.servico.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleCadastrar = async () => {
-    if (!novoCliente.nome.trim() || !novoCliente.email.trim()) return;
-    try {
-      const response = await supabase.functions.invoke("invite-client", {
-        body: {
-          nome: novoCliente.nome.trim(),
-          email: novoCliente.email.trim(),
-        },
-      });
-      if (response.error || response.data?.error) {
-        toast({ title: "Erro ao convidar", description: response.data?.error || "Tente novamente.", variant: "destructive" });
-      } else {
-        // Refresh list
-        const { data } = await supabase
-          .from("portal_clients")
-          .select("id, nome, email, status")
-          .eq("empresa_id", empresaId!)
-          .neq("status", "inativo");
-        if (data) setClientes(data);
-        toast({ title: "Convite enviado!", description: `E-mail enviado para ${novoCliente.email.trim()}.` });
-        setDialogOpen(false);
-        setNovoCliente({ nome: "", email: "" });
-      }
-    } catch {
-      toast({ title: "Erro ao convidar", description: "Ocorreu um erro inesperado.", variant: "destructive" });
-    }
+  const handleCadastrar = () => {
+    // Simulação de cadastro
+    setDialogOpen(false);
+    setNovoCliente({ nome: "", negocio: "", servico: "", status: "ativo", whatsapp: "", email: "" });
   };
 
   const handleDownloadModelo = () => {
@@ -208,7 +202,40 @@ export default function EmpresaClientes() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email">E-mail *</Label>
+                  <Label htmlFor="negocio">Nome do negócio (opcional)</Label>
+                  <Input
+                    id="negocio"
+                    placeholder="Ex: Studio Bella"
+                    value={novoCliente.negocio}
+                    onChange={(e) =>
+                      setNovoCliente({ ...novoCliente, negocio: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="servico">Serviço ativo *</Label>
+                  <Input
+                    id="servico"
+                    placeholder="Ex: Design mensal, Site institucional"
+                    value={novoCliente.servico}
+                    onChange={(e) =>
+                      setNovoCliente({ ...novoCliente, servico: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="whatsapp">WhatsApp</Label>
+                  <Input
+                    id="whatsapp"
+                    placeholder="(00) 00000-0000"
+                    value={novoCliente.whatsapp}
+                    onChange={(e) =>
+                      setNovoCliente({ ...novoCliente, whatsapp: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">E-mail</Label>
                   <Input
                     id="email"
                     type="email"
@@ -244,11 +271,7 @@ export default function EmpresaClientes() {
 
         {/* Lista de Clientes */}
         <div className="space-y-3">
-          {loading ? (
-            <div className="flex justify-center py-16">
-              <p className="text-muted-foreground">Carregando...</p>
-            </div>
-          ) : clientesFiltrados.map((cliente, index) => (
+          {clientesFiltrados.map((cliente, index) => (
             <div
               key={cliente.id}
               className="group cursor-pointer rounded-xl border border-border bg-card p-4 transition-all card-hover animate-slide-up"
@@ -258,14 +281,21 @@ export default function EmpresaClientes() {
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-4 min-w-0">
                   <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-primary/10">
-                    <User className="h-5 w-5 text-primary" />
+                    {cliente.negocio ? (
+                      <Building2 className="h-5 w-5 text-primary" />
+                    ) : (
+                      <User className="h-5 w-5 text-primary" />
+                    )}
                   </div>
                   <div className="space-y-1 min-w-0">
                     <h3 className="font-semibold text-foreground truncate">{cliente.nome}</h3>
-                    <p className="text-sm text-muted-foreground truncate">{cliente.email}</p>
+                    {cliente.negocio && (
+                      <p className="text-sm text-muted-foreground truncate">{cliente.negocio}</p>
+                    )}
                     <div className="flex flex-wrap gap-1.5 pt-1">
-                      <StatusBadge variant={statusConfig[cliente.status]?.variant || "warning"} className="whitespace-nowrap">
-                        {statusConfig[cliente.status]?.label || cliente.status}
+                      <StatusBadge variant="primary" className="whitespace-nowrap">{cliente.servico}</StatusBadge>
+                      <StatusBadge variant={statusConfig[cliente.status].variant} className="whitespace-nowrap">
+                        {statusConfig[cliente.status].label}
                       </StatusBadge>
                     </div>
                   </div>

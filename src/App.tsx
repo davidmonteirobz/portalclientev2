@@ -4,12 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { EmpresaThemeProvider } from "@/contexts/EmpresaThemeContext";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
-import Cadastro from "./pages/Cadastro";
 
 // Empresa
 import EmpresaClientes from "./pages/empresa/Clientes";
@@ -25,37 +21,35 @@ import ClienteMateriais from "./pages/cliente/Materiais";
 
 const queryClient = new QueryClient();
 
+// Main App component
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <EmpresaThemeProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/cadastro" element={<Cadastro />} />
-              
-              {/* Área da Empresa - Protegida */}
-              <Route path="/empresa/clientes" element={<ProtectedRoute><EmpresaClientes /></ProtectedRoute>} />
-              <Route path="/empresa/cliente-detalhe" element={<ProtectedRoute><EmpresaClienteDetalhe /></ProtectedRoute>} />
-              <Route path="/empresa/configuracoes" element={<ProtectedRoute><EmpresaConfiguracoes /></ProtectedRoute>} />
-              
-              {/* Portal do Cliente */}
-              <Route path="/cliente/dashboard" element={<ClienteDashboard />} />
-              <Route path="/cliente/onboarding" element={<ClienteOnboarding />} />
-              <Route path="/cliente/entregas" element={<ClienteEntregas />} />
-              <Route path="/cliente/entrega-detalhe" element={<ClienteEntregaDetalhe />} />
-              <Route path="/cliente/materiais" element={<ClienteMateriais />} />
-              
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </EmpresaThemeProvider>
-    </AuthProvider>
+    <EmpresaThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            
+            {/* Área da Empresa */}
+            <Route path="/empresa/clientes" element={<EmpresaClientes />} />
+            <Route path="/empresa/cliente-detalhe" element={<EmpresaClienteDetalhe />} />
+            <Route path="/empresa/configuracoes" element={<EmpresaConfiguracoes />} />
+            
+            {/* Portal do Cliente */}
+            <Route path="/cliente/dashboard" element={<ClienteDashboard />} />
+            <Route path="/cliente/onboarding" element={<ClienteOnboarding />} />
+            <Route path="/cliente/entregas" element={<ClienteEntregas />} />
+            <Route path="/cliente/entrega-detalhe" element={<ClienteEntregaDetalhe />} />
+            <Route path="/cliente/materiais" element={<ClienteMateriais />} />
+            
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </EmpresaThemeProvider>
   </QueryClientProvider>
 );
 

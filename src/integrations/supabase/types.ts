@@ -14,134 +14,16 @@ export type Database = {
   }
   public: {
     Tables: {
-      empresas: {
-        Row: {
-          created_at: string
-          id: string
-          nome: string
-          owner_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          nome: string
-          owner_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          nome?: string
-          owner_id?: string
-        }
-        Relationships: []
-      }
-      portal_clients: {
-        Row: {
-          activated_at: string | null
-          email: string
-          empresa_id: string
-          id: string
-          invited_at: string
-          nome: string
-          status: string
-          user_id: string | null
-        }
-        Insert: {
-          activated_at?: string | null
-          email: string
-          empresa_id: string
-          id?: string
-          invited_at?: string
-          nome: string
-          status?: string
-          user_id?: string | null
-        }
-        Update: {
-          activated_at?: string | null
-          email?: string
-          empresa_id?: string
-          id?: string
-          invited_at?: string
-          nome?: string
-          status?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "portal_clients_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      profiles: {
-        Row: {
-          created_at: string
-          empresa_id: string | null
-          id: string
-          nome: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          empresa_id?: string | null
-          id?: string
-          nome: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          empresa_id?: string | null
-          id?: string
-          nome?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_roles: {
-        Row: {
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      get_user_empresa_id: { Args: { _user_id: string }; Returns: string }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
+      [_ in never]: never
     }
     Enums: {
-      app_role: "empresa" | "cliente"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -268,8 +150,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      app_role: ["empresa", "cliente"],
-    },
+    Enums: {},
   },
 } as const

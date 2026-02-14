@@ -1,12 +1,11 @@
 import { ReactNode } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Users, LayoutDashboard, ChevronLeft, ChevronRight, Menu, X, Settings, LogOut } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Users, LayoutDashboard, ChevronLeft, ChevronRight, Menu, X, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEmpresaTheme } from "@/contexts/EmpresaThemeContext";
-import { useAuth } from "@/contexts/AuthContext";
 
 interface EmpresaLayoutProps {
   children: ReactNode;
@@ -19,17 +18,10 @@ const menuItems = [
 
 export function EmpresaLayout({ children }: EmpresaLayoutProps) {
   const location = useLocation();
-  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { theme } = useEmpresaTheme();
-  const { signOut } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const handleLogout = async () => {
-    await signOut();
-    navigate("/login");
-  };
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -138,29 +130,8 @@ export function EmpresaLayout({ children }: EmpresaLayoutProps) {
 
         {/* Footer */}
         <div className="border-t border-sidebar-border p-4">
-          {(isMobile || !collapsed) ? (
-            <div className="space-y-3">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="w-full justify-start gap-2 text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              >
-                <LogOut className="h-4 w-4" />
-                Sair
-              </Button>
-              <p className="text-xs text-sidebar-muted">Área da Empresa</p>
-            </div>
-          ) : (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              className="h-8 w-8 text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              title="Sair"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
+          {(isMobile || !collapsed) && (
+            <p className="text-xs text-sidebar-muted">Área da Empresa</p>
           )}
         </div>
       </aside>
