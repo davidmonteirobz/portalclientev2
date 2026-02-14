@@ -1,11 +1,12 @@
 import { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Users, LayoutDashboard, ChevronLeft, ChevronRight, Menu, X, Settings } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Users, LayoutDashboard, ChevronLeft, ChevronRight, Menu, X, Settings, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEmpresaTheme } from "@/contexts/EmpresaThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface EmpresaLayoutProps {
   children: ReactNode;
@@ -18,10 +19,17 @@ const menuItems = [
 
 export function EmpresaLayout({ children }: EmpresaLayoutProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { theme } = useEmpresaTheme();
+  const { signOut } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate("/login");
+  };
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -129,7 +137,15 @@ export function EmpresaLayout({ children }: EmpresaLayoutProps) {
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-sidebar-border p-4">
+        <div className="border-t border-sidebar-border p-4 space-y-3">
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            className="w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          >
+            <LogOut className="h-5 w-5 flex-shrink-0" />
+            {(isMobile || !collapsed) && <span>Sair</span>}
+          </Button>
           {(isMobile || !collapsed) && (
             <p className="text-xs text-sidebar-muted">Área da Empresa</p>
           )}
