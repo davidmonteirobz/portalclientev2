@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -41,6 +41,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 type StatusContrato = "ativo" | "pausado" | "rescindido";
 
@@ -87,6 +90,8 @@ export default function EmpresaClienteDetalhe() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const clienteId = searchParams.get("id") || "1";
+  const { empresaId } = useAuth();
+  const { toast } = useToast();
 
   // Estados do cliente
   const [cliente, setCliente] = useState({
@@ -189,12 +194,36 @@ export default function EmpresaClienteDetalhe() {
   const [materialEditando, setMaterialEditando] = useState<{ id: string; nome: string; link: string }>({ id: "", nome: "", link: "" });
 
   // Estado dos usuários de acesso ao portal
-  const [usuarios, setUsuarios] = useState<UsuarioCliente[]>([
-    { id: "1", nome: "Maria Silva", email: "maria@studiobella.com", status: "ativo" },
-    { id: "2", nome: "João Assistente", email: "joao@studiobella.com", status: "pendente" },
-  ]);
+  const [usuarios, setUsuarios] = useState<UsuarioCliente[]>([]);
   const [novoUsuarioDialog, setNovoUsuarioDialog] = useState(false);
   const [novoUsuario, setNovoUsuario] = useState({ nome: "", email: "" });
+  const [loadingUsuarios, setLoadingUsuarios] = useState(false);
+  const [addingUsuario, setAddingUsuario] = useState(false);
+
+  // Load portal clients from Supabase
+  useEffect(() => {
+    if (!empresaId) return;
+    
+    const fetchUsuarios = async () => {
+      setLoadingUsuarios(true);
+      const { data, error } = await supabase
+        .from("portal_clients")
+        .select("id, nome, email, status")
+        .eq("empresa_id", empresaId);
+      
+      if (data && !error) {
+        setUsuarios(data.map((u: any) => ({
+          id: u.id,
+          nome: u.nome,
+          email: u.email,
+          status: u.status === "ativo" ? "ativo" : "pendente",
+        })));
+      }
+      setLoadingUsuarios(false);
+    };
+
+    fetchUsuarios();
+  }, [empresaId]);
 
   const handleAddEntrega = () => {
     if (novaEntrega.nome && novaEntrega.link) {
@@ -310,22 +339,71 @@ export default function EmpresaClienteDetalhe() {
   };
 
   // Funções de usuários do portal
-  const handleAddUsuario = () => {
-    if (novoUsuario.nome.trim() && novoUsuario.email.trim()) {
-      const newUsuario: UsuarioCliente = {
-        id: Date.now().toString(),
-        nome: novoUsuario.nome.trim(),
-        email: novoUsuario.email.trim(),
-        status: "pendente",
-      };
-      setUsuarios([...usuarios, newUsuario]);
-      setNovoUsuario({ nome: "", email: "" });
-      setNovoUsuarioDialog(false);
+  const handleAddUsuario = async () => {
+    if (!novoUsuario.nome.trim() || !novoUsuario.email.trim()) return;
+    
+    setAddingUsuario(true);
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const response = await supabase.functions.invoke("invite-client", {
+        body: {
+          nome: novoUsuario.nome.trim(),
+          email: novoUsuario.email.trim(),
+        },
+      });
+
+      if (response.error || response.data?.error) {
+        toast({
+          title: "Erro ao convidar",
+          description: response.data?.error || "Tente novamente.",
+          variant: "destructive",
+        });
+      } else {
+        // Refresh list
+        const { data } = await supabase
+          .from("portal_clients")
+          .select("id, nome, email, status")
+          .eq("empresa_id", empresaId!);
+        
+        if (data) {
+          setUsuarios(data.map((u: any) => ({
+            id: u.id,
+            nome: u.nome,
+            email: u.email,
+            status: u.status === "ativo" ? "ativo" : "pendente",
+          })));
+        }
+        
+        toast({
+          title: "Convite enviado!",
+          description: `Um e-mail foi enviado para ${novoUsuario.email.trim()}.`,
+        });
+        setNovoUsuario({ nome: "", email: "" });
+        setNovoUsuarioDialog(false);
+      }
+    } catch (err) {
+      toast({
+        title: "Erro ao convidar",
+        description: "Ocorreu um erro inesperado.",
+        variant: "destructive",
+      });
     }
+    
+    setAddingUsuario(false);
   };
 
-  const handleRemoveUsuario = (id: string) => {
-    setUsuarios(usuarios.filter((u) => u.id !== id));
+  const handleRemoveUsuario = async (id: string) => {
+    const { error } = await supabase
+      .from("portal_clients")
+      .update({ status: "inativo" })
+      .eq("id", id);
+    
+    if (!error) {
+      setUsuarios(usuarios.filter((u) => u.id !== id));
+      toast({ title: "Acesso removido" });
+    }
   };
 
   return (
@@ -950,7 +1028,9 @@ export default function EmpresaClienteDetalhe() {
                         <Button variant="outline" onClick={() => setNovoUsuarioDialog(false)}>
                           Cancelar
                         </Button>
-                        <Button onClick={handleAddUsuario}>Adicionar</Button>
+                        <Button onClick={handleAddUsuario} disabled={addingUsuario}>
+                          {addingUsuario ? "Enviando..." : "Adicionar"}
+                        </Button>
                       </div>
                     </DialogContent>
                   </Dialog>
