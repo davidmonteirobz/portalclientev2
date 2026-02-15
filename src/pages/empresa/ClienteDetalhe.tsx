@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -41,6 +41,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2 } from "lucide-react";
 
 type StatusContrato = "ativo" | "pausado" | "rescindido";
 
@@ -86,17 +88,18 @@ interface UsuarioCliente {
 export default function EmpresaClienteDetalhe() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const clienteId = searchParams.get("id") || "1";
+  const clienteId = searchParams.get("id") || "";
+  const [loading, setLoading] = useState(true);
 
   // Estados do cliente
   const [cliente, setCliente] = useState({
     id: clienteId,
-    nome: "Maria Silva",
-    negocio: "Studio Bella",
-    servico: "Design Mensal",
+    nome: "",
+    negocio: "",
+    servico: "",
   });
 
-  const [statusContrato, setStatusContrato] = useState<StatusContrato>("ativo"); // contract status
+  const [statusContrato, setStatusContrato] = useState<StatusContrato>("ativo");
 
   const [editarCadastroDialog, setEditarCadastroDialog] = useState(false);
   const [clienteEditando, setClienteEditando] = useState({
@@ -124,57 +127,66 @@ export default function EmpresaClienteDetalhe() {
     setEditarCadastroDialog(false);
   };
 
+  // Fetch client data from Supabase
+  useEffect(() => {
+    const fetchCliente = async () => {
+      if (!clienteId) return;
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from("portal_clients")
+          .select("id, nome, negocio, servico, email, whatsapp, status")
+          .eq("id", clienteId)
+          .single();
+
+        if (error) throw error;
+        if (data) {
+          setCliente({
+            id: data.id,
+            nome: data.nome,
+            negocio: data.negocio || "",
+            servico: data.servico || "",
+          });
+          const s = data.status as StatusContrato;
+          if (s === "ativo" || s === "pausado" || s === "rescindido") {
+            setStatusContrato(s);
+          }
+        }
+      } catch (err) {
+        console.error("Erro ao buscar cliente:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCliente();
+  }, [clienteId]);
+
   // Estado do Onboarding
   const [onboarding, setOnboarding] = useState({
     nome: "Onboarding do Serviço",
-    ativo: true,
-    etapas: [
-      { id: "1", nome: "Reunião inicial", status: "concluido" as const },
-      { id: "2", nome: "Briefing", status: "concluido" as const },
-      { id: "3", nome: "Envio de materiais", status: "concluido" as const },
-      { id: "4", nome: "Setup inicial", status: "atual" as const },
-      { id: "5", nome: "Aprovação final", status: "pendente" as const },
-    ] as EtapaOnboarding[],
+    ativo: false,
+    etapas: [] as EtapaOnboarding[],
   });
 
   const [novaEtapaDialog, setNovaEtapaDialog] = useState(false);
   const [novaEtapa, setNovaEtapa] = useState("");
 
-  const [faseAtual, setFaseAtual] = useState("Design da Nova Home");
+  const [faseAtual, setFaseAtual] = useState("");
   const [proximaAcao, setProximaAcao] = useState({
-    descricao: "Revisar protótipo da Home",
-    prazoData: "2026-02-03",
-    prazoHorario: "18:00",
+    descricao: "",
+    prazoData: "",
+    prazoHorario: "",
   });
   const [reuniao, setReuniao] = useState({
-    data: "2026-02-05",
-    horario: "14:00",
-    assunto: "Revisão do protótipo da home",
+    data: "",
+    horario: "",
+    assunto: "",
   });
-  const [observacoesInternas, setObservacoesInternas] = useState(
-    "Cliente prefere tons mais claros. Prazo flexível para esta entrega."
-  );
+  const [observacoesInternas, setObservacoesInternas] = useState("");
 
-  const [entregas, setEntregas] = useState<Entrega[]>([
-    { id: "1", nome: "Wireframe Home", status: "aprovado", link: "https://figma.com/..." },
-    { id: "2", nome: "Design Home v1", status: "em_revisao", link: "https://figma.com/..." },
-    { 
-      id: "3", 
-      nome: "Design Home v2", 
-      status: "ajuste_solicitado", 
-      link: "https://figma.com/...",
-      ajuste: {
-        texto: "Gostaria que o banner principal fosse mais alto e com cores mais vibrantes. Também seria bom adicionar um botão de CTA mais visível.",
-        dataHora: "31/01/2026, 14:30",
-      }
-    },
-  ]);
+  const [entregas, setEntregas] = useState<Entrega[]>([]);
 
-  const [materiais, setMateriais] = useState<Material[]>([
-    { id: "1", nome: "Identidade Visual", link: "https://drive.google.com/..." },
-    { id: "2", nome: "Briefing", link: "https://notion.so/..." },
-    { id: "3", nome: "Textos", link: "https://docs.google.com/..." },
-  ]);
+  const [materiais, setMateriais] = useState<Material[]>([]);
 
   const [novaEntregaDialog, setNovaEntregaDialog] = useState(false);
   const [novaEntrega, setNovaEntrega] = useState({ nome: "", link: "", legenda: "" });
@@ -189,10 +201,7 @@ export default function EmpresaClienteDetalhe() {
   const [materialEditando, setMaterialEditando] = useState<{ id: string; nome: string; link: string }>({ id: "", nome: "", link: "" });
 
   // Estado dos usuários de acesso ao portal
-  const [usuarios, setUsuarios] = useState<UsuarioCliente[]>([
-    { id: "1", nome: "Maria Silva", email: "maria@studiobella.com", status: "ativo" },
-    { id: "2", nome: "João Assistente", email: "joao@studiobella.com", status: "pendente" },
-  ]);
+  const [usuarios, setUsuarios] = useState<UsuarioCliente[]>([]);
   const [novoUsuarioDialog, setNovoUsuarioDialog] = useState(false);
   const [novoUsuario, setNovoUsuario] = useState({ nome: "", email: "" });
 
@@ -330,6 +339,11 @@ export default function EmpresaClienteDetalhe() {
 
   return (
     <EmpresaLayout>
+      {loading ? (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      ) : (
       <div className="animate-fade-in space-y-8 overflow-hidden">
         {/* Header */}
         <div className="space-y-4">
@@ -1008,6 +1022,7 @@ export default function EmpresaClienteDetalhe() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Dialog Editar Entrega */}
       <Dialog open={editarEntregaDialog} onOpenChange={setEditarEntregaDialog}>
