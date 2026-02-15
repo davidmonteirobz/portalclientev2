@@ -42,9 +42,12 @@ export type Database = {
           empresa_id: string
           id: string
           invited_at: string
+          negocio: string | null
           nome: string
+          servico: string
           status: string
           user_id: string | null
+          whatsapp: string | null
         }
         Insert: {
           activated_at?: string | null
@@ -52,9 +55,12 @@ export type Database = {
           empresa_id: string
           id?: string
           invited_at?: string
+          negocio?: string | null
           nome: string
+          servico?: string
           status?: string
           user_id?: string | null
+          whatsapp?: string | null
         }
         Update: {
           activated_at?: string | null
@@ -62,9 +68,12 @@ export type Database = {
           empresa_id?: string
           id?: string
           invited_at?: string
+          negocio?: string | null
           nome?: string
+          servico?: string
           status?: string
           user_id?: string | null
+          whatsapp?: string | null
         }
         Relationships: [
           {
