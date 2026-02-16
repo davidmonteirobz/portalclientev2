@@ -35,6 +35,41 @@ export type Database = {
         }
         Relationships: []
       }
+      portal_client_users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          nome: string
+          portal_client_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          nome: string
+          portal_client_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          nome?: string
+          portal_client_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_client_users_portal_client_id_fkey"
+            columns: ["portal_client_id"]
+            isOneToOne: false
+            referencedRelation: "portal_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       portal_clients: {
         Row: {
           activated_at: string | null
