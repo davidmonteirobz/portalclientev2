@@ -205,6 +205,21 @@ export default function EmpresaClienteDetalhe() {
   const [novoUsuarioDialog, setNovoUsuarioDialog] = useState(false);
   const [novoUsuario, setNovoUsuario] = useState({ nome: "", email: "" });
 
+  // Fetch portal users from Supabase
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      if (!clienteId) return;
+      const { data, error } = await supabase
+        .from("portal_client_users" as any)
+        .select("id, nome, email, status")
+        .eq("portal_client_id", clienteId);
+      if (data && !error) {
+        setUsuarios((data as any[]).map((u) => ({ id: u.id, nome: u.nome, email: u.email, status: u.status })));
+      }
+    };
+    fetchUsuarios();
+  }, [clienteId]);
+
   const handleAddEntrega = () => {
     if (novaEntrega.nome && novaEntrega.link) {
       setEntregas([
@@ -319,21 +334,24 @@ export default function EmpresaClienteDetalhe() {
   };
 
   // Funções de usuários do portal
-  const handleAddUsuario = () => {
+  const handleAddUsuario = async () => {
     if (novoUsuario.nome.trim() && novoUsuario.email.trim()) {
-      const newUsuario: UsuarioCliente = {
-        id: Date.now().toString(),
-        nome: novoUsuario.nome.trim(),
-        email: novoUsuario.email.trim(),
-        status: "pendente",
-      };
-      setUsuarios([...usuarios, newUsuario]);
+      const { data, error } = await supabase
+        .from("portal_client_users" as any)
+        .insert({ portal_client_id: clienteId, nome: novoUsuario.nome.trim(), email: novoUsuario.email.trim() } as any)
+        .select("id, nome, email, status")
+        .single();
+      if (data && !error) {
+        const d = data as any;
+        setUsuarios([...usuarios, { id: d.id, nome: d.nome, email: d.email, status: d.status }]);
+      }
       setNovoUsuario({ nome: "", email: "" });
       setNovoUsuarioDialog(false);
     }
   };
 
-  const handleRemoveUsuario = (id: string) => {
+  const handleRemoveUsuario = async (id: string) => {
+    await supabase.from("portal_client_users" as any).delete().eq("id", id);
     setUsuarios(usuarios.filter((u) => u.id !== id));
   };
 
