@@ -73,23 +73,36 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Invite user via Supabase Auth (sends email with link to set password)
-    const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-      data: {
-        nome,
-        role: "cliente",
-      },
-      redirectTo: `${supabaseUrl.replace('.supabase.co', '.supabase.co')}/auth/v1/callback`,
-    });
+    // Use the app's published URL as redirect
+    const redirectUrl = "https://portalclientev2.lovable.app/login";
 
-    if (inviteError) {
-      // If user already exists, that's ok - just save the portal_client_user record
-      if (!inviteError.message.includes("already been registered")) {
+    // Check if user already exists in auth
+    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
+    const existingUser = existingUsers?.users?.find(u => u.email === email);
+
+    let invited = false;
+
+    if (!existingUser) {
+      // Invite new user via Supabase Auth
+      const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+        data: {
+          nome,
+          role: "cliente",
+        },
+        redirectTo: redirectUrl,
+      });
+
+      if (inviteError) {
+        console.error("Invite error:", inviteError.message);
         return new Response(JSON.stringify({ error: inviteError.message }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+      invited = true;
+    } else {
+      // User already exists - just link them
+      console.log("User already exists, skipping invite for:", email);
     }
 
     // Insert portal_client_users record
@@ -111,11 +124,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    return new Response(JSON.stringify({ user: newUser, invited: !inviteError }), {
+    return new Response(JSON.stringify({ user: newUser, invited }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
+    console.error("Edge function error:", err);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
