@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -334,16 +335,40 @@ export default function EmpresaClienteDetalhe() {
   };
 
   // Funções de usuários do portal
+  const [enviandoConvite, setEnviandoConvite] = useState(false);
+
   const handleAddUsuario = async () => {
     if (novoUsuario.nome.trim() && novoUsuario.email.trim()) {
-      const { data, error } = await supabase
-        .from("portal_client_users" as any)
-        .insert({ portal_client_id: clienteId, nome: novoUsuario.nome.trim(), email: novoUsuario.email.trim() } as any)
-        .select("id, nome, email, status")
-        .single();
-      if (data && !error) {
-        const d = data as any;
-        setUsuarios([...usuarios, { id: d.id, nome: d.nome, email: d.email, status: d.status }]);
+      setEnviandoConvite(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await fetch(
+          "https://byilgvjorlntlldvjexq.supabase.co/functions/v1/invite-portal-user",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.access_token}`,
+              apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5aWxndmpvcmxudGxsZHZqZXhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwNzQ5MTksImV4cCI6MjA4NjY1MDkxOX0.C_NVXPpKc-9rEquqF86ph7vi4GcDw2oc3MtJn8JcfQc",
+            },
+            body: JSON.stringify({
+              nome: novoUsuario.nome.trim(),
+              email: novoUsuario.email.trim(),
+              portal_client_id: clienteId,
+            }),
+          }
+        );
+        const result = await res.json();
+        if (!res.ok) {
+          toast.error(result.error || "Erro ao enviar convite");
+        } else {
+          setUsuarios([...usuarios, { id: result.user.id, nome: result.user.nome, email: result.user.email, status: result.user.status }]);
+          toast.success("Convite enviado! O cliente receberá um e-mail para criar sua senha.");
+        }
+      } catch (err) {
+        toast.error("Erro ao enviar convite");
+      } finally {
+        setEnviandoConvite(false);
       }
       setNovoUsuario({ nome: "", email: "" });
       setNovoUsuarioDialog(false);
@@ -982,7 +1007,9 @@ export default function EmpresaClienteDetalhe() {
                         <Button variant="outline" onClick={() => setNovoUsuarioDialog(false)}>
                           Cancelar
                         </Button>
-                        <Button onClick={handleAddUsuario}>Adicionar</Button>
+                        <Button onClick={handleAddUsuario} disabled={enviandoConvite}>
+                          {enviandoConvite ? "Enviando..." : "Adicionar"}
+                        </Button>
                       </div>
                     </DialogContent>
                   </Dialog>
