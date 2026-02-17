@@ -336,33 +336,41 @@ export default function EmpresaClienteDetalhe() {
 
   // Funções de usuários do portal
   const [enviandoConvite, setEnviandoConvite] = useState(false);
+  const [reenviandoConvite, setReenviandoConvite] = useState<string | null>(null);
+
+  const sendInvite = async (nome: string, email: string, resend = false) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const res = await fetch(
+      "https://byilgvjorlntlldvjexq.supabase.co/functions/v1/send-invite",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+          apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5aWxndmpvcmxudGxsZHZqZXhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwNzQ5MTksImV4cCI6MjA4NjY1MDkxOX0.C_NVXPpKc-9rEquqF86ph7vi4GcDw2oc3MtJn8JcfQc",
+        },
+        body: JSON.stringify({
+          nome: nome.trim(),
+          email: email.trim(),
+          portal_client_id: clienteId,
+          resend,
+        }),
+      }
+    );
+    return { res, result: await res.json() };
+  };
 
   const handleAddUsuario = async () => {
     if (novoUsuario.nome.trim() && novoUsuario.email.trim()) {
       setEnviandoConvite(true);
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const res = await fetch(
-          "https://byilgvjorlntlldvjexq.supabase.co/functions/v1/invite-portal-user",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.access_token}`,
-              apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5aWxndmpvcmxudGxsZHZqZXhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwNzQ5MTksImV4cCI6MjA4NjY1MDkxOX0.C_NVXPpKc-9rEquqF86ph7vi4GcDw2oc3MtJn8JcfQc",
-            },
-            body: JSON.stringify({
-              nome: novoUsuario.nome.trim(),
-              email: novoUsuario.email.trim(),
-              portal_client_id: clienteId,
-            }),
-          }
-        );
-        const result = await res.json();
+        const { res, result } = await sendInvite(novoUsuario.nome, novoUsuario.email);
         if (!res.ok) {
           toast.error(result.error || "Erro ao enviar convite");
         } else {
-          setUsuarios([...usuarios, { id: result.user.id, nome: result.user.nome, email: result.user.email, status: result.user.status }]);
+          if (result.user) {
+            setUsuarios([...usuarios, { id: result.user.id, nome: result.user.nome, email: result.user.email, status: result.user.status }]);
+          }
           toast.success("Convite enviado! O cliente receberá um e-mail para criar sua senha.");
         }
       } catch (err) {
@@ -372,6 +380,22 @@ export default function EmpresaClienteDetalhe() {
       }
       setNovoUsuario({ nome: "", email: "" });
       setNovoUsuarioDialog(false);
+    }
+  };
+
+  const handleResendInvite = async (usuario: UsuarioCliente) => {
+    setReenviandoConvite(usuario.id);
+    try {
+      const { res, result } = await sendInvite(usuario.nome, usuario.email, true);
+      if (!res.ok) {
+        toast.error(result.error || "Erro ao reenviar convite");
+      } else {
+        toast.success("Convite reenviado com sucesso!");
+      }
+    } catch {
+      toast.error("Erro ao reenviar convite");
+    } finally {
+      setReenviandoConvite(null);
     }
   };
 
@@ -1045,6 +1069,22 @@ export default function EmpresaClienteDetalhe() {
                         >
                           {usuario.status === "ativo" ? "Ativo" : "Pendente"}
                         </StatusBadge>
+                        {usuario.status === "pendente" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 text-xs gap-1"
+                            onClick={() => handleResendInvite(usuario)}
+                            disabled={reenviandoConvite === usuario.id}
+                          >
+                            {reenviandoConvite === usuario.id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <Mail className="h-3 w-3" />
+                            )}
+                            Reenviar
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="icon"

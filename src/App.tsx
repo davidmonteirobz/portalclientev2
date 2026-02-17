@@ -10,6 +10,7 @@ import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import NotFound from "./pages/NotFound";
+import AcceptInvite from "./pages/AcceptInvite";
 
 // Empresa
 import EmpresaClientes from "./pages/empresa/Clientes";
@@ -50,6 +51,7 @@ const App = () => (
               <Route path="/cliente/entrega-detalhe" element={<ProtectedRoute><ClienteEntregaDetalhe /></ProtectedRoute>} />
               <Route path="/cliente/materiais" element={<ProtectedRoute><ClienteMateriais /></ProtectedRoute>} />
               
+              <Route path="/accept-invite" element={<AcceptInvite />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
