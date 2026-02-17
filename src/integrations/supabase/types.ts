@@ -35,6 +35,60 @@ export type Database = {
         }
         Relationships: []
       }
+      invites: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          empresa_id: string
+          expires_at: string
+          id: string
+          nome: string
+          portal_client_id: string
+          status: string
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          empresa_id: string
+          expires_at?: string
+          id?: string
+          nome: string
+          portal_client_id: string
+          status?: string
+          token: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          empresa_id?: string
+          expires_at?: string
+          id?: string
+          nome?: string
+          portal_client_id?: string
+          status?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invites_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invites_portal_client_id_fkey"
+            columns: ["portal_client_id"]
+            isOneToOne: false
+            referencedRelation: "portal_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       portal_client_users: {
         Row: {
           created_at: string
