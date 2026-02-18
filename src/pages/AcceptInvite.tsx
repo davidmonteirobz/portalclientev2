@@ -6,9 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, CheckCircle, AlertCircle, Lock } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
-const SUPABASE_URL = "https://byilgvjorlntlldvjexq.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5aWxndmpvcmxudGxsZHZqZXhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwNzQ5MTksImV4cCI6MjA4NjY1MDkxOX0.C_NVXPpKc-9rEquqF86ph7vi4GcDw2oc3MtJn8JcfQc";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 type InviteState = "loading" | "valid" | "invalid" | "expired" | "used" | "success";
 
@@ -27,15 +28,19 @@ export default function AcceptInvite() {
   useEffect(() => {
     if (!token) {
       setState("invalid");
-      setErrorMessage("Link de convite inválido.");
+      setErrorMessage("Link de convite inválido. Verifique se o link está completo.");
       return;
     }
 
     const validate = async () => {
       try {
         const res = await fetch(
-          `${SUPABASE_URL}/functions/v1/validate-invite?token=${token}`,
-          { headers: { apikey: SUPABASE_ANON_KEY } }
+          `${SUPABASE_URL}/functions/v1/accept-invite`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json", apikey: SUPABASE_ANON_KEY },
+            body: JSON.stringify({ action: "validate", token }),
+          }
         );
         const data = await res.json();
 
@@ -51,7 +56,7 @@ export default function AcceptInvite() {
         }
       } catch {
         setState("invalid");
-        setErrorMessage("Erro ao validar convite.");
+        setErrorMessage("Erro ao validar convite. Tente novamente.");
       }
     };
 
@@ -82,7 +87,18 @@ export default function AcceptInvite() {
       if (res.ok && data.success) {
         setState("success");
         toast.success("Conta criada com sucesso!");
-        setTimeout(() => navigate("/login"), 2000);
+
+        // Try auto-login
+        const { error: loginError } = await supabase.auth.signInWithPassword({
+          email: inviteData.email,
+          password,
+        });
+
+        if (!loginError) {
+          setTimeout(() => navigate("/cliente/dashboard"), 1500);
+        } else {
+          setTimeout(() => navigate("/login"), 2000);
+        }
       } else {
         toast.error(data.error || "Erro ao criar conta.");
       }
@@ -165,10 +181,10 @@ export default function AcceptInvite() {
 
         {state === "success" && (
           <CardContent className="flex flex-col items-center gap-4 py-12">
-            <CheckCircle className="h-12 w-12 text-success" />
+            <CheckCircle className="h-12 w-12 text-green-500" />
             <div className="text-center">
               <h2 className="text-lg font-semibold">Conta criada!</h2>
-              <p className="text-sm text-muted-foreground">Redirecionando para o login...</p>
+              <p className="text-sm text-muted-foreground">Redirecionando...</p>
             </div>
           </CardContent>
         )}
