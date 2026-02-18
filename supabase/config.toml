@@ -1,6 +1,6 @@
 project_id = "byilgvjorlntlldvjexq"
 
-[functions.validate-invite]
+[functions.send-invite]
 verify_jwt = false
 
 [functions.accept-invite]
