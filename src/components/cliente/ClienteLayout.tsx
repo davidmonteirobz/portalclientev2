@@ -6,11 +6,13 @@ import {
   Package, 
   FolderOpen,
   Menu,
-  X
+  X,
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useEmpresaTheme } from "@/contexts/EmpresaThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ClienteLayoutProps {
   children: ReactNode;
@@ -37,6 +39,7 @@ const getMenuItems = (onboardingAtivo: boolean) => {
 export function ClienteLayout({ children, onboardingAtivo = true }: ClienteLayoutProps) {
   const location = useLocation();
   const { theme } = useEmpresaTheme();
+  const { signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuItems = getMenuItems(onboardingAtivo);
 
@@ -81,7 +84,18 @@ export function ClienteLayout({ children, onboardingAtivo = true }: ClienteLayou
                 </Link>
               );
             })}
-          </nav>
+           </nav>
+
+          {/* Desktop Logout */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden md:flex text-muted-foreground hover:text-foreground"
+            onClick={signOut}
+            title="Sair"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
 
           {/* Mobile Menu Button */}
           <Button
@@ -117,6 +131,13 @@ export function ClienteLayout({ children, onboardingAtivo = true }: ClienteLayou
                   </Link>
                 );
               })}
+              <button
+                onClick={signOut}
+                className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-all"
+              >
+                <LogOut className="h-5 w-5" />
+                <span>Sair</span>
+              </button>
             </div>
           </nav>
         )}
