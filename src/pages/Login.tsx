@@ -18,16 +18,26 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       toast.error(error.message === "Invalid login credentials"
         ? "E-mail ou senha inválidos."
         : error.message);
-    } else {
-      toast.success("Login realizado com sucesso!");
-      navigate("/empresa/clientes");
+      setLoading(false);
+      return;
     }
+
+    // Check user role to redirect correctly
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user.id);
+
+    const isCliente = roles?.some(r => r.role === "cliente");
+    
+    toast.success("Login realizado com sucesso!");
+    navigate(isCliente ? "/cliente/dashboard" : "/empresa/clientes");
     setLoading(false);
   };
 
