@@ -14,6 +14,173 @@ export type Database = {
   }
   public: {
     Tables: {
+      client_contexto: {
+        Row: {
+          fase_atual: string | null
+          id: string
+          observacoes_internas: string | null
+          onboarding_ativo: boolean | null
+          onboarding_nome: string | null
+          portal_client_id: string
+          proxima_acao_descricao: string | null
+          proxima_acao_prazo_data: string | null
+          proxima_acao_prazo_horario: string | null
+          reuniao_assunto: string | null
+          reuniao_data: string | null
+          reuniao_horario: string | null
+          updated_at: string
+        }
+        Insert: {
+          fase_atual?: string | null
+          id?: string
+          observacoes_internas?: string | null
+          onboarding_ativo?: boolean | null
+          onboarding_nome?: string | null
+          portal_client_id: string
+          proxima_acao_descricao?: string | null
+          proxima_acao_prazo_data?: string | null
+          proxima_acao_prazo_horario?: string | null
+          reuniao_assunto?: string | null
+          reuniao_data?: string | null
+          reuniao_horario?: string | null
+          updated_at?: string
+        }
+        Update: {
+          fase_atual?: string | null
+          id?: string
+          observacoes_internas?: string | null
+          onboarding_ativo?: boolean | null
+          onboarding_nome?: string | null
+          portal_client_id?: string
+          proxima_acao_descricao?: string | null
+          proxima_acao_prazo_data?: string | null
+          proxima_acao_prazo_horario?: string | null
+          reuniao_assunto?: string | null
+          reuniao_data?: string | null
+          reuniao_horario?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_contexto_portal_client_id_fkey"
+            columns: ["portal_client_id"]
+            isOneToOne: true
+            referencedRelation: "portal_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_entregas: {
+        Row: {
+          ajuste_data_hora: string | null
+          ajuste_texto: string | null
+          created_at: string
+          id: string
+          legenda: string | null
+          link: string
+          nome: string
+          portal_client_id: string
+          status: string
+        }
+        Insert: {
+          ajuste_data_hora?: string | null
+          ajuste_texto?: string | null
+          created_at?: string
+          id?: string
+          legenda?: string | null
+          link?: string
+          nome: string
+          portal_client_id: string
+          status?: string
+        }
+        Update: {
+          ajuste_data_hora?: string | null
+          ajuste_texto?: string | null
+          created_at?: string
+          id?: string
+          legenda?: string | null
+          link?: string
+          nome?: string
+          portal_client_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_entregas_portal_client_id_fkey"
+            columns: ["portal_client_id"]
+            isOneToOne: false
+            referencedRelation: "portal_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_materiais: {
+        Row: {
+          created_at: string
+          id: string
+          link: string
+          nome: string
+          portal_client_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          link?: string
+          nome: string
+          portal_client_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          link?: string
+          nome?: string
+          portal_client_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_materiais_portal_client_id_fkey"
+            columns: ["portal_client_id"]
+            isOneToOne: false
+            referencedRelation: "portal_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_onboarding_etapas: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          portal_client_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          ordem?: number
+          portal_client_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          portal_client_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_onboarding_etapas_portal_client_id_fkey"
+            columns: ["portal_client_id"]
+            isOneToOne: false
+            referencedRelation: "portal_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       empresas: {
         Row: {
           created_at: string
