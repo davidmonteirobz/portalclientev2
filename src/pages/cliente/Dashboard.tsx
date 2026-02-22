@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Package, FolderOpen, Calendar, Clock, Target } from "lucide-react";
+import { ArrowRight, Package, FolderOpen, Calendar, Clock, Target, Rocket, CheckCircle, Circle } from "lucide-react";
 import { ClienteLayout } from "@/components/cliente/ClienteLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { ProgressBar } from "@/components/ui/progress-bar";
 
 export default function ClienteDashboard() {
   const { user } = useAuth();
@@ -12,6 +13,8 @@ export default function ClienteDashboard() {
   const [onboardingAtivo, setOnboardingAtivo] = useState(false);
   const [proximaAcao, setProximaAcao] = useState<{ descricao: string; prazoData: string; prazoHorario: string } | null>(null);
   const [reuniao, setReuniao] = useState<{ data: string; horario: string; assunto: string } | null>(null);
+  const [onboardingNome, setOnboardingNome] = useState("Onboarding");
+  const [etapas, setEtapas] = useState<{ id: string; nome: string; status: string }[]>([]);
 
   useEffect(() => {
     async function fetchClienteData() {
@@ -39,12 +42,13 @@ export default function ClienteDashboard() {
 
         const { data: ctx } = await supabase
           .from("client_contexto")
-          .select("onboarding_ativo, proxima_acao_descricao, proxima_acao_prazo_data, proxima_acao_prazo_horario, reuniao_data, reuniao_horario, reuniao_assunto")
+          .select("onboarding_ativo, onboarding_nome, proxima_acao_descricao, proxima_acao_prazo_data, proxima_acao_prazo_horario, reuniao_data, reuniao_horario, reuniao_assunto")
           .eq("portal_client_id", pc.id)
           .maybeSingle();
 
         if (ctx) {
           setOnboardingAtivo(ctx.onboarding_ativo || false);
+          if (ctx.onboarding_nome) setOnboardingNome(ctx.onboarding_nome);
           if (ctx.proxima_acao_descricao) {
             setProximaAcao({
               descricao: ctx.proxima_acao_descricao,
@@ -59,6 +63,17 @@ export default function ClienteDashboard() {
               assunto: ctx.reuniao_assunto || "",
             });
           }
+        }
+
+        // Fetch onboarding etapas
+        if (ctx?.onboarding_ativo) {
+          const { data: etapasData } = await supabase
+            .from("client_onboarding_etapas")
+            .select("id, nome, status")
+            .eq("portal_client_id", pc.id)
+            .order("ordem");
+
+          if (etapasData) setEtapas(etapasData);
         }
       }
 
@@ -145,6 +160,43 @@ export default function ClienteDashboard() {
             )}
           </div>
         )}
+
+        {/* Onboarding Card */}
+        {onboardingAtivo && etapas.length > 0 && (() => {
+          const concluidas = etapas.filter(e => e.status === "concluido").length;
+          const percentage = Math.round((concluidas / etapas.length) * 100);
+          return (
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-foreground">
+                  <Rocket className="h-5 w-5" />
+                  <h3 className="font-semibold">{onboardingNome}</h3>
+                </div>
+                <span className="text-sm font-medium text-muted-foreground">{percentage}%</span>
+              </div>
+              <ProgressBar value={percentage} size="md" />
+              <div className="space-y-2">
+                {etapas.map((etapa) => (
+                  <div key={etapa.id} className="flex items-center gap-2.5">
+                    {etapa.status === "concluido" ? (
+                      <CheckCircle className="h-5 w-5 text-success flex-shrink-0" />
+                    ) : etapa.status === "atual" ? (
+                      <Clock className="h-5 w-5 text-primary flex-shrink-0" />
+                    ) : (
+                      <Circle className="h-5 w-5 text-muted-foreground/40 flex-shrink-0" />
+                    )}
+                    <span className={etapa.status === "pendente" ? "text-muted-foreground" : "text-foreground"}>
+                      {etapa.nome}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <Link to="/cliente/onboarding" className="inline-flex items-center gap-1 text-sm font-medium text-foreground hover:text-primary transition-colors">
+                Ver detalhes <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          );
+        })()}
 
         {/* CTAs */}
         <div className="flex flex-col gap-4">
