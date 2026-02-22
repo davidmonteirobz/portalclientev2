@@ -9,6 +9,7 @@ interface Etapa {
   id: string;
   nome: string;
   status: "concluido" | "atual" | "pendente";
+  dataConclusao?: string;
 }
 
 export default function ClienteOnboarding() {
@@ -39,12 +40,12 @@ export default function ClienteOnboarding() {
 
       const { data: etapasData } = await supabase
         .from("client_onboarding_etapas")
-        .select("id, nome, status")
+        .select("id, nome, status, data_conclusao")
         .eq("portal_client_id", pc.id)
         .order("ordem");
 
       if (etapasData) {
-        setEtapas(etapasData.map((e: any) => ({ id: e.id, nome: e.nome, status: e.status as any })));
+        setEtapas(etapasData.map((e: any) => ({ id: e.id, nome: e.nome, status: e.status as any, dataConclusao: e.data_conclusao || "" })));
       }
 
       setLoading(false);
@@ -88,14 +89,21 @@ export default function ClienteOnboarding() {
                       <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-border bg-background"><Circle className="h-4 w-4 text-muted-foreground" /></div>
                     )}
                   </div>
-                  <div className={cn("flex-1 rounded-xl border p-4 transition-all", etapa.status === "atual" ? "border-primary/30 bg-primary/5" : etapa.status === "concluido" ? "border-success/20 bg-success/5" : "border-border bg-muted/30")}>
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <h3 className={cn("font-semibold", etapa.status === "pendente" ? "text-muted-foreground" : "text-foreground")}>{etapa.nome}</h3>
-                      <span className={cn("w-fit rounded-full px-2.5 py-1.5 text-xs font-medium", etapa.status === "concluido" ? "bg-success/10 text-success" : etapa.status === "atual" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground")}>
-                        {etapa.status === "concluido" ? "Concluído" : etapa.status === "atual" ? "Em andamento" : "Pendente"}
-                      </span>
+                    <div className={cn("flex-1 rounded-xl border p-4 transition-all", etapa.status === "atual" ? "border-primary/30 bg-primary/5" : etapa.status === "concluido" ? "border-success/20 bg-success/5" : "border-border bg-muted/30")}>
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <h3 className={cn("font-semibold", etapa.status === "pendente" ? "text-muted-foreground" : "text-foreground")}>{etapa.nome}</h3>
+                        <div className="flex items-center gap-2">
+                          {etapa.status === "concluido" && etapa.dataConclusao && (
+                            <span className="text-xs text-muted-foreground">
+                              {(() => { try { const [y,m,d] = etapa.dataConclusao.split("-"); return `${d}/${m}/${y}`; } catch { return etapa.dataConclusao; } })()}
+                            </span>
+                          )}
+                          <span className={cn("w-fit rounded-full px-2.5 py-1.5 text-xs font-medium", etapa.status === "concluido" ? "bg-success/10 text-success" : etapa.status === "atual" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground")}>
+                            {etapa.status === "concluido" ? "Concluído" : etapa.status === "atual" ? "Em andamento" : "Pendente"}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
                 </div>
               );
             })}

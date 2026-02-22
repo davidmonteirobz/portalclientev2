@@ -78,6 +78,7 @@ interface EtapaOnboarding {
   id: string;
   nome: string;
   status: "concluido" | "atual" | "pendente";
+  dataConclusao?: string;
 }
 
 interface UsuarioCliente {
@@ -247,7 +248,7 @@ export default function EmpresaClienteDetalhe() {
         if (etapasData) {
           setOnboarding(prev => ({
             ...prev,
-            etapas: etapasData.map((e: any) => ({ id: e.id, nome: e.nome, status: e.status as any })),
+            etapas: etapasData.map((e: any) => ({ id: e.id, nome: e.nome, status: e.status as any, dataConclusao: e.data_conclusao || "" })),
           }));
         }
 
@@ -333,6 +334,7 @@ export default function EmpresaClienteDetalhe() {
             nome: e.nome,
             status: e.status,
             ordem: i,
+            data_conclusao: e.dataConclusao || "",
           }))
         );
       }
@@ -420,14 +422,23 @@ export default function EmpresaClienteDetalhe() {
     setOnboarding({ ...onboarding, etapas: onboarding.etapas.filter((e) => e.id !== id) });
   };
 
-  const cycleEtapaStatus = (id: string) => {
+  const handleChangeEtapaStatus = (id: string, newStatus: "pendente" | "atual" | "concluido") => {
     setOnboarding({
       ...onboarding,
       etapas: onboarding.etapas.map((e) => {
         if (e.id !== id) return e;
-        const nextStatus = e.status === "pendente" ? "atual" : e.status === "atual" ? "concluido" : "pendente";
-        return { ...e, status: nextStatus };
+        const dataConclusao = newStatus === "concluido" && !e.dataConclusao
+          ? new Date().toISOString().split("T")[0]
+          : newStatus !== "concluido" ? "" : e.dataConclusao;
+        return { ...e, status: newStatus, dataConclusao };
       }),
+    });
+  };
+
+  const handleChangeEtapaDataConclusao = (id: string, date: string) => {
+    setOnboarding({
+      ...onboarding,
+      etapas: onboarding.etapas.map((e) => e.id === id ? { ...e, dataConclusao: date } : e),
     });
   };
 
@@ -637,16 +648,33 @@ export default function EmpresaClienteDetalhe() {
 
                   <div className="space-y-1.5">
                     {onboarding.etapas.map((etapa) => (
-                      <div key={etapa.id} className={cn("flex items-center justify-between rounded-lg border p-2.5", etapa.status === "concluido" ? "border-success/30 bg-success/5" : etapa.status === "atual" ? "border-primary/30 bg-primary/5" : "border-border bg-muted/30")}>
-                        <div className="flex items-center gap-2">
-                          <button onClick={() => cycleEtapaStatus(etapa.id)} className="flex-shrink-0">
-                            {etapa.status === "concluido" ? <CheckCircle className="h-4 w-4 text-success" /> : etapa.status === "atual" ? <Clock className="h-4 w-4 text-primary" /> : <Circle className="h-4 w-4 text-muted-foreground" />}
-                          </button>
+                      <div key={etapa.id} className={cn("rounded-lg border p-3 space-y-2", etapa.status === "concluido" ? "border-success/30 bg-success/5" : etapa.status === "atual" ? "border-primary/30 bg-primary/5" : "border-border bg-muted/30")}>
+                        <div className="flex items-center justify-between">
                           <span className={cn("text-sm font-medium", etapa.status === "pendente" ? "text-muted-foreground" : "text-foreground")}>{etapa.nome}</span>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => handleRemoveEtapa(etapa.id)}>
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
                         </div>
-                        <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-destructive" onClick={() => handleRemoveEtapa(etapa.id)}>
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Select value={etapa.status} onValueChange={(v) => handleChangeEtapaStatus(etapa.id, v as any)}>
+                            <SelectTrigger className="h-7 text-xs w-[140px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pendente">Pendente</SelectItem>
+                              <SelectItem value="atual">Em andamento</SelectItem>
+                              <SelectItem value="concluido">Concluído</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {etapa.status === "concluido" && (
+                            <Input
+                              type="date"
+                              value={etapa.dataConclusao || ""}
+                              onChange={(e) => handleChangeEtapaDataConclusao(etapa.id, e.target.value)}
+                              className="h-7 text-xs w-[140px]"
+                            />
+                          )}
+                        </div>
                       </div>
                     ))}
                     {onboarding.etapas.length === 0 && <p className="py-3 text-center text-sm text-muted-foreground">Nenhuma etapa cadastrada</p>}

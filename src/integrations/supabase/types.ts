@@ -149,6 +149,7 @@ export type Database = {
       client_onboarding_etapas: {
         Row: {
           created_at: string
+          data_conclusao: string | null
           id: string
           nome: string
           ordem: number
@@ -157,6 +158,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          data_conclusao?: string | null
           id?: string
           nome: string
           ordem?: number
@@ -165,6 +167,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          data_conclusao?: string | null
           id?: string
           nome?: string
           ordem?: number
