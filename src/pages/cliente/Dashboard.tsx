@@ -112,7 +112,7 @@ export default function ClienteDashboard() {
             Olá, {clienteNome || "Cliente"}!
           </h1>
           <p className="text-lg text-muted-foreground">
-            Bem-vindo(a) ao seu portal. Aqui você encontra tudo sobre o seu projeto em um só luga 
+            Bem-vindo(a) ao seu portal. Aqui você encontra tudo sobre o seu projeto em um só lugar. 
           </p>
         </div>
 
