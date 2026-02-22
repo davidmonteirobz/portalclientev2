@@ -1,0 +1,1 @@
+ALTER TABLE public.client_onboarding_etapas ADD COLUMN data_conclusao text DEFAULT '';
