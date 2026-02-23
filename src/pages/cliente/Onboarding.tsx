@@ -93,7 +93,7 @@ export default function ClienteOnboarding() {
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <h3 className={cn("font-semibold", etapa.status === "pendente" ? "text-muted-foreground" : "text-foreground")}>{etapa.nome}</h3>
                         <div className="flex items-center gap-2">
-                          {etapa.status === "concluido" && etapa.dataConclusao && (
+                          {etapa.dataConclusao && (
                             <span className="text-xs text-muted-foreground">
                               {(() => { try { const [y,m,d] = etapa.dataConclusao.split("-"); return `${d}/${m}/${y}`; } catch { return etapa.dataConclusao; } })()}
                             </span>
