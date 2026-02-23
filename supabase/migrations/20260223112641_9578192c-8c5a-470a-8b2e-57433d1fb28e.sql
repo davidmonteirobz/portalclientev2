@@ -1,0 +1,2 @@
+ALTER TABLE public.portal_clients DROP CONSTRAINT portal_clients_status_check;
+ALTER TABLE public.portal_clients ADD CONSTRAINT portal_clients_status_check CHECK (status = ANY (ARRAY['pendente'::text, 'ativo'::text, 'inativo'::text, 'pausado'::text, 'rescindido'::text]));
