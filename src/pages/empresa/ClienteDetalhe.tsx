@@ -276,10 +276,17 @@ export default function EmpresaClienteDetalhe() {
     setSalvando(true);
     try {
       // 1. Update portal_clients (nome, negocio, servico, status)
-      await supabase
+      const { error: clientError } = await supabase
         .from("portal_clients")
         .update({ nome: cliente.nome, negocio: cliente.negocio || null, servico: cliente.servico, status: statusContrato })
         .eq("id", clienteId);
+
+      if (clientError) {
+        console.error("Erro ao atualizar cliente:", clientError);
+        toast.error("Sem permissão para salvar. Verifique se está logado com a conta da empresa.");
+        setSalvando(false);
+        return;
+      }
 
       // 2. Upsert contexto
       await supabase
