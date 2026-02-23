@@ -140,6 +140,7 @@ export default function EmpresaClienteDetalhe() {
 
   const [novaEtapaDialog, setNovaEtapaDialog] = useState(false);
   const [novaEtapa, setNovaEtapa] = useState("");
+  const [novaEtapaData, setNovaEtapaData] = useState("");
 
   const [faseAtual, setFaseAtual] = useState("");
   const [proximaAcao, setProximaAcao] = useState({
@@ -411,9 +412,10 @@ export default function EmpresaClienteDetalhe() {
     if (novaEtapa.trim()) {
       setOnboarding({
         ...onboarding,
-        etapas: [...onboarding.etapas, { id: Date.now().toString(), nome: novaEtapa.trim(), status: "pendente" }],
+        etapas: [...onboarding.etapas, { id: Date.now().toString(), nome: novaEtapa.trim(), status: "pendente", dataConclusao: novaEtapaData || "" }],
       });
       setNovaEtapa("");
+      setNovaEtapaData("");
       setNovaEtapaDialog(false);
     }
   };
@@ -637,6 +639,10 @@ export default function EmpresaClienteDetalhe() {
                             <Label>Nome da etapa</Label>
                             <Input value={novaEtapa} onChange={(e) => setNovaEtapa(e.target.value)} placeholder="Ex: Reunião inicial" />
                           </div>
+                          <div className="space-y-2">
+                            <Label>Data de entrega (opcional)</Label>
+                            <Input type="date" value={novaEtapaData} onChange={(e) => setNovaEtapaData(e.target.value)} />
+                          </div>
                         </div>
                         <div className="flex justify-end gap-3">
                           <Button variant="outline" onClick={() => setNovaEtapaDialog(false)}>Cancelar</Button>
@@ -666,14 +672,12 @@ export default function EmpresaClienteDetalhe() {
                               <SelectItem value="concluido">Concluído</SelectItem>
                             </SelectContent>
                           </Select>
-                          {etapa.status === "concluido" && (
-                            <Input
-                              type="date"
-                              value={etapa.dataConclusao || ""}
-                              onChange={(e) => handleChangeEtapaDataConclusao(etapa.id, e.target.value)}
-                              className="h-7 text-xs w-[140px]"
-                            />
-                          )}
+                          <Input
+                            type="date"
+                            value={etapa.dataConclusao || ""}
+                            onChange={(e) => handleChangeEtapaDataConclusao(etapa.id, e.target.value)}
+                            className="h-7 text-xs w-[140px]"
+                          />
                         </div>
                       </div>
                     ))}
