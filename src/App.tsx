@@ -40,16 +40,16 @@ const App = () => (
               <Route path="/cadastro" element={<Cadastro />} />
               
               {/* Área da Empresa - Protegida */}
-              <Route path="/empresa/clientes" element={<ProtectedRoute><EmpresaClientes /></ProtectedRoute>} />
-              <Route path="/empresa/cliente-detalhe" element={<ProtectedRoute><EmpresaClienteDetalhe /></ProtectedRoute>} />
-              <Route path="/empresa/configuracoes" element={<ProtectedRoute><EmpresaConfiguracoes /></ProtectedRoute>} />
+              <Route path="/empresa/clientes" element={<ProtectedRoute requiredRole="empresa"><EmpresaClientes /></ProtectedRoute>} />
+              <Route path="/empresa/cliente-detalhe" element={<ProtectedRoute requiredRole="empresa"><EmpresaClienteDetalhe /></ProtectedRoute>} />
+              <Route path="/empresa/configuracoes" element={<ProtectedRoute requiredRole="empresa"><EmpresaConfiguracoes /></ProtectedRoute>} />
               
               {/* Portal do Cliente - Protegido */}
-              <Route path="/cliente/dashboard" element={<ProtectedRoute><ClienteDashboard /></ProtectedRoute>} />
-              <Route path="/cliente/onboarding" element={<ProtectedRoute><ClienteOnboarding /></ProtectedRoute>} />
-              <Route path="/cliente/entregas" element={<ProtectedRoute><ClienteEntregas /></ProtectedRoute>} />
-              <Route path="/cliente/entrega-detalhe" element={<ProtectedRoute><ClienteEntregaDetalhe /></ProtectedRoute>} />
-              <Route path="/cliente/materiais" element={<ProtectedRoute><ClienteMateriais /></ProtectedRoute>} />
+              <Route path="/cliente/dashboard" element={<ProtectedRoute requiredRole="cliente"><ClienteDashboard /></ProtectedRoute>} />
+              <Route path="/cliente/onboarding" element={<ProtectedRoute requiredRole="cliente"><ClienteOnboarding /></ProtectedRoute>} />
+              <Route path="/cliente/entregas" element={<ProtectedRoute requiredRole="cliente"><ClienteEntregas /></ProtectedRoute>} />
+              <Route path="/cliente/entrega-detalhe" element={<ProtectedRoute requiredRole="cliente"><ClienteEntregaDetalhe /></ProtectedRoute>} />
+              <Route path="/cliente/materiais" element={<ProtectedRoute requiredRole="cliente"><ClienteMateriais /></ProtectedRoute>} />
               
               <Route path="/accept-invite" element={<AcceptInvite />} />
               <Route path="*" element={<NotFound />} />
