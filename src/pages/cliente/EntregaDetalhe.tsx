@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ClienteLayout } from "@/components/cliente/ClienteLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -21,50 +21,122 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 type EntregaStatus = "em_revisao" | "aprovado" | "ajuste_solicitado";
 
+interface EntregaData {
+  id: string;
+  nome: string;
+  status: EntregaStatus;
+  link: string;
+  legenda: string | null;
+  ajuste_texto: string | null;
+  ajuste_data_hora: string | null;
+}
+
 export default function ClienteEntregaDetalhe() {
   const navigate = useNavigate();
-  // Dados mockados - onboarding ativo viria da empresa
-  const onboardingAtivo = true;
+  const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const entregaId = searchParams.get("id") || "2";
+  const entregaId = searchParams.get("id") || "";
 
-  // Mock data
-  const [entrega, setEntrega] = useState({
-    id: entregaId,
-    nome: "Design Home v1",
-    status: "em_revisao" as EntregaStatus,
-    link: "https://figma.com/...",
-    previewImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=600&fit=crop",
-    legenda: "Primeira versão do design da home page. Apresentamos o layout principal com hero section, seção de serviços e depoimentos de clientes.",
-    ajuste: null as { texto: string; dataHora: string } | null,
-  });
-
+  const [entrega, setEntrega] = useState<EntregaData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [onboardingAtivo, setOnboardingAtivo] = useState(false);
   const [comentario, setComentario] = useState("");
   const [ajusteDialogOpen, setAjusteDialogOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const handleAprovar = () => {
-    setEntrega({ ...entrega, status: "aprovado", ajuste: null });
+  useEffect(() => {
+    async function fetchData() {
+      if (!user || !entregaId) return;
+
+      const { data: pc } = await supabase
+        .from("portal_clients")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!pc) { setLoading(false); return; }
+
+      const [entregaRes, ctxRes] = await Promise.all([
+        supabase
+          .from("client_entregas")
+          .select("id, nome, status, link, legenda, ajuste_texto, ajuste_data_hora")
+          .eq("id", entregaId)
+          .eq("portal_client_id", pc.id)
+          .maybeSingle(),
+        supabase
+          .from("client_contexto")
+          .select("onboarding_ativo")
+          .eq("portal_client_id", pc.id)
+          .maybeSingle(),
+      ]);
+
+      if (entregaRes.data) {
+        setEntrega(entregaRes.data as EntregaData);
+      }
+      if (ctxRes.data) {
+        setOnboardingAtivo(ctxRes.data.onboarding_ativo || false);
+      }
+      setLoading(false);
+    }
+    fetchData();
+  }, [user, entregaId]);
+
+  const handleAprovar = async () => {
+    if (!entrega) return;
+    setSaving(true);
+    const { error } = await supabase
+      .from("client_entregas")
+      .update({ status: "aprovado", ajuste_texto: null, ajuste_data_hora: null })
+      .eq("id", entrega.id);
+
+    if (error) {
+      toast.error("Erro ao aprovar entrega");
+      console.error(error);
+    } else {
+      setEntrega({ ...entrega, status: "aprovado", ajuste_texto: null, ajuste_data_hora: null });
+      toast.success("Entrega aprovada!");
+    }
+    setSaving(false);
   };
 
-  const handleSolicitarAjuste = () => {
-    if (comentario.trim()) {
+  const handleSolicitarAjuste = async () => {
+    if (!entrega || !comentario.trim()) return;
+    setSaving(true);
+    const dataHora = new Date().toLocaleString("pt-BR");
+    const { error } = await supabase
+      .from("client_entregas")
+      .update({
+        status: "ajuste_solicitado",
+        ajuste_texto: comentario,
+        ajuste_data_hora: dataHora,
+      })
+      .eq("id", entrega.id);
+
+    if (error) {
+      toast.error("Erro ao solicitar ajuste");
+      console.error(error);
+    } else {
       setEntrega({
         ...entrega,
         status: "ajuste_solicitado",
-        ajuste: {
-          texto: comentario,
-          dataHora: new Date().toLocaleString("pt-BR"),
-        },
+        ajuste_texto: comentario,
+        ajuste_data_hora: dataHora,
       });
+      toast.success("Ajuste solicitado!");
       setAjusteDialogOpen(false);
       setComentario("");
     }
+    setSaving(false);
   };
 
   const getStatusBadge = () => {
+    if (!entrega) return null;
     switch (entrega.status) {
       case "aprovado":
         return <StatusBadge variant="success">Aprovado</StatusBadge>;
@@ -74,6 +146,29 @@ export default function ClienteEntregaDetalhe() {
         return <StatusBadge variant="warning">Em revisão</StatusBadge>;
     }
   };
+
+  if (loading) {
+    return (
+      <ClienteLayout onboardingAtivo={onboardingAtivo}>
+        <div className="flex items-center justify-center py-20">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        </div>
+      </ClienteLayout>
+    );
+  }
+
+  if (!entrega) {
+    return (
+      <ClienteLayout onboardingAtivo={onboardingAtivo}>
+        <div className="flex flex-col items-center justify-center py-20">
+          <p className="text-muted-foreground">Entrega não encontrada</p>
+          <Button variant="ghost" className="mt-4" onClick={() => navigate(-1)}>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
+          </Button>
+        </div>
+      </ClienteLayout>
+    );
+  }
 
   return (
     <ClienteLayout onboardingAtivo={onboardingAtivo}>
@@ -94,22 +189,14 @@ export default function ClienteEntregaDetalhe() {
         {/* Preview */}
         <Card className="overflow-hidden">
           <CardContent className="p-0">
-            <div className="relative aspect-video w-full bg-muted">
-              <img
-                src={entrega.previewImage}
-                alt={entrega.nome}
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-foreground/5">
-                <Button asChild variant="secondary" className="gap-2">
-                  <a href={entrega.link} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-4 w-4" />
-                    Abrir no Figma
-                  </a>
-                </Button>
-              </div>
+            <div className="relative aspect-video w-full bg-muted flex items-center justify-center">
+              <Button asChild variant="secondary" className="gap-2">
+                <a href={entrega.link} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="h-4 w-4" />
+                  Abrir link
+                </a>
+              </Button>
             </div>
-            {/* Legenda */}
             {entrega.legenda && (
               <div className="border-t border-border bg-muted/30 p-4">
                 <p className="text-sm text-muted-foreground">{entrega.legenda}</p>
@@ -118,8 +205,8 @@ export default function ClienteEntregaDetalhe() {
           </CardContent>
         </Card>
 
-        {/* Ajuste Solicitado - Feedback visual */}
-        {entrega.status === "ajuste_solicitado" && entrega.ajuste && (
+        {/* Ajuste Solicitado */}
+        {entrega.status === "ajuste_solicitado" && entrega.ajuste_texto && (
           <Card className="border-warning/20 bg-warning/5">
             <CardContent className="flex items-start gap-4 p-6">
               <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-warning">
@@ -131,10 +218,12 @@ export default function ClienteEntregaDetalhe() {
                   Seu pedido foi enviado. Aguarde o retorno da equipe.
                 </p>
                 <div className="mt-3 rounded-lg bg-background p-3">
-                  <p className="text-sm text-foreground">{entrega.ajuste.texto}</p>
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    Enviado em {entrega.ajuste.dataHora}
-                  </p>
+                  <p className="text-sm text-foreground">{entrega.ajuste_texto}</p>
+                  {entrega.ajuste_data_hora && (
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Enviado em {entrega.ajuste_data_hora}
+                    </p>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -151,9 +240,10 @@ export default function ClienteEntregaDetalhe() {
                   size="lg"
                   className="h-14 w-full gap-2"
                   onClick={handleAprovar}
+                  disabled={saving}
                 >
                   <CheckCircle className="h-5 w-5" />
-                  Aprovar entrega
+                  {saving ? "Salvando..." : "Aprovar entrega"}
                 </Button>
 
                 <Dialog open={ajusteDialogOpen} onOpenChange={setAjusteDialogOpen}>
@@ -189,8 +279,8 @@ export default function ClienteEntregaDetalhe() {
                       <Button variant="outline" onClick={() => setAjusteDialogOpen(false)}>
                         Cancelar
                       </Button>
-                      <Button onClick={handleSolicitarAjuste} disabled={!comentario.trim()}>
-                        Enviar solicitação
+                      <Button onClick={handleSolicitarAjuste} disabled={!comentario.trim() || saving}>
+                        {saving ? "Enviando..." : "Enviar solicitação"}
                       </Button>
                     </div>
                   </DialogContent>
