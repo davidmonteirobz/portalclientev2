@@ -357,14 +357,20 @@ export default function EmpresaClienteDetalhe() {
   };
 
   const handleAddEntrega = () => {
-    if (novaEntrega.nome && novaEntrega.link) {
-      setEntregas([
-        ...entregas,
-        { id: Date.now().toString(), nome: novaEntrega.nome, status: "em_revisao", link: novaEntrega.link, legenda: novaEntrega.legenda || undefined },
-      ]);
-      setNovaEntrega({ nome: "", link: "", legenda: "" });
-      setNovaEntregaDialog(false);
+    if (!novaEntrega.nome.trim()) {
+      toast.error("Preencha o nome da entrega");
+      return;
     }
+    if (!novaEntrega.link.trim()) {
+      toast.error("Preencha o link da entrega");
+      return;
+    }
+    setEntregas([
+      ...entregas,
+      { id: Date.now().toString(), nome: novaEntrega.nome.trim(), status: "em_revisao", link: novaEntrega.link.trim(), legenda: novaEntrega.legenda?.trim() || undefined },
+    ]);
+    setNovaEntrega({ nome: "", link: "", legenda: "" });
+    setNovaEntregaDialog(false);
   };
 
   const handleAddMaterial = () => {
