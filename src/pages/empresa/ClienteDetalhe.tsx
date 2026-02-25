@@ -801,7 +801,7 @@ export default function EmpresaClienteDetalhe() {
                             {entrega.status === "aprovado" ? "Aprovado" : entrega.status === "ajuste_solicitado" ? "Ajuste solicitado" : "Em revisão"}
                           </StatusBadge>
                           <Button variant="ghost" size="icon" className="flex-shrink-0" onClick={() => handleEditarEntrega(entrega)}><Edit2 className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="icon" className="flex-shrink-0 text-destructive hover:text-destructive" onClick={() => handleExcluirEntrega(entrega.id)}><Trash2 className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" className="flex-shrink-0 text-foreground hover:text-destructive" onClick={() => handleExcluirEntrega(entrega.id)} aria-label="Excluir entrega" title="Excluir entrega"><Trash2 className="h-4 w-4" /></Button>
                           <Button variant="ghost" size="icon" className="flex-shrink-0" asChild>
                             <a href={entrega.link} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4" /></a>
                           </Button>
