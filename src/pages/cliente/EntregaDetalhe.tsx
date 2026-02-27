@@ -13,6 +13,8 @@ import {
   MessageSquare,
   AlertCircle,
   Clock,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   Dialog,
@@ -31,7 +33,7 @@ interface EntregaData {
   id: string;
   nome: string;
   status: EntregaStatus;
-  link: string;
+  links: string[];
   legenda: string | null;
   ajuste_texto: string | null;
   ajuste_data_hora: string | null;
@@ -49,6 +51,7 @@ export default function ClienteEntregaDetalhe() {
   const [comentario, setComentario] = useState("");
   const [ajusteDialogOpen, setAjusteDialogOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
@@ -77,7 +80,10 @@ export default function ClienteEntregaDetalhe() {
       ]);
 
       if (entregaRes.data) {
-        setEntrega(entregaRes.data as EntregaData);
+        const raw = entregaRes.data as any;
+        let links: string[] = [];
+        try { links = JSON.parse(raw.link); } catch { if (raw.link) links = [raw.link]; }
+        setEntrega({ ...raw, links } as EntregaData);
       }
       if (ctxRes.data) {
         setOnboardingAtivo(ctxRes.data.onboarding_ativo || false);
@@ -189,14 +195,47 @@ export default function ClienteEntregaDetalhe() {
         {/* Preview */}
         <Card className="overflow-hidden">
           <CardContent className="p-0">
-            <div className="relative w-full bg-muted flex items-center justify-center">
-              {entrega.link && /\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(entrega.link) ? (
-                <img src={entrega.link} alt={entrega.nome} className="w-full max-h-[500px] object-contain" />
-              ) : entrega.link && /\.pdf(\?.*)?$/i.test(entrega.link) ? (
-                <iframe src={entrega.link} className="w-full h-[500px]" title={entrega.nome} />
+            <div className="relative w-full bg-muted">
+              {entrega.links.length > 0 ? (
+                <div className="relative">
+                  {/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(entrega.links[currentImageIndex]) ? (
+                    <img src={entrega.links[currentImageIndex]} alt={`${entrega.nome} - ${currentImageIndex + 1}`} className="w-full max-h-[500px] object-contain" />
+                  ) : /\.pdf(\?.*)?$/i.test(entrega.links[currentImageIndex]) ? (
+                    <iframe src={entrega.links[currentImageIndex]} className="w-full h-[500px]" title={entrega.nome} />
+                  ) : (
+                    <div className="aspect-video w-full flex items-center justify-center">
+                      <p className="text-muted-foreground text-sm">Pré-visualização não disponível</p>
+                    </div>
+                  )}
+                  {entrega.links.length > 1 && (
+                    <>
+                      <button
+                        onClick={() => setCurrentImageIndex(i => i > 0 ? i - 1 : entrega.links.length - 1)}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-background/80 shadow-md backdrop-blur-sm transition-colors hover:bg-background"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => setCurrentImageIndex(i => i < entrega.links.length - 1 ? i + 1 : 0)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-background/80 shadow-md backdrop-blur-sm transition-colors hover:bg-background"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-background/80 px-3 py-1.5 backdrop-blur-sm">
+                        {entrega.links.map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setCurrentImageIndex(i)}
+                            className={`h-2 w-2 rounded-full transition-colors ${i === currentImageIndex ? 'bg-primary' : 'bg-muted-foreground/30'}`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               ) : (
                 <div className="aspect-video w-full flex items-center justify-center">
-                  <p className="text-muted-foreground text-sm">Pré-visualização não disponível</p>
+                  <p className="text-muted-foreground text-sm">Nenhum arquivo disponível</p>
                 </div>
               )}
             </div>
