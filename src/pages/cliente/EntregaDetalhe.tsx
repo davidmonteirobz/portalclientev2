@@ -189,13 +189,16 @@ export default function ClienteEntregaDetalhe() {
         {/* Preview */}
         <Card className="overflow-hidden">
           <CardContent className="p-0">
-            <div className="relative aspect-video w-full bg-muted flex items-center justify-center">
-              <Button asChild variant="secondary" className="gap-2">
-                <a href={entrega.link} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4" />
-                  Abrir link
-                </a>
-              </Button>
+            <div className="relative w-full bg-muted flex items-center justify-center">
+              {entrega.link && /\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(entrega.link) ? (
+                <img src={entrega.link} alt={entrega.nome} className="w-full max-h-[500px] object-contain" />
+              ) : entrega.link && /\.pdf(\?.*)?$/i.test(entrega.link) ? (
+                <iframe src={entrega.link} className="w-full h-[500px]" title={entrega.nome} />
+              ) : (
+                <div className="aspect-video w-full flex items-center justify-center">
+                  <p className="text-muted-foreground text-sm">Pré-visualização não disponível</p>
+                </div>
+              )}
             </div>
             {entrega.legenda && (
               <div className="border-t border-border bg-muted/30 p-4">

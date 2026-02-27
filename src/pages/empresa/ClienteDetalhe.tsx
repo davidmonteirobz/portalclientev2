@@ -17,6 +17,8 @@ import {
   Mail,
   X,
   Save,
+  Upload,
+  FileImage,
 } from "lucide-react";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { Button } from "@/components/ui/button";
@@ -159,10 +161,12 @@ export default function EmpresaClienteDetalhe() {
   const [materiais, setMateriais] = useState<Material[]>([]);
 
   const [novaEntregaDialog, setNovaEntregaDialog] = useState(false);
-  const [novaEntrega, setNovaEntrega] = useState({ nome: "", link: "", legenda: "" });
+  const [novaEntrega, setNovaEntrega] = useState({ nome: "", legenda: "" });
+  const [novaEntregaFile, setNovaEntregaFile] = useState<File | null>(null);
 
   const [editarEntregaDialog, setEditarEntregaDialog] = useState(false);
   const [entregaEditando, setEntregaEditando] = useState<{ id: string; nome: string; link: string; legenda: string }>({ id: "", nome: "", link: "", legenda: "" });
+  const [editarEntregaFile, setEditarEntregaFile] = useState<File | null>(null);
 
   const [novoMaterialDialog, setNovoMaterialDialog] = useState(false);
   const [novoMaterial, setNovoMaterial] = useState({ nome: "", link: "" });
@@ -356,20 +360,36 @@ export default function EmpresaClienteDetalhe() {
     }
   };
 
-  const handleAddEntrega = () => {
+  const uploadEntregaFile = async (file: File): Promise<string | null> => {
+    const ext = file.name.split(".").pop();
+    const filePath = `${clienteId}/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("entregas").upload(filePath, file);
+    if (error) {
+      console.error("Upload error:", error);
+      toast.error("Erro ao fazer upload do arquivo");
+      return null;
+    }
+    const { data: urlData } = supabase.storage.from("entregas").getPublicUrl(filePath);
+    return urlData.publicUrl;
+  };
+
+  const handleAddEntrega = async () => {
     if (!novaEntrega.nome.trim()) {
       toast.error("Preencha o nome da entrega");
       return;
     }
-    if (!novaEntrega.link.trim()) {
-      toast.error("Preencha o link da entrega");
+    if (!novaEntregaFile) {
+      toast.error("Selecione um arquivo para a entrega");
       return;
     }
+    const url = await uploadEntregaFile(novaEntregaFile);
+    if (!url) return;
     setEntregas([
       ...entregas,
-      { id: Date.now().toString(), nome: novaEntrega.nome.trim(), status: "em_revisao", link: novaEntrega.link.trim(), legenda: novaEntrega.legenda?.trim() || undefined },
+      { id: Date.now().toString(), nome: novaEntrega.nome.trim(), status: "em_revisao", link: url, legenda: novaEntrega.legenda?.trim() || undefined },
     ]);
-    setNovaEntrega({ nome: "", link: "", legenda: "" });
+    setNovaEntrega({ nome: "", legenda: "" });
+    setNovaEntregaFile(null);
     setNovaEntregaDialog(false);
   };
 
@@ -394,8 +414,15 @@ export default function EmpresaClienteDetalhe() {
     setEditarEntregaDialog(true);
   };
 
-  const handleSalvarEntrega = () => {
-    setEntregas(entregas.map((e) => e.id === entregaEditando.id ? { ...e, nome: entregaEditando.nome, link: entregaEditando.link, legenda: entregaEditando.legenda || undefined } : e));
+  const handleSalvarEntrega = async () => {
+    let link = entregaEditando.link;
+    if (editarEntregaFile) {
+      const url = await uploadEntregaFile(editarEntregaFile);
+      if (!url) return;
+      link = url;
+    }
+    setEntregas(entregas.map((e) => e.id === entregaEditando.id ? { ...e, nome: entregaEditando.nome, link, legenda: entregaEditando.legenda || undefined } : e));
+    setEditarEntregaFile(null);
     setEditarEntregaDialog(false);
   };
 
@@ -769,8 +796,19 @@ export default function EmpresaClienteDetalhe() {
                           <Input value={novaEntrega.nome} onChange={(e) => setNovaEntrega({ ...novaEntrega, nome: e.target.value })} placeholder="Ex: Design Home v2" />
                         </div>
                         <div className="space-y-2">
-                          <Label>Link *</Label>
-                          <Input value={novaEntrega.link} onChange={(e) => setNovaEntrega({ ...novaEntrega, link: e.target.value })} placeholder="https://..." />
+                          <Label>Arquivo *</Label>
+                          <div className="flex items-center gap-3">
+                            <label className="flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-accent transition-colors">
+                              <Upload className="h-4 w-4" />
+                              {novaEntregaFile ? novaEntregaFile.name : "Selecionar arquivo"}
+                              <input type="file" className="hidden" accept="image/*,.pdf" onChange={(e) => setNovaEntregaFile(e.target.files?.[0] || null)} />
+                            </label>
+                            {novaEntregaFile && (
+                              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setNovaEntregaFile(null)}>
+                                <X className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
                         </div>
                         <div className="space-y-2">
                           <Label>Legenda (opcional)</Label>
@@ -803,7 +841,7 @@ export default function EmpresaClienteDetalhe() {
                           <Button variant="ghost" size="icon" className="flex-shrink-0" onClick={() => handleEditarEntrega(entrega)}><Edit2 className="h-4 w-4" /></Button>
                           <Button variant="ghost" size="icon" className="flex-shrink-0 text-foreground hover:text-destructive" onClick={() => handleExcluirEntrega(entrega.id)} aria-label="Excluir entrega" title="Excluir entrega"><Trash2 className="h-4 w-4" /></Button>
                           <Button variant="ghost" size="icon" className="flex-shrink-0" asChild>
-                            <a href={entrega.link} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4" /></a>
+                            <a href={entrega.link} target="_blank" rel="noopener noreferrer"><FileImage className="h-4 w-4" /></a>
                           </Button>
                         </div>
                       </div>
@@ -962,7 +1000,27 @@ export default function EmpresaClienteDetalhe() {
           <DialogHeader><DialogTitle>Editar Entrega</DialogTitle></DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2"><Label>Nome da entrega</Label><Input value={entregaEditando.nome} onChange={(e) => setEntregaEditando({ ...entregaEditando, nome: e.target.value })} /></div>
-            <div className="space-y-2"><Label>Link</Label><Input value={entregaEditando.link} onChange={(e) => setEntregaEditando({ ...entregaEditando, link: e.target.value })} /></div>
+            <div className="space-y-2">
+              <Label>Arquivo</Label>
+              {entregaEditando.link && !editarEntregaFile && (
+                <div className="mb-2 rounded-md border border-border p-2">
+                  <img src={entregaEditando.link} alt="Preview" className="max-h-32 rounded object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                  <p className="mt-1 text-xs text-muted-foreground truncate">Arquivo atual</p>
+                </div>
+              )}
+              <div className="flex items-center gap-3">
+                <label className="flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-accent transition-colors">
+                  <Upload className="h-4 w-4" />
+                  {editarEntregaFile ? editarEntregaFile.name : "Trocar arquivo"}
+                  <input type="file" className="hidden" accept="image/*,.pdf" onChange={(e) => setEditarEntregaFile(e.target.files?.[0] || null)} />
+                </label>
+                {editarEntregaFile && (
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditarEntregaFile(null)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
             <div className="space-y-2"><Label>Legenda (opcional)</Label><Input value={entregaEditando.legenda} onChange={(e) => setEntregaEditando({ ...entregaEditando, legenda: e.target.value })} /></div>
           </div>
           <div className="flex justify-end gap-3">
