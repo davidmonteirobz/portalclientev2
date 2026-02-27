@@ -200,6 +200,8 @@ export default function ClienteEntregaDetalhe() {
                 <div className="relative">
                   {/\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(entrega.links[currentImageIndex]) ? (
                     <img src={entrega.links[currentImageIndex]} alt={`${entrega.nome} - ${currentImageIndex + 1}`} className="w-full max-h-[500px] object-contain" />
+                  ) : /\.(mp4|webm|mov|avi|mkv)(\?.*)?$/i.test(entrega.links[currentImageIndex]) ? (
+                    <video src={entrega.links[currentImageIndex]} controls className="w-full max-h-[500px]" />
                   ) : /\.pdf(\?.*)?$/i.test(entrega.links[currentImageIndex]) ? (
                     <iframe src={entrega.links[currentImageIndex]} className="w-full h-[500px]" title={entrega.nome} />
                   ) : (
