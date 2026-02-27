@@ -445,12 +445,8 @@ export default function EmpresaClienteDetalhe() {
     setEditarMaterialDialog(false);
   };
 
-  const handleEntregaEmAndamento = (id: string) => {
+  const handleAjusteFeito = (id: string) => {
     setEntregas(entregas.map((e) => e.id === id ? { ...e, status: "em_revisao", ajuste: undefined } : e));
-  };
-
-  const handleEntregaResolvida = (id: string) => {
-    setEntregas(entregas.map((e) => e.id === id ? { ...e, status: "aprovado", ajuste: undefined } : e));
   };
 
   const toggleEntregaStatus = (id: string) => {
@@ -869,14 +865,9 @@ export default function EmpresaClienteDetalhe() {
                             <p className="text-sm text-foreground">{entrega.ajuste.texto}</p>
                             <p className="mt-2 text-xs text-muted-foreground">Solicitado em {entrega.ajuste.dataHora}</p>
                           </div>
-                          <div className="flex flex-col gap-2">
-                            <Button size="sm" variant="outline" className="w-full" onClick={() => handleEntregaEmAndamento(entrega.id)}>
-                              <Clock className="mr-1.5 h-4 w-4" />Marcar como em andamento
-                            </Button>
-                            <Button size="sm" className="w-full" onClick={() => handleEntregaResolvida(entrega.id)}>
-                              <CheckCircle className="mr-1.5 h-4 w-4" />Marcar como resolvido
-                            </Button>
-                          </div>
+                          <Button size="sm" className="w-full" onClick={() => handleAjusteFeito(entrega.id)}>
+                            <CheckCircle className="mr-1.5 h-4 w-4" />Ajuste feito
+                          </Button>
                         </div>
                       )}
                     </div>
