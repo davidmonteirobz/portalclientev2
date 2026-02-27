@@ -65,7 +65,7 @@ interface Entrega {
   id: string;
   nome: string;
   status: "em_revisao" | "aprovado" | "ajuste_solicitado";
-  link: string;
+  links: string[];
   legenda?: string;
   ajuste?: AjusteSolicitado;
 }
@@ -162,11 +162,11 @@ export default function EmpresaClienteDetalhe() {
 
   const [novaEntregaDialog, setNovaEntregaDialog] = useState(false);
   const [novaEntrega, setNovaEntrega] = useState({ nome: "", legenda: "" });
-  const [novaEntregaFile, setNovaEntregaFile] = useState<File | null>(null);
+  const [novaEntregaFiles, setNovaEntregaFiles] = useState<File[]>([]);
 
   const [editarEntregaDialog, setEditarEntregaDialog] = useState(false);
-  const [entregaEditando, setEntregaEditando] = useState<{ id: string; nome: string; link: string; legenda: string }>({ id: "", nome: "", link: "", legenda: "" });
-  const [editarEntregaFile, setEditarEntregaFile] = useState<File | null>(null);
+  const [entregaEditando, setEntregaEditando] = useState<{ id: string; nome: string; links: string[]; legenda: string }>({ id: "", nome: "", links: [], legenda: "" });
+  const [editarEntregaFiles, setEditarEntregaFiles] = useState<File[]>([]);
 
   const [novoMaterialDialog, setNovoMaterialDialog] = useState(false);
   const [novoMaterial, setNovoMaterial] = useState({ nome: "", link: "" });
@@ -222,14 +222,18 @@ export default function EmpresaClienteDetalhe() {
           .order("created_at");
 
         if (entregasData) {
-          setEntregas(entregasData.map((e: any) => ({
-            id: e.id,
-            nome: e.nome,
-            status: e.status as any,
-            link: e.link,
-            legenda: e.legenda || undefined,
-            ajuste: e.ajuste_texto ? { texto: e.ajuste_texto, dataHora: e.ajuste_data_hora || "" } : undefined,
-          })));
+          setEntregas(entregasData.map((e: any) => {
+            let links: string[] = [];
+            try { links = JSON.parse(e.link); } catch { if (e.link) links = [e.link]; }
+            return {
+              id: e.id,
+              nome: e.nome,
+              status: e.status as any,
+              links,
+              legenda: e.legenda || undefined,
+              ajuste: e.ajuste_texto ? { texto: e.ajuste_texto, dataHora: e.ajuste_data_hora || "" } : undefined,
+            };
+          }));
         }
 
         // Fetch materiais
@@ -316,7 +320,7 @@ export default function EmpresaClienteDetalhe() {
           entregas.map((e) => ({
             portal_client_id: clienteId,
             nome: e.nome,
-            link: e.link,
+            link: JSON.stringify(e.links),
             legenda: e.legenda || null,
             status: e.status,
             ajuste_texto: e.ajuste?.texto || null,
@@ -362,7 +366,7 @@ export default function EmpresaClienteDetalhe() {
 
   const uploadEntregaFile = async (file: File): Promise<string | null> => {
     const ext = file.name.split(".").pop();
-    const filePath = `${clienteId}/${Date.now()}.${ext}`;
+    const filePath = `${clienteId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const { error } = await supabase.storage.from("entregas").upload(filePath, file);
     if (error) {
       console.error("Upload error:", error);
@@ -373,23 +377,32 @@ export default function EmpresaClienteDetalhe() {
     return urlData.publicUrl;
   };
 
+  const uploadMultipleFiles = async (files: File[]): Promise<string[]> => {
+    const urls: string[] = [];
+    for (const file of files) {
+      const url = await uploadEntregaFile(file);
+      if (url) urls.push(url);
+    }
+    return urls;
+  };
+
   const handleAddEntrega = async () => {
     if (!novaEntrega.nome.trim()) {
       toast.error("Preencha o nome da entrega");
       return;
     }
-    if (!novaEntregaFile) {
-      toast.error("Selecione um arquivo para a entrega");
+    if (novaEntregaFiles.length === 0) {
+      toast.error("Selecione pelo menos um arquivo para a entrega");
       return;
     }
-    const url = await uploadEntregaFile(novaEntregaFile);
-    if (!url) return;
+    const urls = await uploadMultipleFiles(novaEntregaFiles);
+    if (urls.length === 0) return;
     setEntregas([
       ...entregas,
-      { id: Date.now().toString(), nome: novaEntrega.nome.trim(), status: "em_revisao", link: url, legenda: novaEntrega.legenda?.trim() || undefined },
+      { id: Date.now().toString(), nome: novaEntrega.nome.trim(), status: "em_revisao", links: urls, legenda: novaEntrega.legenda?.trim() || undefined },
     ]);
     setNovaEntrega({ nome: "", legenda: "" });
-    setNovaEntregaFile(null);
+    setNovaEntregaFiles([]);
     setNovaEntregaDialog(false);
   };
 
@@ -410,19 +423,19 @@ export default function EmpresaClienteDetalhe() {
   };
 
   const handleEditarEntrega = (entrega: Entrega) => {
-    setEntregaEditando({ id: entrega.id, nome: entrega.nome, link: entrega.link, legenda: entrega.legenda || "" });
+    setEntregaEditando({ id: entrega.id, nome: entrega.nome, links: [...entrega.links], legenda: entrega.legenda || "" });
+    setEditarEntregaFiles([]);
     setEditarEntregaDialog(true);
   };
 
   const handleSalvarEntrega = async () => {
-    let link = entregaEditando.link;
-    if (editarEntregaFile) {
-      const url = await uploadEntregaFile(editarEntregaFile);
-      if (!url) return;
-      link = url;
+    let links = [...entregaEditando.links];
+    if (editarEntregaFiles.length > 0) {
+      const newUrls = await uploadMultipleFiles(editarEntregaFiles);
+      links = [...links, ...newUrls];
     }
-    setEntregas(entregas.map((e) => e.id === entregaEditando.id ? { ...e, nome: entregaEditando.nome, link, legenda: entregaEditando.legenda || undefined } : e));
-    setEditarEntregaFile(null);
+    setEntregas(entregas.map((e) => e.id === entregaEditando.id ? { ...e, nome: entregaEditando.nome, links, legenda: entregaEditando.legenda || undefined } : e));
+    setEditarEntregaFiles([]);
     setEditarEntregaDialog(false);
   };
 
@@ -796,19 +809,26 @@ export default function EmpresaClienteDetalhe() {
                           <Input value={novaEntrega.nome} onChange={(e) => setNovaEntrega({ ...novaEntrega, nome: e.target.value })} placeholder="Ex: Design Home v2" />
                         </div>
                         <div className="space-y-2">
-                          <Label>Arquivo *</Label>
-                          <div className="flex items-center gap-3">
-                            <label className="flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-accent transition-colors">
-                              <Upload className="h-4 w-4" />
-                              {novaEntregaFile ? novaEntregaFile.name : "Selecionar arquivo"}
-                              <input type="file" className="hidden" accept="image/*,.pdf" onChange={(e) => setNovaEntregaFile(e.target.files?.[0] || null)} />
-                            </label>
-                            {novaEntregaFile && (
-                              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setNovaEntregaFile(null)}>
-                                <X className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
+                          <Label>Arquivos *</Label>
+                          <label className="flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-accent transition-colors">
+                            <Upload className="h-4 w-4" />
+                            Selecionar arquivos
+                            <input type="file" className="hidden" accept="image/*,.pdf" multiple onChange={(e) => {
+                              if (e.target.files) setNovaEntregaFiles(prev => [...prev, ...Array.from(e.target.files!)]);
+                            }} />
+                          </label>
+                          {novaEntregaFiles.length > 0 && (
+                            <div className="space-y-1 mt-2">
+                              {novaEntregaFiles.map((f, i) => (
+                                <div key={i} className="flex items-center justify-between rounded bg-muted px-3 py-1.5 text-sm">
+                                  <span className="truncate">{f.name}</span>
+                                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setNovaEntregaFiles(novaEntregaFiles.filter((_, idx) => idx !== i))}>
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <div className="space-y-2">
                           <Label>Legenda (opcional)</Label>
@@ -840,9 +860,11 @@ export default function EmpresaClienteDetalhe() {
                           </StatusBadge>
                           <Button variant="ghost" size="icon" className="flex-shrink-0" onClick={() => handleEditarEntrega(entrega)}><Edit2 className="h-4 w-4" /></Button>
                           <Button variant="ghost" size="icon" className="flex-shrink-0 text-foreground hover:text-destructive" onClick={() => handleExcluirEntrega(entrega.id)} aria-label="Excluir entrega" title="Excluir entrega"><Trash2 className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="icon" className="flex-shrink-0" asChild>
-                            <a href={entrega.link} target="_blank" rel="noopener noreferrer"><FileImage className="h-4 w-4" /></a>
-                          </Button>
+                          {entrega.links.length > 0 && (
+                            <Button variant="ghost" size="icon" className="flex-shrink-0" asChild>
+                              <a href={entrega.links[0]} target="_blank" rel="noopener noreferrer"><FileImage className="h-4 w-4" /></a>
+                            </Button>
+                          )}
                         </div>
                       </div>
                       {entrega.status === "ajuste_solicitado" && entrega.ajuste && (
@@ -1001,25 +1023,39 @@ export default function EmpresaClienteDetalhe() {
           <div className="space-y-4 py-4">
             <div className="space-y-2"><Label>Nome da entrega</Label><Input value={entregaEditando.nome} onChange={(e) => setEntregaEditando({ ...entregaEditando, nome: e.target.value })} /></div>
             <div className="space-y-2">
-              <Label>Arquivo</Label>
-              {entregaEditando.link && !editarEntregaFile && (
-                <div className="mb-2 rounded-md border border-border p-2">
-                  <img src={entregaEditando.link} alt="Preview" className="max-h-32 rounded object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                  <p className="mt-1 text-xs text-muted-foreground truncate">Arquivo atual</p>
+              <Label>Arquivos</Label>
+              {entregaEditando.links.length > 0 && (
+                <div className="space-y-1 mb-2">
+                  {entregaEditando.links.map((url, i) => (
+                    <div key={i} className="flex items-center gap-2 rounded-md border border-border p-2">
+                      <img src={url} alt={`Arquivo ${i + 1}`} className="h-16 w-16 rounded object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                      <span className="flex-1 text-xs text-muted-foreground truncate">Arquivo {i + 1}</span>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => setEntregaEditando({ ...entregaEditando, links: entregaEditando.links.filter((_, idx) => idx !== i) })}>
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
               )}
-              <div className="flex items-center gap-3">
-                <label className="flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-accent transition-colors">
-                  <Upload className="h-4 w-4" />
-                  {editarEntregaFile ? editarEntregaFile.name : "Trocar arquivo"}
-                  <input type="file" className="hidden" accept="image/*,.pdf" onChange={(e) => setEditarEntregaFile(e.target.files?.[0] || null)} />
-                </label>
-                {editarEntregaFile && (
-                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditarEntregaFile(null)}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-accent transition-colors">
+                <Upload className="h-4 w-4" />
+                Adicionar arquivos
+                <input type="file" className="hidden" accept="image/*,.pdf" multiple onChange={(e) => {
+                  if (e.target.files) setEditarEntregaFiles(prev => [...prev, ...Array.from(e.target.files!)]);
+                }} />
+              </label>
+              {editarEntregaFiles.length > 0 && (
+                <div className="space-y-1 mt-2">
+                  {editarEntregaFiles.map((f, i) => (
+                    <div key={i} className="flex items-center justify-between rounded bg-muted px-3 py-1.5 text-sm">
+                      <span className="truncate">{f.name}</span>
+                      <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setEditarEntregaFiles(editarEntregaFiles.filter((_, idx) => idx !== i))}>
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             <div className="space-y-2"><Label>Legenda (opcional)</Label><Input value={entregaEditando.legenda} onChange={(e) => setEntregaEditando({ ...entregaEditando, legenda: e.target.value })} /></div>
           </div>
