@@ -813,7 +813,7 @@ export default function EmpresaClienteDetalhe() {
                           <label className="flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-accent transition-colors">
                             <Upload className="h-4 w-4" />
                             Selecionar arquivos
-                            <input type="file" className="hidden" accept="image/*,.pdf" multiple onChange={(e) => {
+                            <input type="file" className="hidden" accept="image/*,.pdf,video/*" multiple onChange={(e) => {
                               if (e.target.files) setNovaEntregaFiles(prev => [...prev, ...Array.from(e.target.files!)]);
                             }} />
                           </label>
@@ -1040,7 +1040,7 @@ export default function EmpresaClienteDetalhe() {
               <label className="flex cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-accent transition-colors">
                 <Upload className="h-4 w-4" />
                 Adicionar arquivos
-                <input type="file" className="hidden" accept="image/*,.pdf" multiple onChange={(e) => {
+                <input type="file" className="hidden" accept="image/*,.pdf,video/*" multiple onChange={(e) => {
                   if (e.target.files) setEditarEntregaFiles(prev => [...prev, ...Array.from(e.target.files!)]);
                 }} />
               </label>
