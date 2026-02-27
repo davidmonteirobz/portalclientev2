@@ -378,12 +378,8 @@ export default function EmpresaClienteDetalhe() {
   };
 
   const uploadMultipleFiles = async (files: File[]): Promise<string[]> => {
-    const urls: string[] = [];
-    for (const file of files) {
-      const url = await uploadEntregaFile(file);
-      if (url) urls.push(url);
-    }
-    return urls;
+    const results = await Promise.all(files.map(file => uploadEntregaFile(file)));
+    return results.filter((url): url is string => url !== null);
   };
 
   const handleAddEntrega = async () => {
