@@ -8,6 +8,7 @@ interface EmpresaTheme {
 
 interface EmpresaThemeContextType {
   theme: EmpresaTheme;
+  themeStyles: React.CSSProperties;
   setTheme: (theme: EmpresaTheme) => void;
   updateCorPrimaria: (cor: string) => void;
   updateLogoUrl: (url: string | null) => void;
@@ -32,21 +33,21 @@ export function EmpresaThemeProvider({ children }: EmpresaThemeProviderProps) {
     return { corPrimaria: "#000000", logoUrl: null };
   });
 
-  // Aplica cor dinamicamente via CSS variables
+  // Salva no localStorage quando muda
   useEffect(() => {
-    const hsl = hexToHsl(theme.corPrimaria);
-    
-    // Atualiza a cor primária global
-    document.documentElement.style.setProperty("--primary", hsl);
-    
-    // Atualiza cores da sidebar para manter consistência
-    document.documentElement.style.setProperty("--sidebar-primary", hsl);
-    document.documentElement.style.setProperty("--sidebar-background", hsl);
-    document.documentElement.style.setProperty("--ring", hsl);
-    
-    // Salva no localStorage
     localStorage.setItem("empresa-theme", JSON.stringify(theme));
   }, [theme]);
+
+  // Gera CSS variables para aplicar em containers escopados
+  const themeStyles = (() => {
+    const hsl = hexToHsl(theme.corPrimaria);
+    return {
+      "--primary": hsl,
+      "--sidebar-primary": hsl,
+      "--sidebar-background": hsl,
+      "--ring": hsl,
+    } as React.CSSProperties;
+  })();
 
   const updateCorPrimaria = (cor: string) => {
     setTheme((prev) => ({ ...prev, corPrimaria: cor }));
@@ -57,7 +58,7 @@ export function EmpresaThemeProvider({ children }: EmpresaThemeProviderProps) {
   };
 
   return (
-    <EmpresaThemeContext.Provider value={{ theme, setTheme, updateCorPrimaria, updateLogoUrl }}>
+    <EmpresaThemeContext.Provider value={{ theme, themeStyles, setTheme, updateCorPrimaria, updateLogoUrl }}>
       {children}
     </EmpresaThemeContext.Provider>
   );
