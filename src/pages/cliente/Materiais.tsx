@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ClienteLayout } from "@/components/cliente/ClienteLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, FileText, LayoutDashboard, Package, ArrowRight } from "lucide-react";
+import { ExternalLink, FileText, LayoutDashboard, Package, ArrowRight, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -23,27 +23,27 @@ export default function ClienteMateriais() {
     async function fetchData() {
       if (!user) return;
 
-      const { data: pc } = await supabase
-        .from("portal_clients")
-        .select("id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      const { data: pc } = await supabase.
+      from("portal_clients").
+      select("id").
+      eq("user_id", user.id).
+      maybeSingle();
 
-      if (!pc) { setLoading(false); return; }
+      if (!pc) {setLoading(false);return;}
 
-      const { data: matData } = await supabase
-        .from("client_materiais")
-        .select("id, nome, link")
-        .eq("portal_client_id", pc.id)
-        .order("created_at");
+      const { data: matData } = await supabase.
+      from("client_materiais").
+      select("id, nome, link").
+      eq("portal_client_id", pc.id).
+      order("created_at");
 
       if (matData) setMateriais(matData);
 
-      const { data: ctx } = await supabase
-        .from("client_contexto")
-        .select("onboarding_ativo")
-        .eq("portal_client_id", pc.id)
-        .maybeSingle();
+      const { data: ctx } = await supabase.
+      from("client_contexto").
+      select("onboarding_ativo").
+      eq("portal_client_id", pc.id).
+      maybeSingle();
 
       if (ctx) setOnboardingAtivo(ctx.onboarding_ativo || false);
 
@@ -58,8 +58,8 @@ export default function ClienteMateriais() {
         <div className="flex items-center justify-center py-20">
           <p className="text-muted-foreground">Carregando...</p>
         </div>
-      </ClienteLayout>
-    );
+      </ClienteLayout>);
+
   }
 
   return (
@@ -70,10 +70,10 @@ export default function ClienteMateriais() {
           <p className="text-muted-foreground">Acesse os arquivos do seu projeto</p>
         </div>
 
-        {materiais.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {materiais.map((material, index) => (
-              <Card key={material.id} className="group transition-all card-hover animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
+        {materiais.length > 0 ?
+        <div className="grid gap-4 sm:grid-cols-2">
+            {materiais.map((material, index) =>
+          <Card key={material.id} className="group transition-all card-hover animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-4">
@@ -93,17 +93,17 @@ export default function ClienteMateriais() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16">
+          )}
+          </div> :
+
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
               <FileText className="h-6 w-6 text-muted-foreground" />
             </div>
             <h3 className="mt-4 font-medium text-foreground">Nenhum arquivo ainda</h3>
             <p className="mt-1 text-sm text-muted-foreground">Seus arquivos aparecerão aqui</p>
           </div>
-        )}
+        }
 
         <div className="rounded-lg bg-muted/50 p-4">
           <p className="text-sm text-muted-foreground">💡 Os arquivos são hospedados externamente. Se tiver problemas de acesso, entre em contato pelo WhatsApp.</p>
@@ -117,10 +117,10 @@ export default function ClienteMateriais() {
           </Link>
           <Link to="/cliente/entregas" className="flex items-center justify-between rounded-2xl border-2 border-primary bg-transparent px-6 py-5 text-primary transition-all hover:bg-primary/5 active:scale-[0.98]">
             <div className="flex items-center gap-4"><Package className="h-6 w-6" /><span className="text-lg font-medium">Entregas</span></div>
-            <ArrowRight className="h-5 w-5" />
+            <ArrowLeft className="h-5 w-5" />
           </Link>
         </div>
       </div>
-    </ClienteLayout>
-  );
+    </ClienteLayout>);
+
 }
