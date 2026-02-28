@@ -38,7 +38,7 @@ const getMenuItems = (onboardingAtivo: boolean) => {
 
 export function ClienteLayout({ children, onboardingAtivo = true }: ClienteLayoutProps) {
   const location = useLocation();
-  const { theme } = useEmpresaTheme();
+  const { theme, themeStyles } = useEmpresaTheme();
   const { signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const menuItems = getMenuItems(onboardingAtivo);
@@ -54,7 +54,7 @@ export function ClienteLayout({ children, onboardingAtivo = true }: ClienteLayou
   );
 
   return (
-    <div className="min-h-screen w-full bg-background">
+    <div className="min-h-screen w-full bg-background" style={themeStyles}>
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 lg:px-8">

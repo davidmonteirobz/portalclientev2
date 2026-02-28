@@ -21,7 +21,7 @@ export function EmpresaLayout({ children }: EmpresaLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { theme } = useEmpresaTheme();
+  const { theme, themeStyles } = useEmpresaTheme();
   const { signOut } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -54,7 +54,7 @@ export function EmpresaLayout({ children }: EmpresaLayoutProps) {
   );
 
   return (
-    <div className="flex min-h-screen w-full bg-background">
+    <div className="flex min-h-screen w-full bg-background" style={themeStyles}>
       {/* Mobile Header */}
       {isMobile && (
         <div className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b border-border bg-sidebar px-4">
