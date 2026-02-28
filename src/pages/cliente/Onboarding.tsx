@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ClienteLayout } from "@/components/cliente/ClienteLayout";
-import { CheckCircle, Circle, Clock } from "lucide-react";
+import { CheckCircle, Circle, Clock, Package, LayoutDashboard, ArrowRight, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -114,6 +115,18 @@ export default function ClienteOnboarding() {
             <p className="mt-1 text-sm text-muted-foreground">As etapas do onboarding aparecerão aqui</p>
           </div>
         )}
+
+        {/* CTAs - Mobile */}
+        <div className="flex flex-col gap-4 md:hidden">
+          <Link to="/cliente/entregas" className="flex items-center justify-between rounded-2xl bg-primary px-6 py-5 text-primary-foreground transition-all hover:opacity-90 active:scale-[0.98]">
+            <div className="flex items-center gap-4"><Package className="h-6 w-6" /><span className="text-lg font-medium">Entregas</span></div>
+            <ArrowRight className="h-5 w-5" />
+          </Link>
+          <Link to="/cliente/dashboard" className="flex items-center justify-between rounded-2xl border-2 border-primary bg-transparent px-6 py-5 text-primary transition-all hover:bg-primary/5 active:scale-[0.98]">
+            <div className="flex items-center gap-4"><LayoutDashboard className="h-6 w-6" /><span className="text-lg font-medium">Início</span></div>
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+        </div>
       </div>
     </ClienteLayout>
   );
