@@ -172,6 +172,26 @@ export default function EmpresaClientes() {
     }
   };
 
+  const handleDeleteCliente = async () => {
+    if (!clienteToDelete) return;
+    try {
+      setDeleting(true);
+      const { error } = await supabase
+        .from("portal_clients")
+        .delete()
+        .eq("id", clienteToDelete.id);
+      if (error) throw error;
+      toast({ title: "Cliente excluído com sucesso" });
+      setClienteToDelete(null);
+      fetchClientes();
+    } catch (err: any) {
+      console.error("Erro ao excluir:", err);
+      toast({ title: "Erro ao excluir cliente", description: err.message, variant: "destructive" });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <EmpresaLayout>
       <div className="animate-fade-in space-y-6">
