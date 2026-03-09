@@ -119,13 +119,13 @@ export function EmpresaThemeProvider({ children }: EmpresaThemeProviderProps) {
     setTheme((prev) => ({ ...prev, logoUrl: url }));
   };
 
-  const saveThemeToDb = useCallback(async () => {
+  const saveThemeToDb = useCallback(async (cor: string, logo: string | null) => {
     if (!empresaId) return;
     const { error } = await supabase
       .from("empresas")
       .update({
-        cor_primaria: theme.corPrimaria,
-        logo_url: theme.logoUrl,
+        cor_primaria: cor,
+        logo_url: logo,
       })
       .eq("id", empresaId);
 
@@ -133,7 +133,7 @@ export function EmpresaThemeProvider({ children }: EmpresaThemeProviderProps) {
       console.error("Error saving theme:", error);
       throw error;
     }
-  }, [empresaId, theme]);
+  }, [empresaId]);
 
   return (
     <EmpresaThemeContext.Provider value={{ theme, themeStyles, empresaId, loading, setTheme, updateCorPrimaria, updateLogoUrl, saveThemeToDb }}>
