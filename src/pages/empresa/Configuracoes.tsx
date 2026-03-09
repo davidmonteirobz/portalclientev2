@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { useEmpresaTheme } from "@/contexts/EmpresaThemeContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,12 +10,18 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 export default function Configuracoes() {
-  const { theme, updateCorPrimaria, updateLogoUrl } = useEmpresaTheme();
+  const { theme, updateCorPrimaria, updateLogoUrl, saveThemeToDb } = useEmpresaTheme();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [corTemp, setCorTemp] = useState(theme.corPrimaria);
   const [logoTemp, setLogoTemp] = useState(theme.logoUrl);
+
+  // Sync temp state when theme loads from DB
+  useEffect(() => {
+    setCorTemp(theme.corPrimaria);
+    setLogoTemp(theme.logoUrl);
+  }, [theme.corPrimaria, theme.logoUrl]);
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -45,13 +51,22 @@ export default function Configuracoes() {
     }
   };
 
-  const handleSave = () => {
-    updateCorPrimaria(corTemp);
-    updateLogoUrl(logoTemp);
-    toast({
-      title: "Configurações salvas",
-      description: "As alterações foram aplicadas com sucesso.",
-    });
+  const handleSave = async () => {
+    try {
+      await saveThemeToDb(corTemp, logoTemp);
+      updateCorPrimaria(corTemp);
+      updateLogoUrl(logoTemp);
+      toast({
+        title: "Configurações salvas",
+        description: "As alterações foram aplicadas com sucesso.",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Erro ao salvar",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
   };
 
   const hasChanges = corTemp !== theme.corPrimaria || logoTemp !== theme.logoUrl;
