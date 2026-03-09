@@ -16,7 +16,7 @@ interface EmpresaThemeContextType {
   setTheme: (theme: EmpresaTheme) => void;
   updateCorPrimaria: (cor: string) => void;
   updateLogoUrl: (url: string | null) => void;
-  saveThemeToDb: () => Promise<void>;
+  saveThemeToDb: (cor: string, logo: string | null) => Promise<void>;
 }
 
 const defaultTheme: EmpresaTheme = { corPrimaria: "#000000", logoUrl: null };
