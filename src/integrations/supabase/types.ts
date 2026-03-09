@@ -186,20 +186,26 @@ export type Database = {
       }
       empresas: {
         Row: {
+          cor_primaria: string
           created_at: string
           id: string
+          logo_url: string | null
           nome: string
           owner_id: string
         }
         Insert: {
+          cor_primaria?: string
           created_at?: string
           id?: string
+          logo_url?: string | null
           nome: string
           owner_id: string
         }
         Update: {
+          cor_primaria?: string
           created_at?: string
           id?: string
+          logo_url?: string | null
           nome?: string
           owner_id?: string
         }
