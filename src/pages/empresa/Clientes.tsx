@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, ChevronRight, Building2, User, Upload, FileSpreadsheet, Loader2 } from "lucide-react";
+import { Plus, Search, ChevronRight, Building2, User, Upload, FileSpreadsheet, Loader2, Trash2 } from "lucide-react";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -45,6 +57,8 @@ export default function EmpresaClientes() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [clienteToDelete, setClienteToDelete] = useState<Cliente | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [novoCliente, setNovoCliente] = useState({
     nome: "",
     negocio: "",
@@ -155,6 +169,26 @@ export default function EmpresaClientes() {
     if (file) {
       console.log("Arquivo selecionado:", file.name);
       setImportDialogOpen(false);
+    }
+  };
+
+  const handleDeleteCliente = async () => {
+    if (!clienteToDelete) return;
+    try {
+      setDeleting(true);
+      const { error } = await supabase
+        .from("portal_clients")
+        .delete()
+        .eq("id", clienteToDelete.id);
+      if (error) throw error;
+      toast({ title: "Cliente excluído com sucesso" });
+      setClienteToDelete(null);
+      fetchClientes();
+    } catch (err: any) {
+      console.error("Erro ao excluir:", err);
+      toast({ title: "Erro ao excluir cliente", description: err.message, variant: "destructive" });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -343,7 +377,20 @@ export default function EmpresaClientes() {
                       </div>
                     </div>
                   </div>
-                  <ChevronRight className="h-5 w-5 flex-shrink-0 text-muted-foreground" />
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setClienteToDelete(cliente);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -366,6 +413,28 @@ export default function EmpresaClientes() {
           </div>
         )}
       </div>
+
+      <AlertDialog open={!!clienteToDelete} onOpenChange={(open) => !open && setClienteToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir cliente</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir <strong>{clienteToDelete?.nome}</strong>? Esta ação não pode ser desfeita e todos os dados associados serão removidos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteCliente}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </EmpresaLayout>
   );
 }
