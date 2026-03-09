@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Search, ChevronRight, Building2, User, Upload, FileSpreadsheet, Loader2 } from "lucide-react";
+import { Plus, Search, ChevronRight, Building2, User, Upload, FileSpreadsheet, Loader2, Trash2 } from "lucide-react";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
