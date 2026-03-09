@@ -136,7 +136,7 @@ export default function EmpresaClienteDetalhe() {
   // Estado do Onboarding
   const [onboarding, setOnboarding] = useState({
     nome: "Onboarding do Serviço",
-    ativo: false,
+    ativo: true,
     etapas: [] as EtapaOnboarding[],
   });
 
@@ -211,7 +211,7 @@ export default function EmpresaClienteDetalhe() {
           setProximaAcao({ descricao: ctx.proxima_acao_descricao || "", prazoData: ctx.proxima_acao_prazo_data || "", prazoHorario: ctx.proxima_acao_prazo_horario || "" });
           setReuniao({ data: ctx.reuniao_data || "", horario: ctx.reuniao_horario || "", assunto: ctx.reuniao_assunto || "" });
           setObservacoesInternas(ctx.observacoes_internas || "");
-          setOnboarding(prev => ({ ...prev, nome: ctx.onboarding_nome || "Onboarding do Serviço", ativo: ctx.onboarding_ativo || false }));
+          setOnboarding(prev => ({ ...prev, nome: ctx.onboarding_nome || "Onboarding do Serviço", ativo: ctx.onboarding_ativo !== false }));
         }
 
         // Fetch entregas
