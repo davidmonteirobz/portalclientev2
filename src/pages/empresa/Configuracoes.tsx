@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { EmpresaLayout } from "@/components/empresa/EmpresaLayout";
 import { useEmpresaTheme } from "@/contexts/EmpresaThemeContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
