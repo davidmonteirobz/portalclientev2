@@ -53,10 +53,9 @@ export default function Configuracoes() {
 
   const handleSave = async () => {
     try {
+      await saveThemeToDb(corTemp, logoTemp);
       updateCorPrimaria(corTemp);
       updateLogoUrl(logoTemp);
-      // Wait for state to update then save
-      await saveThemeToDb();
       toast({
         title: "Configurações salvas",
         description: "As alterações foram aplicadas com sucesso.",
