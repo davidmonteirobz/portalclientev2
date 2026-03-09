@@ -136,7 +136,7 @@ export default function EmpresaClienteDetalhe() {
   // Estado do Onboarding
   const [onboarding, setOnboarding] = useState({
     nome: "Onboarding do Serviço",
-    ativo: false,
+    ativo: true,
     etapas: [] as EtapaOnboarding[],
   });
 
