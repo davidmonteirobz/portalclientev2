@@ -57,6 +57,8 @@ export default function EmpresaClientes() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [clienteToDelete, setClienteToDelete] = useState<Cliente | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const [novoCliente, setNovoCliente] = useState({
     nome: "",
     negocio: "",
