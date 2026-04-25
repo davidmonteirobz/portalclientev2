@@ -1,73 +1,43 @@
-# Welcome to your Lovable project
+# Portal do Cliente
 
-## Project info
+Sistema centralizado para gestão da experiência do cliente 
+em agências digitais.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## O problema
 
-## How can I edit this code?
+Clientes de agências recebem links dispersos, demoram a aprovar 
+demandas e não têm clareza sobre o onboarding — impactando 
+diretamente os prazos de entrega.
 
-There are several ways of editing your application.
+## A solução
 
-**Use Lovable**
+Portal white-label com dois perfis de acesso onde toda a 
+comunicação e gestão do cliente acontece em um único lugar.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+**Empresa (Agência)**
+- Cadastra clientes e envia convite por e-mail
+- Personaliza o painel com logo e cores da agência
+- Gerencia onboarding, reuniões e aprovações
+- Organiza arquivos por cliente
 
-Changes made via Lovable will be committed automatically to this repo.
+**Cliente**
+- Acessa via convite exclusivo
+- Visualiza onboarding completo e próximas reuniões
+- Aprova ou solicita ajustes diretamente pelo celular
+- Acessa seus arquivos, fotos e documentos em um só lugar
 
-**Use your preferred IDE**
+## Funcionalidades
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Login separado por perfil (agência e cliente)
+- Cadastro de cliente com envite por e-mail
+- Painel white-label com logo e cores personalizadas
+- Gestão de onboarding passo a passo
+- Agendamento de reuniões com temas definidos
+- Aprovações com suporte a imagens e vídeos
+- Área exclusiva de arquivos por cliente
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Stack
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
+- Lovable
+- Supabase (autenticação + banco de dados)
 - TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
